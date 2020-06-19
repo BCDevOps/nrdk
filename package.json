@@ -1,0 +1,88 @@
+{
+  "name": "@bcgov/nrdk",
+  "description": "NR Developer/Deployment Kit",
+  "version": "0.1.0-rc.12",
+  "author": "Clecio Varjao",
+  "bin": {
+    "nrdk": "./bin/run"
+  },
+  "bugs": "https://github.com/bcdevops/nrdk/issues",
+  "dependencies": {
+    "@bcgov/pipeline-cli": "git+https://github.com/BCDevOps/pipeline-cli.git#release/v1.1",
+    "@oclif/command": "^1.6.1",
+    "@oclif/plugin-help": "^3.1.0",
+    "@types/rsync": "^0.4.30",
+    "isomorphic-git": "^1.4.4",
+    "nr-pipeline-ext": "git+https://github.com/BCDevOps/nr-pipeline-ext.git#fix/ZERO-2019",
+    "rsync": "^0.6.1",
+    "shelljs": "^0.8.4",
+    "tar": "^6.0.2",
+    "winston": "^3.2.1"
+  },
+  "devDependencies": {
+    "@oclif/dev-cli": "^1",
+    "@oclif/test": "^1",
+    "@types/chai": "^4",
+    "@types/mocha": "^5",
+    "@types/node": "^10",
+    "@zeit/ncc": "^0.22.3",
+    "chai": "^4",
+    "eslint": "^5.13",
+    "eslint-config-oclif": "^3.1",
+    "eslint-config-oclif-typescript": "^0.1",
+    "globby": "^10",
+    "mocha": "^7.2.0",
+    "nyc": "^14",
+    "oclif": "^1.16.1",
+    "pkg": "^4.4.8",
+    "ts-loader": "^7.0.5",
+    "ts-node": "^8",
+    "typescript": "^3.9.5"
+  },
+  "engines": {
+    "node": ">=8.0.0"
+  },
+  "files": [
+    "/bin",
+    "/lib",
+    "/npm-shrinkwrap.json",
+    "/oclif.manifest.json"
+  ],
+  "homepage": "https://github.com/bcdevops/nrdk",
+  "keywords": [
+    "oclif"
+  ],
+  "license": "Apache",
+  "main": "lib/index.js",
+  "oclif": {
+    "commands": "./lib/commands",
+    "bin": "nrdk",
+    "plugins": [
+      "@oclif/plugin-help"
+    ]
+  },
+  "repository": "bcdevops/nrdk",
+  "scripts": {
+    "build": "tsc -b",
+    "postpack": "rm -f oclif.manifest.json",
+    "posttest": "eslint . --ext .ts --config .eslintrc",
+    "prepack": "rm -rf lib && tsc -b && oclif-dev manifest && oclif-dev readme",
+    "ncc": "ncc build bin/run -o dist --minify",
+    "test": "nyc --extension .ts mocha --forbid-only \"test/**/*.test.ts\"",
+    "version": "oclif-dev readme && git add README.md",
+    "oclif": "oclif"
+  },
+  "types": "lib/index.d.ts",
+  "bundleDependencies": [
+    "@bcgov/pipeline-cli",
+    "@oclif/plugin-help",
+    "@types/rsync",
+    "isomorphic-git",
+    "nr-pipeline-ext",
+    "rsync",
+    "tar",
+    "winston",
+    "@oclif/command",
+    "shelljs"
+  ]
+}
