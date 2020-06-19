@@ -20,7 +20,7 @@ $ npm install -g @bcgov/nrdk
 $ nrdk COMMAND
 running command...
 $ nrdk (-v|--version|version)
-@bcgov/nrdk/0.1.0-rc.12 darwin-x64 node-v12.14.1
+@bcgov/nrdk/0.1.0-rc.13 darwin-x64 node-v12.14.1
 $ nrdk --help [COMMAND]
 USAGE
   $ nrdk COMMAND
@@ -48,7 +48,7 @@ OPTIONS
   --pr=pr
 ```
 
-_See code: [src/commands/build.ts](https://github.com/bcdevops/nrdk/blob/v0.1.0-rc.12/src/commands/build.ts)_
+_See code: [src/commands/build.ts](https://github.com/bcdevops/nrdk/blob/v0.1.0-rc.13/src/commands/build.ts)_
 
 ## `nrdk clean`
 
@@ -65,7 +65,7 @@ OPTIONS
   --pr=pr
 ```
 
-_See code: [src/commands/clean.ts](https://github.com/bcdevops/nrdk/blob/v0.1.0-rc.12/src/commands/clean.ts)_
+_See code: [src/commands/clean.ts](https://github.com/bcdevops/nrdk/blob/v0.1.0-rc.13/src/commands/clean.ts)_
 
 ## `nrdk deploy`
 
@@ -82,7 +82,7 @@ OPTIONS
   --pr=pr
 ```
 
-_See code: [src/commands/deploy.ts](https://github.com/bcdevops/nrdk/blob/v0.1.0-rc.12/src/commands/deploy.ts)_
+_See code: [src/commands/deploy.ts](https://github.com/bcdevops/nrdk/blob/v0.1.0-rc.13/src/commands/deploy.ts)_
 
 ## `nrdk help [COMMAND]`
 
