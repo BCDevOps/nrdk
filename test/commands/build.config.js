@@ -6,6 +6,14 @@ module.exports = class {
   }
 
   build() {
-    return {options: this.options}
+    const idirCredLocation = require('path').resolve(require('os').homedir(), '.idir.cred.json')
+    const idir = require(idirCredLocation)
+    return {
+      options: this.options,
+      jiraUrl: 'bwa.nrs.gov.bc.ca/int/jira',
+      phases: {
+        dlvr: {credentials: {idir: {user: idir.username, pass: idir.password}}},
+      },
+    }
   }
 }

@@ -1,26 +1,28 @@
-import {Command, flags} from '@oclif/command'
-import * as GitFlags from '../git-flags'
+import {BaseCommand} from '../base'
+import {FlagNames, flagConfigScript, flagCleanScript, flagEnvSpec, flagPullRequestNumberSpec, flagGitRemoteName, flagGitRemoteUrl, flagGitBranch, flagGitBranchRemote, loadScript, loadConfigScript, applyFlagDefaults} from '../flags'
 
-interface CommandFlags {
-  'pr':  flags.IOptionFlag<string | undefined>;
-  'env':  flags.IOptionFlag<string | undefined>;
-}
-
-type Flags=flags.Input<any> & GitFlags.GitFlags & CommandFlags;
-
-export default class Clean extends Command {
+export default class Clean extends BaseCommand {
   static description = 'describe the command here'
 
-  static flags = {...{pr: flags.integer(), env: flags.string()}, ...GitFlags.createGitFlags()} as Flags
+  static flags = {
+    [FlagNames.CONFIG_SCRIPT]: flagConfigScript,
+    [FlagNames.CLEAN_SCRIPT]: flagCleanScript,
+    [FlagNames.ENV]: flagEnvSpec,
+    [FlagNames.PULL_REQUEST_NUMBER]: flagPullRequestNumberSpec,
+    [FlagNames.GIT_REMOTE_NAME]: flagGitRemoteName,
+    [FlagNames.GIT_REMOTE_URL]: flagGitRemoteUrl,
+    [FlagNames.GIT_BRANCH]: flagGitBranch,
+    [FlagNames.GIT_BRANCH_REMOTE]: flagGitBranchRemote,
+  }
 
   // static args = [{name: 'file'}]
   async run() {
     const {flags} = this.parse(Clean)
-    await GitFlags.applyDefaults(flags)
-    this.debug(flags)
-    const Config = require(`${process.cwd()}/.pipeline/lib/config.js`)
-    const task = require(`${process.cwd()}/.pipeline/lib/clean.js`)
-    const settings = new Config().build()
-    task(Object.assign(settings, {phase: settings.options.env}))
+    await applyFlagDefaults(flags)
+    const settings = loadConfigScript(flags)
+    const {BasicJavaApplicationClean} = require('nr-pipeline-ext')
+    new BasicJavaApplicationClean(settings).clean()
+    // const task = loadScript(flags, FlagNames.CLEAN_SCRIPT)
+    // task(Object.assign(settings, {phase: settings.options.env}))
   }
 }

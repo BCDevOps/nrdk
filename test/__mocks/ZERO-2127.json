@@ -1,0 +1,102 @@
+{
+  "scope": "https://bwa.nrs.gov.bc.ca:443",
+  "method": "GET",
+  "path": "/int/jira/rest/api/2/issue/ZERO-2127",
+  "body": {},
+  "status": 200,
+  "response": {
+    "expand": "renderedFields,names,schema,operations,editmeta,changelog,versionedRepresentations",
+    "id": "124521",
+    "key": "ZERO-2127",
+    "fields": {
+      "fixVersions": [
+        {
+          "id": "13727",
+          "description": "First release to SPI vendor developers",
+          "name": "V0.1",
+          "archived": false,
+          "released": false,
+          "releaseDate": "2019-07-31"
+        }
+      ],
+      "lastViewed": "2020-07-29T13:38:31.438-0700",
+      "priority": {
+        "name": "Medium",
+        "id": "3"
+      },
+      "labels": [],
+      "versions": [],
+      "issuelinks": [
+        {
+          "id": "110218",
+          "type": {
+            "id": "10300",
+            "name": "RFC-RFD",
+            "inward": "RFD link to RFC",
+            "outward": "RFC link to RFD"
+          },
+          "outwardIssue": {
+            "id": "125091",
+            "key": "ZERO-2131",
+            "fields": {
+              "summary": "RFD For DLVR",
+              "status": {
+                "description": "A resolution has been taken, and it is awaiting verification by reporter. From here issues are either reopened, or are closed.",
+                "name": "Resolved",
+                "id": "5",
+                "statusCategory": {
+                  "id": 3,
+                  "key": "done",
+                  "colorName": "green",
+                  "name": "Done"
+                }
+              },
+              "priority": {
+                "name": "Medium",
+                "id": "3"
+              },
+              "issuetype": {
+                "id": "10401",
+                "description": "Request for Deployment",
+                "name": "RFD",
+                "subtask": false,
+                "avatarId": 11611
+              }
+            }
+          }
+        }
+      ],
+      "status": {
+        "description": "",
+        "name": "Approved",
+        "id": "10312",
+        "statusCategory": {
+          "id": 4,
+          "key": "indeterminate",
+          "colorName": "yellow",
+          "name": "In Progress"
+        }
+      },
+      "components": [],
+      "issuetype": {
+        "id": "10400",
+        "description": "Request for Change",
+        "name": "RFC",
+        "subtask": false,
+        "avatarId": 11610
+      },
+      "project": {
+        "id": "12613",
+        "key": "ZERO",
+        "name": "Team Zero",
+        "projectTypeKey": "software"
+      },
+      "created": "2020-07-24T12:10:14.000-0700",
+      "updated": "2020-07-29T12:29:46.000-0700",
+      "description": "Test",
+      "attachment": [],
+      "summary": "Fix title color - dummy"
+    }
+  },
+  "responseIsBinary": false
+}

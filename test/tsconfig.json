@@ -2,7 +2,8 @@
   "extends": "../tsconfig",
   "compilerOptions": {
     "noEmit": true,
-    "composite": true
+    "composite": true,
+    "esModuleInterop": true
   },
   "references": [
     {"path": ".."}

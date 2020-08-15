@@ -13,8 +13,10 @@
     "@oclif/plugin-help": "^3.1.0",
     "@types/rsync": "^0.4.30",
     "isomorphic-git": "^1.4.4",
-    "nr-pipeline-ext": "git+https://github.com/BCDevOps/nr-pipeline-ext.git#fix/ZERO-2019",
+    "lodash.merge": "^4.6.2",
+    "nr-pipeline-ext": "git+https://github.com/BCDevOps/nr-pipeline-ext.git#fix/ONETEAM-64",
     "rsync": "^0.6.1",
+    "safe-buffer": "^5.2.1",
     "shelljs": "^0.8.4",
     "tar": "^6.0.2",
     "winston": "^3.2.1"
@@ -23,6 +25,7 @@
     "@oclif/dev-cli": "^1",
     "@oclif/test": "^1",
     "@types/chai": "^4",
+    "@types/lodash.merge": "^4.6.6",
     "@types/mocha": "^5",
     "@types/node": "^10",
     "@zeit/ncc": "^0.22.3",
@@ -30,8 +33,11 @@
     "eslint": "^5.13",
     "eslint-config-oclif": "^3.1",
     "eslint-config-oclif-typescript": "^0.1",
+    "expect": "^26.1.0",
     "globby": "^10",
+    "jest-snapshot": "^26.1.0",
     "mocha": "^7.2.0",
+    "nock": "^13.0.3",
     "nyc": "^14",
     "oclif": "^1.16.1",
     "pkg": "^4.4.8",
@@ -70,7 +76,8 @@
     "ncc": "ncc build bin/run -o dist --minify",
     "test": "nyc --extension .ts mocha --forbid-only \"test/**/*.test.ts\"",
     "version": "oclif-dev readme && git add README.md",
-    "oclif": "oclif"
+    "oclif": "oclif",
+    "link": "npm link nr-pipeline-ext"
   },
   "types": "lib/index.d.ts",
   "bundleDependencies": [
@@ -83,6 +90,8 @@
     "tar",
     "winston",
     "@oclif/command",
-    "shelljs"
+    "shelljs",
+    "lodash.merge",
+    "safe-buffer"
   ]
 }

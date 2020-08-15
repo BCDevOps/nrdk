@@ -10,9 +10,14 @@ nrdk
 [![License](https://img.shields.io/npm/l/nrdk.svg)](https://github.com/cvarjao/nrdk/blob/master/package.json)
 
 <!-- toc -->
+* [Prerequisites](#prerequisites)
 * [Usage](#usage)
 * [Commands](#commands)
 <!-- tocstop -->
+
+# Prerequisites
+* Setup yout git CLI so that credentials are being cached. You can use the `store` or `cache` credential helper. PS.: Jenkins will do that automatically for you when running within a jenkins job.
+
 # Usage
 <!-- usage -->
 ```sh-session
@@ -33,6 +38,7 @@ USAGE
 * [`nrdk clean`](#nrdk-clean)
 * [`nrdk deploy`](#nrdk-deploy)
 * [`nrdk help [COMMAND]`](#nrdk-help-command)
+* [`nrdk on:jira.issue`](#nrdk-onjiraissue)
 
 ## `nrdk build`
 
@@ -43,9 +49,13 @@ USAGE
   $ nrdk build
 
 OPTIONS
-  -b, --git.branch=git.branch                GIT local branch name to build
-  -b, --git.branch.remote=git.branch.remote  GIT remote branch name to build
-  --pr=pr
+  -b, --git.branch.name=git.branch.name  GIT local branch name
+  --dev-mode                             Developer Mode (local)
+  --env=env                              Environment
+  --git.branch.merge=git.branch.merge    GIT remote branch name
+  --git.remote.name=git.remote.name      [default: origin] GIT remote name
+  --git.remote.url=git.remote.url        GIT remote URL
+  --pr=pr                                Pull Request number
 ```
 
 _See code: [src/commands/build.ts](https://github.com/bcdevops/nrdk/blob/v0.1.0-rc.13/src/commands/build.ts)_
@@ -59,10 +69,12 @@ USAGE
   $ nrdk clean
 
 OPTIONS
-  -b, --git.branch=git.branch                GIT local branch name to build
-  -b, --git.branch.remote=git.branch.remote  GIT remote branch name to build
-  --env=env
-  --pr=pr
+  -b, --git.branch.name=git.branch.name  GIT local branch name
+  --env=env                              Environment
+  --git.branch.merge=git.branch.merge    GIT remote branch name
+  --git.remote.name=git.remote.name      [default: origin] GIT remote name
+  --git.remote.url=git.remote.url        GIT remote URL
+  --pr=pr                                Pull Request number
 ```
 
 _See code: [src/commands/clean.ts](https://github.com/bcdevops/nrdk/blob/v0.1.0-rc.13/src/commands/clean.ts)_
@@ -76,10 +88,12 @@ USAGE
   $ nrdk deploy
 
 OPTIONS
-  -b, --git.branch=git.branch                GIT local branch name to build
-  -b, --git.branch.remote=git.branch.remote  GIT remote branch name to build
-  --env=env
-  --pr=pr
+  -b, --git.branch.name=git.branch.name  GIT local branch name
+  --env=env                              Environment
+  --git.branch.merge=git.branch.merge    GIT remote branch name
+  --git.remote.name=git.remote.name      [default: origin] GIT remote name
+  --git.remote.url=git.remote.url        GIT remote URL
+  --pr=pr                                Pull Request number
 ```
 
 _See code: [src/commands/deploy.ts](https://github.com/bcdevops/nrdk/blob/v0.1.0-rc.13/src/commands/deploy.ts)_
@@ -100,4 +114,22 @@ OPTIONS
 ```
 
 _See code: [@oclif/plugin-help](https://github.com/oclif/plugin-help/blob/v3.1.0/src/commands/help.ts)_
+
+## `nrdk on:jira.issue`
+
+describe the command here
+
+```
+USAGE
+  $ nrdk on:jira.issue
+
+OPTIONS
+  -b, --git.branch.name=git.branch.name  GIT local branch name
+  --env=env                              Environment
+  --git.branch.merge=git.branch.merge    GIT remote branch name
+  --git.remote.name=git.remote.name      [default: origin] GIT remote name
+  --git.remote.url=git.remote.url        GIT remote URL
+```
+
+_See code: [src/commands/on/jira.issue.ts](https://github.com/bcdevops/nrdk/blob/v0.1.0-rc.13/src/commands/on/jira.issue.ts)_
 <!-- commandsstop -->
