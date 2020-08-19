@@ -1,10 +1,10 @@
 import {flags} from '@oclif/command'
 import GitClient from './git-client'
-import lmerge from 'lodash.merge'
 
 export enum FlagNames {
   CONFIG_SCRIPT = 'config-script',
   BUILD_SCRIPT = 'build-script',
+  GIT_URL = 'git.url',
   GIT_REMOTE_NAME = 'git.remote.name',
   GIT_REMOTE_URL = 'git.remote.url',
   GIT_BRANCH = 'git.branch.name',
@@ -17,6 +17,9 @@ export enum FlagNames {
 }
 
 const defaultValues = {
+  [FlagNames.GIT_URL]: async (flags: any) => {
+    flags[FlagNames.GIT_URL] = await GitClient.getInstance().getRemoteUrl(flags[FlagNames.GIT_REMOTE_NAME])
+  },
   [FlagNames.GIT_REMOTE_URL]: async (flags: any) => {
     flags[FlagNames.GIT_REMOTE_URL] = await GitClient.getInstance().getRemoteUrl(flags[FlagNames.GIT_REMOTE_NAME])
   },
@@ -24,7 +27,14 @@ const defaultValues = {
     flags[FlagNames.GIT_BRANCH] = await GitClient.getInstance().getLocalBranchName()
   },
   [FlagNames.GIT_BRANCH_REMOTE]: async (flags: any) => {
-    if (!flags[FlagNames.GIT_BRANCH_REMOTE]) flags[FlagNames.GIT_BRANCH_REMOTE] = `${flags[FlagNames.GIT_BRANCH]}`
+    if (!flags[FlagNames.GIT_BRANCH_REMOTE]) {
+      flags[FlagNames.GIT_BRANCH_REMOTE] = `${flags[FlagNames.GIT_BRANCH]}`
+      // If it is running from Jenkins, using the Bitbucket Branch Source plugin,
+      // the CHANGE_BRANCH environment variable is provided with the source branch name
+      if (process.env.CHANGE_BRANCH) {
+        flags[FlagNames.GIT_BRANCH_REMOTE] = `${process.env.CHANGE_BRANCH}`
+      }
+    }
   },
 }
 
@@ -33,6 +43,7 @@ export const flagBuildScript = flags.string({name: FlagNames.BUILD_SCRIPT, hidde
 export const flagDeployScript = flags.string({name: FlagNames.DEPLOY_SCRIPT, hidden: true, default: `${process.cwd()}/.pipeline/lib/deploy.js`})
 export const flagCleanScript = flags.string({name: FlagNames.CLEAN_SCRIPT, hidden: true, default: `${process.cwd()}/.pipeline/lib/clean.js`})
 export const flagGitRemoteName = flags.string({description: 'GIT remote name', required: false, default: 'origin'})
+export const flagGitUrl = flags.string({description: 'GIT URL', required: false})
 export const flagGitRemoteUrl = flags.string({description: 'GIT remote URL', required: false})
 export const flagGitBranch = flags.string({char: 'b', description: 'GIT local branch name'})
 export const flagGitBranchRemote = flags.string({description: 'GIT remote branch name'})
@@ -82,8 +93,8 @@ export function parseFlagsAsNestedObject(flags: any) {
 }
 export function loadConfigScript(flags: any) {
   const Config = loadScript(flags, FlagNames.CONFIG_SCRIPT)
-  const legacyArgs = require('@bcgov/pipeline-cli').Util.parseArguments()
-  const options = lmerge(legacyArgs, parseFlagsAsNestedObject(flags))
+  const options = parseFlagsAsNestedObject(flags)
+  require('@bcgov/pipeline-cli').Util.applyArgumentsDefaults(options)
   // eslint-disable-next-line no-console
   // console.dir(options, {depth: 4})
   return new Config(options).build()

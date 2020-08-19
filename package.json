@@ -1,7 +1,7 @@
 {
   "name": "@bcgov/nrdk",
   "description": "NR Developer/Deployment Kit",
-  "version": "0.1.0-rc.13",
+  "version": "0.1.0-rc.20",
   "author": "Clecio Varjao",
   "bin": {
     "nrdk": "./bin/run"
@@ -77,7 +77,8 @@
     "test": "nyc --extension .ts mocha --forbid-only \"test/**/*.test.ts\"",
     "version": "oclif-dev readme && git add README.md",
     "oclif": "oclif",
-    "link": "npm link nr-pipeline-ext"
+    "link": "npm link nr-pipeline-ext && npm link @bcgov/pipeline-cli",
+    "prerelease": "npm --no-git-tag-version version prerelease && npm publish"
   },
   "types": "lib/index.d.ts",
   "bundleDependencies": [

@@ -19,9 +19,10 @@ export default class Build extends BaseCommand {
   async run() {
     const {flags} = this.parse(Build)
     await FLAGS.applyFlagDefaults(flags)
+    this.debug('flags', flags)
     const settings = FLAGS.loadConfigScript(flags)
+    this.debug('settings', settings)
     const task = FLAGS.loadScript(flags, FLAGS.FlagNames.BUILD_SCRIPT)
-
     task(Object.assign(settings, {phase: 'build'}))
   }
 }
