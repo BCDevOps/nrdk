@@ -25,7 +25,7 @@ $ npm install -g @bcgov/nrdk
 $ nrdk COMMAND
 running command...
 $ nrdk (-v|--version|version)
-@bcgov/nrdk/0.1.0-rc.20 darwin-x64 node-v12.14.1
+@bcgov/nrdk/0.1.0-rc.21 darwin-x64 node-v12.14.1
 $ nrdk --help [COMMAND]
 USAGE
   $ nrdk COMMAND
@@ -58,7 +58,7 @@ OPTIONS
   --pr=pr                                Pull Request number
 ```
 
-_See code: [src/commands/build.ts](https://github.com/bcdevops/nrdk/blob/v0.1.0-rc.20/src/commands/build.ts)_
+_See code: [src/commands/build.ts](https://github.com/bcdevops/nrdk/blob/v0.1.0-rc.21/src/commands/build.ts)_
 
 ## `nrdk clean`
 
@@ -77,7 +77,7 @@ OPTIONS
   --pr=pr                                Pull Request number
 ```
 
-_See code: [src/commands/clean.ts](https://github.com/bcdevops/nrdk/blob/v0.1.0-rc.20/src/commands/clean.ts)_
+_See code: [src/commands/clean.ts](https://github.com/bcdevops/nrdk/blob/v0.1.0-rc.21/src/commands/clean.ts)_
 
 ## `nrdk deploy`
 
@@ -96,7 +96,7 @@ OPTIONS
   --pr=pr                                Pull Request number
 ```
 
-_See code: [src/commands/deploy.ts](https://github.com/bcdevops/nrdk/blob/v0.1.0-rc.20/src/commands/deploy.ts)_
+_See code: [src/commands/deploy.ts](https://github.com/bcdevops/nrdk/blob/v0.1.0-rc.21/src/commands/deploy.ts)_
 
 ## `nrdk help [COMMAND]`
 
@@ -131,5 +131,5 @@ OPTIONS
   --git.remote.url=git.remote.url        GIT remote URL
 ```
 
-_See code: [src/commands/on/jira.issue.ts](https://github.com/bcdevops/nrdk/blob/v0.1.0-rc.20/src/commands/on/jira.issue.ts)_
+_See code: [src/commands/on/jira.issue.ts](https://github.com/bcdevops/nrdk/blob/v0.1.0-rc.21/src/commands/on/jira.issue.ts)_
 <!-- commandsstop -->
