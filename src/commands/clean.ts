@@ -1,5 +1,5 @@
 import {BaseCommand} from '../base'
-import {FlagNames, flagConfigScript, flagCleanScript, flagEnvSpec, flagPullRequestNumberSpec, flagGitRemoteName, flagGitRemoteUrl, flagGitBranch, flagGitBranchRemote, loadScript, loadConfigScript, applyFlagDefaults} from '../flags'
+import {FlagNames, flagConfigScript, flagCleanScript, flagEnvSpec, flagPullRequestNumberSpec, flagGitRemoteName, flagGitRemoteUrl, flagGitBranch, flagGitBranchRemote, loadConfigScript, applyFlagDefaults} from '../flags'
 
 export default class Clean extends BaseCommand {
   static description = 'describe the command here'
