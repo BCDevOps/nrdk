@@ -32,6 +32,15 @@ USAGE
 ...
 ```
 <!-- usagestop -->
+
+The CLI can also be run with npx:
+```sh-session
+$ npx @bcgov/nrdk (-v|--version|version)
+$ npx @bcgov/nrdk --help [COMMAND]
+USAGE
+  $ nrdk COMMAND
+```
+
 # Commands
 <!-- commands -->
 * [`nrdk build`](#nrdk-build)
