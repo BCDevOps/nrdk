@@ -1,8 +1,8 @@
 import {BaseCommand} from '../base'
-import {FlagNames, flagConfigScript, flagGitRemoteName, flagGitRemoteUrl, flagGitBranch, flagGitBranchRemote, flagEnvSpec, flagPullRequestNumberSpec, applyFlagDefaults,  loadConfigScript, loadScript} from '../flags'
+import {FlagNames, flagConfigScript, flagGitRemoteName, flagGitRemoteUrl, flagGitBranch, flagGitBranchRemote, flagEnvSpec, flagPullRequestNumberSpec, applyFlagDefaults,  loadConfigScript} from '../flags'
 
 export default class FunctionalTest extends BaseCommand {
-  static description = 'describe the command here'
+  static description = 'command to run functional tests for projects'
 
   static flags = {
     [FlagNames.CONFIG_SCRIPT]: flagConfigScript,
