@@ -14,7 +14,7 @@
     "@types/rsync": "^0.4.30",
     "isomorphic-git": "^1.7.4",
     "lodash.merge": "^4.6.2",
-    "nr-pipeline-ext": "git+https://github.com/BCDevOps/nr-pipeline-ext.git#fix/ONETEAM-64",
+    "nr-pipeline-ext": "git+https://github.com/BCDevOps/nr-pipeline-ext.git#release/0.0.1",
     "rsync": "^0.6.1",
     "safe-buffer": "^5.2.1",
     "shelljs": "^0.8.4",
