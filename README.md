@@ -25,7 +25,7 @@ $ npm install -g @bcgov/nrdk
 $ nrdk COMMAND
 running command...
 $ nrdk (-v|--version|version)
-@bcgov/nrdk/0.1.0-rc.22 darwin-x64 node-v12.14.1
+@bcgov/nrdk/0.1.0-rc.24 darwin-x64 node-v12.14.1
 $ nrdk --help [COMMAND]
 USAGE
   $ nrdk COMMAND
@@ -46,6 +46,7 @@ USAGE
 * [`nrdk build`](#nrdk-build)
 * [`nrdk clean`](#nrdk-clean)
 * [`nrdk deploy`](#nrdk-deploy)
+* [`nrdk functionaltest`](#nrdk-functionaltest)
 * [`nrdk help [COMMAND]`](#nrdk-help-command)
 * [`nrdk on:jira.issue`](#nrdk-onjiraissue)
 
@@ -67,7 +68,7 @@ OPTIONS
   --pr=pr                                Pull Request number
 ```
 
-_See code: [src/commands/build.ts](https://github.com/bcdevops/nrdk/blob/v0.1.0-rc.22/src/commands/build.ts)_
+_See code: [src/commands/build.ts](https://github.com/bcdevops/nrdk/blob/v0.1.0-rc.24/src/commands/build.ts)_
 
 ## `nrdk clean`
 
@@ -86,7 +87,7 @@ OPTIONS
   --pr=pr                                Pull Request number
 ```
 
-_See code: [src/commands/clean.ts](https://github.com/bcdevops/nrdk/blob/v0.1.0-rc.22/src/commands/clean.ts)_
+_See code: [src/commands/clean.ts](https://github.com/bcdevops/nrdk/blob/v0.1.0-rc.24/src/commands/clean.ts)_
 
 ## `nrdk deploy`
 
@@ -105,7 +106,26 @@ OPTIONS
   --pr=pr                                Pull Request number
 ```
 
-_See code: [src/commands/deploy.ts](https://github.com/bcdevops/nrdk/blob/v0.1.0-rc.22/src/commands/deploy.ts)_
+_See code: [src/commands/deploy.ts](https://github.com/bcdevops/nrdk/blob/v0.1.0-rc.24/src/commands/deploy.ts)_
+
+## `nrdk functionaltest`
+
+command to run functional tests for projects
+
+```
+USAGE
+  $ nrdk functionaltest
+
+OPTIONS
+  -b, --git.branch.name=git.branch.name  GIT local branch name
+  --env=env                              Environment
+  --git.branch.merge=git.branch.merge    GIT remote branch name
+  --git.remote.name=git.remote.name      [default: origin] GIT remote name
+  --git.remote.url=git.remote.url        GIT remote URL
+  --pr=pr                                Pull Request number
+```
+
+_See code: [src/commands/functionaltest.ts](https://github.com/bcdevops/nrdk/blob/v0.1.0-rc.24/src/commands/functionaltest.ts)_
 
 ## `nrdk help [COMMAND]`
 
@@ -140,5 +160,5 @@ OPTIONS
   --git.remote.url=git.remote.url        GIT remote URL
 ```
 
-_See code: [src/commands/on/jira.issue.ts](https://github.com/bcdevops/nrdk/blob/v0.1.0-rc.22/src/commands/on/jira.issue.ts)_
+_See code: [src/commands/on/jira.issue.ts](https://github.com/bcdevops/nrdk/blob/v0.1.0-rc.24/src/commands/on/jira.issue.ts)_
 <!-- commandsstop -->

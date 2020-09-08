@@ -1,4 +1,4 @@
-import { BaseCommand } from "../base";
+import {BaseCommand} from '../base'
 import {
   FlagNames,
   flagConfigScript,
@@ -10,10 +10,10 @@ import {
   flagPullRequestNumberSpec,
   applyFlagDefaults,
   loadConfigScript,
-} from "../flags";
+} from '../flags'
 
 export default class FunctionalTest extends BaseCommand {
-  static description = "command to run functional tests for projects";
+  static description = 'command to run functional tests for projects';
 
   static flags = {
     [FlagNames.CONFIG_SCRIPT]: flagConfigScript,
@@ -26,10 +26,10 @@ export default class FunctionalTest extends BaseCommand {
   };
 
   async run() {
-    const { flags } = this.parse(FunctionalTest);
-    await applyFlagDefaults(flags);
-    const settings = loadConfigScript(flags);
-    const { BasicFunctionalTester } = require("nr-pipeline-ext");
-    new BasicFunctionalTester(settings).runFunctionalTests();
+    const {flags} = this.parse(FunctionalTest)
+    await applyFlagDefaults(flags)
+    const settings = loadConfigScript(flags)
+    const {BasicFunctionalTester} = require('nr-pipeline-ext')
+    new BasicFunctionalTester(settings).runFunctionalTests()
   }
 }

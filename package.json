@@ -1,7 +1,7 @@
 {
   "name": "@bcgov/nrdk",
   "description": "NR Developer/Deployment Kit",
-  "version": "0.1.0-rc.22",
+  "version": "0.1.0-rc.24",
   "author": "Clecio Varjao",
   "bin": {
     "nrdk": "./bin/run"
@@ -12,7 +12,7 @@
     "@oclif/command": "^1.8.0",
     "@oclif/plugin-help": "^3.2.0",
     "@types/rsync": "^0.4.30",
-    "isomorphic-git": "^1.7.4",
+    "isomorphic-git": "^1.7.6",
     "lodash.merge": "^4.6.2",
     "nr-pipeline-ext": "git+https://github.com/BCDevOps/nr-pipeline-ext.git#release/0.0.1",
     "rsync": "^0.6.1",
@@ -27,7 +27,7 @@
     "@types/chai": "^4.2.12",
     "@types/lodash.merge": "^4.6.6",
     "@types/mocha": "^5",
-    "@types/node": "^10.17.28",
+    "@types/node": "^10.17.30",
     "@zeit/ncc": "^0.22.3",
     "chai": "^4",
     "eslint": "^5.13",
@@ -71,6 +71,7 @@
   "scripts": {
     "build": "tsc -b",
     "postpack": "rm -f oclif.manifest.json",
+    "lint": "eslint . --ext .ts --config .eslintrc",
     "posttest": "eslint . --ext .ts --config .eslintrc",
     "prepack": "rm -rf lib && tsc -b && oclif-dev manifest && oclif-dev readme",
     "ncc": "ncc build bin/run -o dist --minify",
