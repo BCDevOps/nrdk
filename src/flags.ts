@@ -9,6 +9,7 @@ export enum FlagNames {
   GIT_REMOTE_URL = 'git.remote.url',
   GIT_BRANCH = 'git.branch.name',
   GIT_BRANCH_REMOTE = 'git.branch.merge',
+  GIT_CHANGE_TARGET = 'git.change.target',
   ENV = 'env',
   PULL_REQUEST_NUMBER = 'pr',
   DEPLOY_SCRIPT = 'deploy-script',
@@ -36,6 +37,11 @@ const defaultValues = {
       }
     }
   },
+  [FlagNames.GIT_CHANGE_TARGET]: async (flags: any) => {
+    if (!flags[FlagNames.GIT_CHANGE_TARGET] && process.env.CHANGE_TARGET) {
+      flags[FlagNames.GIT_CHANGE_TARGET] = process.env.CHANGE_TARGET
+    }
+  },
 }
 
 export const flagConfigScript = flags.string({name: FlagNames.CONFIG_SCRIPT, hidden: true, default: `${process.cwd()}/.pipeline/lib/config.js`})
@@ -47,6 +53,7 @@ export const flagGitUrl = flags.string({description: 'GIT URL', required: false}
 export const flagGitRemoteUrl = flags.string({description: 'GIT remote URL', required: false})
 export const flagGitBranch = flags.string({char: 'b', description: 'GIT local branch name'})
 export const flagGitBranchRemote = flags.string({description: 'GIT remote branch name'})
+export const flagGitChangeTarget = flags.string({description: 'Target branch of the pull request (env:CHANGE_TARGET)'})
 export const flagPullRequestNumberSpec = flags.string({name: FlagNames.PULL_REQUEST_NUMBER, description: 'Pull Request number'})
 export const flagEnvSpec = flags.string({name: 'env', description: 'Environment'})
 export const flagDevMode = flags.boolean({name: FlagNames.DEV_MODE, description: 'Developer Mode (local)'})

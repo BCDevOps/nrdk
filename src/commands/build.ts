@@ -14,6 +14,7 @@ export default class Build extends BaseCommand {
     [FLAGS.FlagNames.GIT_BRANCH]: FLAGS.flagGitBranch,
     [FLAGS.FlagNames.GIT_BRANCH_REMOTE]: FLAGS.flagGitBranchRemote,
     [FLAGS.FlagNames.DEV_MODE]: FLAGS.flagDevMode,
+    [FLAGS.FlagNames.GIT_CHANGE_TARGET]: FLAGS.flagGitChangeTarget,
   }
 
   async run() {
