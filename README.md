@@ -25,7 +25,7 @@ $ npm install -g @bcgov/nrdk
 $ nrdk COMMAND
 running command...
 $ nrdk (-v|--version|version)
-@bcgov/nrdk/0.1.0-rc.24 darwin-x64 node-v12.14.1
+@bcgov/nrdk/0.1.0-rc.27 darwin-x64 node-v12.14.1
 $ nrdk --help [COMMAND]
 USAGE
   $ nrdk COMMAND
@@ -63,12 +63,13 @@ OPTIONS
   --dev-mode                             Developer Mode (local)
   --env=env                              Environment
   --git.branch.merge=git.branch.merge    GIT remote branch name
+  --git.change.target=git.change.target  Target branch of the pull request (env:CHANGE_TARGET)
   --git.remote.name=git.remote.name      [default: origin] GIT remote name
   --git.remote.url=git.remote.url        GIT remote URL
   --pr=pr                                Pull Request number
 ```
 
-_See code: [src/commands/build.ts](https://github.com/bcdevops/nrdk/blob/v0.1.0-rc.24/src/commands/build.ts)_
+_See code: [src/commands/build.ts](https://github.com/bcdevops/nrdk/blob/v0.1.0-rc.27/src/commands/build.ts)_
 
 ## `nrdk clean`
 
@@ -87,7 +88,7 @@ OPTIONS
   --pr=pr                                Pull Request number
 ```
 
-_See code: [src/commands/clean.ts](https://github.com/bcdevops/nrdk/blob/v0.1.0-rc.24/src/commands/clean.ts)_
+_See code: [src/commands/clean.ts](https://github.com/bcdevops/nrdk/blob/v0.1.0-rc.27/src/commands/clean.ts)_
 
 ## `nrdk deploy`
 
@@ -106,7 +107,7 @@ OPTIONS
   --pr=pr                                Pull Request number
 ```
 
-_See code: [src/commands/deploy.ts](https://github.com/bcdevops/nrdk/blob/v0.1.0-rc.24/src/commands/deploy.ts)_
+_See code: [src/commands/deploy.ts](https://github.com/bcdevops/nrdk/blob/v0.1.0-rc.27/src/commands/deploy.ts)_
 
 ## `nrdk functionaltest`
 
@@ -125,7 +126,7 @@ OPTIONS
   --pr=pr                                Pull Request number
 ```
 
-_See code: [src/commands/functionaltest.ts](https://github.com/bcdevops/nrdk/blob/v0.1.0-rc.24/src/commands/functionaltest.ts)_
+_See code: [src/commands/functionaltest.ts](https://github.com/bcdevops/nrdk/blob/v0.1.0-rc.27/src/commands/functionaltest.ts)_
 
 ## `nrdk help [COMMAND]`
 
@@ -158,7 +159,8 @@ OPTIONS
   --git.branch.merge=git.branch.merge    GIT remote branch name
   --git.remote.name=git.remote.name      [default: origin] GIT remote name
   --git.remote.url=git.remote.url        GIT remote URL
+  --pr=pr                                Pull Request number
 ```
 
-_See code: [src/commands/on/jira.issue.ts](https://github.com/bcdevops/nrdk/blob/v0.1.0-rc.24/src/commands/on/jira.issue.ts)_
+_See code: [src/commands/on/jira.issue.ts](https://github.com/bcdevops/nrdk/blob/v0.1.0-rc.27/src/commands/on/jira.issue.ts)_
 <!-- commandsstop -->

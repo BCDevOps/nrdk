@@ -1,3 +1,4 @@
+import * as FlagsSpec from '../../flags'
 import {FlagNames, flagGitRemoteName, flagGitRemoteUrl, flagGitBranch, flagGitBranchRemote, applyFlagDefaults, flagConfigScript, flagBuildScript, loadConfigScript, flagEnvSpec} from '../../flags'
 import {BaseCommand} from '../../base'
 
@@ -11,6 +12,7 @@ export default class OnJiraIssue extends BaseCommand {
     [FlagNames.GIT_REMOTE_URL]: flagGitRemoteUrl,
     [FlagNames.GIT_BRANCH]: flagGitBranch,
     [FlagNames.GIT_BRANCH_REMOTE]: flagGitBranchRemote,
+    [FlagNames.PULL_REQUEST_NUMBER]: FlagsSpec.flagPullRequestNumberSpec,
     [FlagNames.ENV]: flagEnvSpec,
   }
 
