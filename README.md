@@ -4,10 +4,9 @@ nrdk
 
 
 [![oclif](https://img.shields.io/badge/cli-oclif-brightgreen.svg)](https://oclif.io)
-[![Version](https://img.shields.io/npm/v/nrdk.svg)](https://npmjs.org/package/nrdk)
-[![CircleCI](https://circleci.com/gh/cvarjao/nrdk/tree/master.svg?style=shield)](https://circleci.com/gh/cvarjao/nrdk/tree/master)
-[![Downloads/week](https://img.shields.io/npm/dw/nrdk.svg)](https://npmjs.org/package/nrdk)
-[![License](https://img.shields.io/npm/l/nrdk.svg)](https://github.com/cvarjao/nrdk/blob/master/package.json)
+[![Version](https://img.shields.io/npm/v/@bcgov/nrdk.svg)](https://www.npmjs.com/package/@bcgov/nrdk)
+[![Downloads/week](https://img.shields.io/npm/dw/@bcgov/nrdk.svg)](https://www.npmjs.com/package/@bcgov/nrdk)
+[![License](https://img.shields.io/npm/l/@bcgov/nrdk.svg)](https://github.com/cvarjao/nrdk/blob/master/package.json)
 
 <!-- toc -->
 * [Prerequisites](#prerequisites)
