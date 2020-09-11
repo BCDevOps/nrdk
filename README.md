@@ -69,7 +69,7 @@ OPTIONS
   --pr=pr                                Pull Request number
 ```
 
-_See code: [src/commands/build.ts](https://github.com/bcdevops/nrdk/blob/v0.1.0-rc.27/src/commands/build.ts)_
+_See code: [src/commands/build.ts](./src/commands/build.ts)_
 
 ## `nrdk clean`
 
@@ -88,7 +88,7 @@ OPTIONS
   --pr=pr                                Pull Request number
 ```
 
-_See code: [src/commands/clean.ts](https://github.com/bcdevops/nrdk/blob/v0.1.0-rc.27/src/commands/clean.ts)_
+_See code: [src/commands/clean.ts](./src/commands/clean.ts)_
 
 ## `nrdk deploy`
 
@@ -107,7 +107,7 @@ OPTIONS
   --pr=pr                                Pull Request number
 ```
 
-_See code: [src/commands/deploy.ts](https://github.com/bcdevops/nrdk/blob/v0.1.0-rc.27/src/commands/deploy.ts)_
+_See code: [src/commands/deploy.ts](./src/commands/deploy.ts)_
 
 ## `nrdk functionaltest`
 
@@ -126,7 +126,7 @@ OPTIONS
   --pr=pr                                Pull Request number
 ```
 
-_See code: [src/commands/functionaltest.ts](https://github.com/bcdevops/nrdk/blob/v0.1.0-rc.27/src/commands/functionaltest.ts)_
+_See code: [src/commands/functionaltest.ts](./src/commands/functionaltest.ts)_
 
 ## `nrdk help [COMMAND]`
 
@@ -162,5 +162,5 @@ OPTIONS
   --pr=pr                                Pull Request number
 ```
 
-_See code: [src/commands/on/jira.issue.ts](https://github.com/bcdevops/nrdk/blob/v0.1.0-rc.27/src/commands/on/jira.issue.ts)_
+_See code: [src/commands/on/jira.issue.ts](./src/commands/on/jira.issue.ts)_
 <!-- commandsstop -->

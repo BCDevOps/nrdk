@@ -65,7 +65,8 @@
     "bin": "nrdk",
     "plugins": [
       "@oclif/plugin-help"
-    ]
+    ],
+    "repositoryPrefix": "./<%- commandPath %>"
   },
   "repository": "bcdevops/nrdk",
   "scripts": {
