@@ -1,12 +1,12 @@
 import {Command, flags} from '@oclif/command'
 import * as Parser from '@oclif/parser'
-import {FlagNames} from './flags'
+import * as FlagsSpec from './flags'
 
 export abstract class BaseCommand extends Command {
   static createBaseFlags() {
     return {
-      [FlagNames.CONFIG_SCRIPT]: flags.string({hidden: true}),
-      [FlagNames.BUILD_SCRIPT]: flags.string({hidden: true}),
+      [FlagsSpec.FlagNames.CONFIG_SCRIPT]: flags.string({hidden: true}),
+      [FlagsSpec.FlagNames.BUILD_SCRIPT]: flags.string({hidden: true}),
     }
   }
 

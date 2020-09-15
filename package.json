@@ -1,7 +1,7 @@
 {
   "name": "@bcgov/nrdk",
   "description": "NR Developer/Deployment Kit",
-  "version": "0.1.0-rc.27",
+  "version": "0.1.0-rc.28",
   "author": "Clecio Varjao",
   "bin": {
     "nrdk": "./bin/run"

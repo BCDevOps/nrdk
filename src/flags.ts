@@ -1,5 +1,6 @@
 import {flags} from '@oclif/command'
 import GitClient from './git-client'
+import {relative, resolve} from 'path'
 
 export enum FlagNames {
   CONFIG_SCRIPT = 'config-script',
@@ -44,10 +45,10 @@ const defaultValues = {
   },
 }
 
-export const flagConfigScript = flags.string({name: FlagNames.CONFIG_SCRIPT, hidden: true, default: `${process.cwd()}/.pipeline/lib/config.js`})
-export const flagBuildScript = flags.string({name: FlagNames.BUILD_SCRIPT, hidden: true, default: `${process.cwd()}/.pipeline/lib/build.js`})
-export const flagDeployScript = flags.string({name: FlagNames.DEPLOY_SCRIPT, hidden: true, default: `${process.cwd()}/.pipeline/lib/deploy.js`})
-export const flagCleanScript = flags.string({name: FlagNames.CLEAN_SCRIPT, hidden: true, default: `${process.cwd()}/.pipeline/lib/clean.js`})
+export const flagConfigScript = flags.string({name: FlagNames.CONFIG_SCRIPT, hidden: true, default: `${relative(process.cwd(), '.pipeline/lib/config.js')}`})
+export const flagBuildScript = flags.string({name: FlagNames.BUILD_SCRIPT, hidden: true, default: `${relative(process.cwd(), '.pipeline/lib/build.js')}`})
+export const flagDeployScript = flags.string({name: FlagNames.DEPLOY_SCRIPT, hidden: true, default: `${relative(process.cwd(), '.pipeline/lib/deploy.js')}`})
+export const flagCleanScript = flags.string({name: FlagNames.CLEAN_SCRIPT, hidden: true, default: `${relative(process.cwd(), '.pipeline/lib/clean.js')}`})
 export const flagGitRemoteName = flags.string({description: 'GIT remote name', required: false, default: 'origin'})
 export const flagGitUrl = flags.string({description: 'GIT URL', required: false})
 export const flagGitRemoteUrl = flags.string({description: 'GIT remote URL', required: false})
@@ -66,6 +67,12 @@ export async function applyFlagDefaults(flags: any) {
       await defaultFn(flags)
     }
   }
+  const _flags = []
+  for (const entry of Object.entries(flags)) {
+    _flags.push(`--${entry[0]}=${entry[1]}`)
+  }
+  // eslint-disable-next-line no-console
+  console.info(_flags.join(' '))
 }
 
 export function createGitFlags() {
@@ -79,7 +86,7 @@ export function createGitFlags() {
 
 export function loadScript(flags: any, flagName: string) {
   const configScriptPath = flags[flagName] as string
-  return require(configScriptPath)
+  return require(resolve(process.cwd(), configScriptPath))
 }
 
 export function parseFlagsAsNestedObject(flags: any) {
