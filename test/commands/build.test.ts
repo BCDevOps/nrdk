@@ -11,6 +11,6 @@ describe('build', () => {
     `${__dirname}/build.build.js`,
   ])
   .it('runs build', ctx => {
-    expect(ctx.stdout).to.equal('Build started\nBuild finished\n')
+    expect(ctx.stdout.split('\n')).to.include.members(['Build started', 'Build finished'])
   })
 })
