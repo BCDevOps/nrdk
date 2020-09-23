@@ -42,14 +42,44 @@ USAGE
 
 # Commands
 <!-- commands -->
+* [`nrdk backlog:checkin`](#nrdk-backlogcheckin)
+* [`nrdk backlog:checkout [ISSUE]`](#nrdk-backlogcheckout-issue)
 * [`nrdk build`](#nrdk-build)
 * [`nrdk clean`](#nrdk-clean)
 * [`nrdk deploy`](#nrdk-deploy)
 * [`nrdk functionaltest`](#nrdk-functionaltest)
-* [`nrdk git:checkout [ISSUE]`](#nrdk-gitcheckout-issue)
-* [`nrdk git:push`](#nrdk-gitpush)
 * [`nrdk help [COMMAND]`](#nrdk-help-command)
 * [`nrdk on:jira.issue`](#nrdk-onjiraissue)
+
+## `nrdk backlog:checkin`
+
+Push local changes (commits) to the remote repository
+
+```
+USAGE
+  $ nrdk backlog:checkin
+```
+
+_See code: [src/commands/backlog/checkin.ts](./src/commands/backlog/checkin.ts)_
+
+## `nrdk backlog:checkout [ISSUE]`
+
+Create (if required), and checkout the git branch supporting a Jira issue (bug, new feature, improvement, etc...)
+
+```
+USAGE
+  $ nrdk backlog:checkout [ISSUE]
+
+ARGUMENTS
+  ISSUE  Jira issue key (e.g.: WEBADE-123)
+
+OPTIONS
+  -b, --branch=branch          Remote Branch Name
+  -p, --project=project        BitBucket Project/Group Name
+  -r, --repository=repository  BitBucket Repository Name
+```
+
+_See code: [src/commands/backlog/checkout.ts](./src/commands/backlog/checkout.ts)_
 
 ## `nrdk build`
 
@@ -128,36 +158,6 @@ OPTIONS
 ```
 
 _See code: [src/commands/functionaltest.ts](./src/commands/functionaltest.ts)_
-
-## `nrdk git:checkout [ISSUE]`
-
-Create (if required), and checkout the git branch supporting a Jira issue (bug, new feature, improvement, etc...)
-
-```
-USAGE
-  $ nrdk git:checkout [ISSUE]
-
-ARGUMENTS
-  ISSUE  Jira issue key (e.g.: WEBADE-123)
-
-OPTIONS
-  -b, --branch=branch          Remote Branch Name
-  -p, --project=project        BitBucket Project/Group Name
-  -r, --repository=repository  BitBucket Repository Name
-```
-
-_See code: [src/commands/git/checkout.ts](./src/commands/git/checkout.ts)_
-
-## `nrdk git:push`
-
-Push local changes (commits) to the remote repository
-
-```
-USAGE
-  $ nrdk git:push
-```
-
-_See code: [src/commands/git/push.ts](./src/commands/git/push.ts)_
 
 ## `nrdk help [COMMAND]`
 
