@@ -26,6 +26,9 @@ export class AxiosJiraClient {
 
   public async getRfcByIssue(issueKey: string): Promise<Issue> {
     const issue = await this.getIssue(issueKey, {fields: 'fixVersions'})
+    if (issue.fields.fixVersions.length === 0) {
+      throw new Error(`Expected to find at least '1' value for fix version, but found '${issue.fields.fixVersions.length}' for issue ${issueKey}`)
+    }
     const fixVersion = issue.fields.fixVersions[0]
     const jql = `fixVersion  = ${fixVersion.id} AND issuetype = RFC AND statusCategory != Done`
     const rfcSearchResults = await this.client.get('rest/api/2/search', {params: {fields: 'issuetype,project', jql: jql}}).then(response => {

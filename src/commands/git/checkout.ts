@@ -5,12 +5,12 @@
  * https://bwa.nrs.gov.bc.ca/int/jira/rest/dev-status/1.0/issue/detail?issueId=131578&applicationType=stash&dataType=pullrequest
  */
 import {flags} from '@oclif/command'
-import {SecretManager, SVC_IDIR, SVC_IDIR_USERNAME} from '../../api/service/secret-manager'
+import {SecretManager, SVC_IDIR_SPEC} from '../../api/service/secret-manager'
 import {AxiosJiraClient} from '../../api/service/axios-jira-client'
 import {GitBaseCommand} from '../../git-base'
 
 export default class GitCheckout extends GitBaseCommand {
-  static description = 'describe the command here'
+  static description = 'Create (if required), and checkout the git branch supporting a Jira issue (bug, new feature, improvement, etc...)'
 
   static flags = {
     project: flags.string({char: 'p', description: 'BitBucket Project/Group Name'}),
@@ -22,12 +22,12 @@ export default class GitCheckout extends GitBaseCommand {
   static args = [{name: 'issue', description: 'Jira issue key (e.g.: WEBADE-123)'}]
 
   async run() {
-    const idirSecret = (await SecretManager.getInstance()).getEntry(SVC_IDIR)
+    const idirSecret = await (await SecretManager.getInstance()).getEntry(SVC_IDIR_SPEC)
     const {args, flags} = this.parse(GitCheckout)
     const jira = this.jira as AxiosJiraClient
     const issue = await jira.getIssue(args.issue, {fields: 'issuetype,components'})
     if (issue.fields.components.length !== 1) {
-      return this.error(`Expected 1 component set for issue '${issue.key}', but found '${issue.fields.components.length}'`)
+      return this.error(`Expected at least 1 component set for issue '${issue.key}', but found '${issue.fields.components.length}'`)
     }
     const component = issue.fields.components[0]
     const repository = await jira.getComponentRepositoryInfo(component)
@@ -39,10 +39,12 @@ export default class GitCheckout extends GitBaseCommand {
     // non-RFC issues
       this.log(`Finding RFC for issue ${issue.key}`)
       const rfc = await jira.getRfcByIssue(issue.key)
+      this.log(`Found RFC ${rfc.key}`)
       const releaseBranch = await this.createReleaseBranch(rfc, repository)
       let branchName = `feature/${issue.key}`
       if (flags.personal) {
-        branchName += `-${idirSecret.getProperty(SVC_IDIR_USERNAME).getPlainText()}`
+        const username = (await idirSecret.getProperty(SVC_IDIR_SPEC.fields.USERNAME.name)).getPlainText()
+        branchName += `-${username}`
       }
       branchInfo = await this.createBranch(issue, repository, branchName, releaseBranch.name)
     }
@@ -62,7 +64,7 @@ export default class GitCheckout extends GitBaseCommand {
     }
     const gitCurrentTrackingBranchName = await this._spawn('git', ['rev-parse', '--abbrev-ref', '--symbolic-full-name', '@{u}'])
     const expectedCurrentTrackingBranchName = gitCurrentTrackingBranchName.stdout.trim()
-    if (expectedCurrentTrackingBranchName !== `${branchInfo.name}`) {
+    if (expectedCurrentTrackingBranchName !== `origin/${branchInfo.name}`) {
       this.log(`Currently on branch '${expectedCurrentTrackingBranchName}'. Checking out branch '${branchInfo.name}'`)
       const gitCheckout = await this._spawn('git', ['checkout', branchInfo.name])
       if (gitCheckout.status !== 0) {

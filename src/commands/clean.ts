@@ -20,7 +20,7 @@ export default class Clean extends BaseCommand {
     const {flags} = this.parse(Clean)
     await applyFlagDefaults(flags)
     const settings = loadConfigScript(flags)
-    const {BasicJavaApplicationClean} = require('nr-pipeline-ext')
+    const {BasicJavaApplicationClean} = require('@bcgov/nr-pipeline-ext')
     new BasicJavaApplicationClean(settings).clean()
     // const task = loadScript(flags, FlagNames.CLEAN_SCRIPT)
     // task(Object.assign(settings, {phase: settings.options.env}))

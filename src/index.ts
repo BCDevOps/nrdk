@@ -4,7 +4,7 @@ import {
   BasicJavaApplicationBuilder,
   BasicJavaApplicationDeployer,
   BasicFunctionalTester,
-} from 'nr-pipeline-ext'
+} from '@bcgov/nr-pipeline-ext'
 import {OpenShiftClient} from '@bcgov/pipeline-cli'
 
 export {

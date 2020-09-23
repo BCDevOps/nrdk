@@ -29,7 +29,7 @@ export default class FunctionalTest extends BaseCommand {
     const {flags} = this.parse(FunctionalTest)
     await applyFlagDefaults(flags)
     const settings = loadConfigScript(flags)
-    const {BasicFunctionalTester} = require('nr-pipeline-ext')
+    const {BasicFunctionalTester} = require('@bcgov/nr-pipeline-ext')
     new BasicFunctionalTester(settings).runFunctionalTests()
   }
 }

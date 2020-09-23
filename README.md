@@ -24,7 +24,7 @@ $ npm install -g @bcgov/nrdk
 $ nrdk COMMAND
 running command...
 $ nrdk (-v|--version|version)
-@bcgov/nrdk/0.1.0-rc.28 darwin-x64 node-v12.14.1
+@bcgov/nrdk/0.1.0-rc.36 darwin-x64 node-v12.14.1
 $ nrdk --help [COMMAND]
 USAGE
   $ nrdk COMMAND
@@ -131,7 +131,7 @@ _See code: [src/commands/functionaltest.ts](./src/commands/functionaltest.ts)_
 
 ## `nrdk git:checkout [ISSUE]`
 
-describe the command here
+Create (if required), and checkout the git branch supporting a Jira issue (bug, new feature, improvement, etc...)
 
 ```
 USAGE

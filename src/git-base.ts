@@ -3,6 +3,8 @@ import {AxiosBitBucketClient} from './api/service/axios-bitbucket-client'
 import {AxiosJiraClient} from './api/service/axios-jira-client'
 import {AxiosFactory} from './api/service/axios-factory'
 import {SpawnOptions, spawn} from 'child_process'
+import * as winston from 'winston'
+import * as Config from '@oclif/config'
 
 export abstract class GitBaseCommand extends Command {
   // eslint-disable-next-line no-useless-escape
@@ -12,7 +14,22 @@ export abstract class GitBaseCommand extends Command {
 
   bitBucket?: AxiosBitBucketClient
 
+  logger: winston.Logger
+
+  constructor(argv: string[], config: Config.IConfig) {
+    super(argv, config)
+    this.logger = winston.createLogger({
+      levels: winston.config.cli.levels,
+      format: winston.format.combine(
+        winston.format.splat(),
+        winston.format.printf(info => `${info.level}: ${info.message}`)
+      ),
+      transports: [new winston.transports.Console()],
+    })
+  }
+
   async _spawn(command: string, argsv?: readonly string[], options?: SpawnOptions): Promise<{status: number; stdout: string; stderr: string}> {
+    this.logger.child({group: ['exec', command], args: argsv}).info('%s %s', command, (argsv || []).join(' '))
     return new Promise(resolve => {
       let stdout = ''
       let stderr = ''
@@ -36,7 +53,7 @@ export abstract class GitBaseCommand extends Command {
     const branches = devDetails.branches.filter((item: { name: string }) => item.name === branchName)
     // this.log('branches:', branches)
     if (branches.length === 0) {
-      this.log(`Creating branch '${branchName}' in repository '${repository.name}' in project '${repository.project}'`)
+      this.log(`Creating branch '${branchName}' from '${startPoint}' in repository '${repository.name}' in project '${repository.project}'`)
       await bitBucket.createBranch(repository.project, repository.name, branchName, startPoint)
     } else if (branches.length > 1) {
       return this.error(`Expected 1 release but found '${branches.length}'`)

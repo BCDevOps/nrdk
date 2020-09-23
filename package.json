@@ -1,21 +1,21 @@
 {
   "name": "@bcgov/nrdk",
   "description": "NR Developer/Deployment Kit",
-  "version": "0.1.0-rc.28",
+  "version": "0.1.0-rc.36",
   "author": "Clecio Varjao",
   "bin": {
     "nrdk": "./bin/run"
   },
   "bugs": "https://github.com/bcdevops/nrdk/issues",
   "dependencies": {
+    "@bcgov/nr-pipeline-ext": "0.1.0-rc.7",
     "@bcgov/pipeline-cli": "git+https://github.com/BCDevOps/pipeline-cli.git#release/v1.1",
     "@oclif/command": "^1.8.0",
     "@oclif/plugin-help": "^3.2.0",
-    "@types/rsync": "^0.4.30",
     "axios": "^0.20.0",
+    "inquirer": "^7.3.3",
     "isomorphic-git": "^1.7.8",
     "lodash.merge": "^4.6.2",
-    "nr-pipeline-ext": "git+https://github.com/BCDevOps/nr-pipeline-ext.git#release/0.0.1",
     "rsync": "^0.6.1",
     "safe-buffer": "^5.2.1",
     "shelljs": "^0.8.4",
@@ -26,6 +26,7 @@
     "@oclif/dev-cli": "^1",
     "@oclif/test": "^1",
     "@types/chai": "^4.2.12",
+    "@types/inquirer": "^7.3.1",
     "@types/lodash.merge": "^4.6.6",
     "@types/mocha": "^8.0.3",
     "@types/node": "^10.17.35",
@@ -59,7 +60,7 @@
   "keywords": [
     "oclif"
   ],
-  "license": "Apache",
+  "license": "Apache-2.0",
   "main": "lib/index.js",
   "oclif": {
     "commands": "./lib/commands",
@@ -83,15 +84,13 @@
     "version": "oclif-dev readme && git add README.md",
     "oclif": "oclif",
     "link": "npm link nr-pipeline-ext && npm link @bcgov/pipeline-cli",
-    "prerelease": "npm --no-git-tag-version version prerelease && npm publish"
+    "prerelease": "npm --no-git-tag-version version prerelease && npm publish --access public"
   },
   "types": "lib/index.d.ts",
   "bundleDependencies": [
     "@bcgov/pipeline-cli",
     "@oclif/plugin-help",
-    "@types/rsync",
     "isomorphic-git",
-    "nr-pipeline-ext",
     "rsync",
     "tar",
     "winston",
@@ -99,6 +98,8 @@
     "shelljs",
     "lodash.merge",
     "safe-buffer",
-    "axios"
+    "axios",
+    "inquirer",
+    "@bcgov/nr-pipeline-ext"
   ]
 }

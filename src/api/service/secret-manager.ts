@@ -2,6 +2,9 @@
 import * as fs from 'fs'
 import {homedir} from 'os'
 import * as util from 'util'
+import * as inquirer from 'inquirer'
+
+const prompt = inquirer.createPromptModule()
 
 class Secret {
   private _value: string
@@ -42,7 +45,7 @@ class EntryAccessor {
     this.entry = entry
   }
 
-  getProperty(name: string): Secret {
+  async getProperty(name: string): Promise<Secret> {
     let _value: any = this.entry[name]
     if (_value instanceof Secret) {
       return _value
@@ -54,8 +57,20 @@ class EntryAccessor {
 }
 
 type Entry = any
+export interface ServiceFieldSpec {name: string; hint?: string; type: string}
+export interface ServiceSpec {name: string; fields: object}
+export interface IdirServiceSpec extends ServiceSpec {fields: {UPN: ServiceFieldSpec; USERNAME: ServiceFieldSpec; PASSWORD: ServiceFieldSpec}}
 
-export const SVC_IDIR = 'IDIR'
+export const SVC_IDIR_SPEC = {
+  name: 'IDIR',
+  fields: {
+    UPN: {name: 'userPrincipalName', hint: 'e-mail format'},
+    USERNAME: {name: 'sAMAccountName'},
+    PASSWORD: {name: 'password', type: 'password'},
+  },
+} as IdirServiceSpec
+
+export const SVC_IDIR = SVC_IDIR_SPEC.name
 export const SVC_IDIR_USERNAME = 'sAMAccountName'
 export const SVC_IDIR_UPN = 'userPrincipalName'
 export const SVC_IDIR_PASSWORD = 'password'
@@ -63,7 +78,7 @@ export const SVC_IDIR_PASSWORD = 'password'
 export class SecretManager {
   private static instance: SecretManager;
 
-  private entries: any
+  private entries: any = {}
 
   private location = '~/nrdk/.secrets.json'
 
@@ -78,12 +93,32 @@ export class SecretManager {
   private async load() {
     // resolve ~/ to current user home directory
     const location = this.location.replace(/^~(?=$|\/|\\)/, homedir())
-    const readFile = util.promisify(fs.readFile)
-    const content = await readFile(location, {encoding: 'utf8'})
-    this.entries = JSON.parse(content)
+    if (fs.existsSync(location)) {
+      const readFile = util.promisify(fs.readFile)
+      const content = await readFile(location, {encoding: 'utf8'})
+      this.entries = JSON.parse(content)
+    }
   }
 
-  getEntry(service: string): EntryAccessor {
-    return new EntryAccessor(this.entries[service] as Entry)
+  async getEntry(service: ServiceSpec): Promise<EntryAccessor> {
+    const svc = this.entries[service.name] as Entry
+    if (svc) {
+      const prompts = []
+      const fieldsSpec = service.fields as any
+      for (const fieldName of Object.keys(fieldsSpec)) {
+        const fieldSpec = fieldsSpec[fieldName]
+        if (!svc[fieldSpec.name]) {
+          prompts.push({type: fieldSpec.type || 'input', name: fieldSpec.name, message: `'${fieldSpec.name}' for '${service.name}'`})
+        }
+      }
+      const answers = await prompt(prompts)
+      for (const fieldName of Object.keys(answers)) {
+        svc[fieldName] = answers[fieldName]
+      }
+    }
+    if (!svc && !svc.name) {
+      svc.name = service
+    }
+    return new EntryAccessor(svc)
   }
 }

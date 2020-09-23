@@ -6,7 +6,7 @@ import {toMatchSnapshot} from '../../util/expect-mocha-snapshot'
 jExpect.extend({toMatchSnapshot})
 import * as nock from 'nock'
 import {saveJiraRequests} from '../../util/record-jira-requests'
-import {RfcWorkflow, RfdWorkflow} from 'nr-pipeline-ext'
+import {RfcWorkflow, RfdWorkflow} from '@bcgov/nr-pipeline-ext'
 
 const _merge = require('lodash.merge')
 const recordJiraRequests = false
