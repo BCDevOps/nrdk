@@ -4,6 +4,8 @@ import {FlagNames, flagConfigScript, flagCleanScript, flagEnvSpec, flagPullReque
 export default class Clean extends BaseCommand {
   static description = 'describe the command here'
 
+  static hidden = true
+
   static flags = {
     [FlagNames.CONFIG_SCRIPT]: flagConfigScript,
     [FlagNames.CLEAN_SCRIPT]: flagCleanScript,

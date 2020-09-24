@@ -5,6 +5,8 @@ import {BaseCommand} from '../../base'
 export default class OnJiraIssue extends BaseCommand {
   static description = 'describe the command here'
 
+  static hidden = true
+
   static flags = {
     [FlagNames.CONFIG_SCRIPT]: flagConfigScript,
     [FlagNames.BUILD_SCRIPT]: flagBuildScript,

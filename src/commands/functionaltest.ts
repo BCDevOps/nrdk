@@ -13,7 +13,9 @@ import {
 } from '../flags'
 
 export default class FunctionalTest extends BaseCommand {
-  static description = 'command to run functional tests for projects';
+  static description = 'command to run functional tests for projects'
+
+  static hidden = true
 
   static flags = {
     [FlagNames.CONFIG_SCRIPT]: flagConfigScript,

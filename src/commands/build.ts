@@ -4,6 +4,8 @@ import * as FLAGS from '../flags'
 export default class Build extends BaseCommand {
   static description = 'describe the command here'
 
+  static hidden = true
+
   static flags = {
     [FLAGS.FlagNames.CONFIG_SCRIPT]: FLAGS.flagConfigScript,
     [FLAGS.FlagNames.BUILD_SCRIPT]: FLAGS.flagBuildScript,
