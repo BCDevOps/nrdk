@@ -8,6 +8,8 @@ import {flags} from '@oclif/command'
 import {SecretManager, SVC_IDIR_SPEC} from '../../api/service/secret-manager'
 import {AxiosJiraClient} from '../../api/service/axios-jira-client'
 import {GitBaseCommand} from '../../git-base'
+import * as inquirer from 'inquirer'
+import * as path from 'path'
 
 export default class GitCheckout extends GitBaseCommand {
   static description = 'Create (if required), and checkout the git branch supporting a Jira issue (bug, new feature, improvement, etc...)'
@@ -48,31 +50,43 @@ export default class GitCheckout extends GitBaseCommand {
       }
       branchInfo = await this.createBranch(issue, repository, branchName, releaseBranch.name)
     }
-    const gitTopLevel = await this._spawn('git', ['rev-parse', '--show-toplevel'])
-    const gitRemoteOriginUrl = await this._spawn('git', ['config', '--get', 'remote.origin.url'], {})
-    const expectedCwd = process.cwd()
-    if (gitRemoteOriginUrl.status !== 0 || expectedCwd.trim() !== gitTopLevel.stdout.trim()) {
-      return this.error('Current directory is not the root of a git repository')
-    }
     const expectedGitRemoteOriginUrl = `https://bwa.nrs.gov.bc.ca/int/stash/scm/${branchInfo.repository.project}/${branchInfo.repository.name}.git`
+    const gitTopLevel = await this._spawn('git', ['rev-parse', '--show-toplevel'])
+    let expectedRepoCwd = process.cwd()
+    if (gitTopLevel.status !== 0) {
+      this.log(`Current directory (${process.cwd()}) is not the root of a git repository.`)
+      const prompt = inquirer.createPromptModule()
+      let answer = await prompt([{type: 'confirm', name: 'clone', message: `Would you like to clone ${expectedGitRemoteOriginUrl}?`}])
+      if (answer.clone !== true) {
+        return this.exit(1)
+      }
+      expectedRepoCwd = path.resolve(process.cwd(), `${branchInfo.repository.project}-${branchInfo.repository.name}`)
+      answer = await prompt([{type: 'input', name: 'path', message: 'Where would you like to clone?', default: expectedRepoCwd}])
+      expectedRepoCwd = answer.path
+      const gitClone = await this._spawn('git', ['clone', expectedGitRemoteOriginUrl, expectedRepoCwd])
+      if (gitClone.status !== 0) {
+        return this.error(`Error cloning repository. Try running\n>git clone ${expectedGitRemoteOriginUrl} ${expectedRepoCwd}`)
+      }
+    }
+    const gitRemoteOriginUrl = await this._spawn('git', ['config', '--get', 'remote.origin.url'], {cwd: expectedRepoCwd})
     if (expectedGitRemoteOriginUrl.trim().toLowerCase() !== gitRemoteOriginUrl.stdout.trim().toLowerCase()) {
       return this.error(`Expected the git remote url to be '${expectedGitRemoteOriginUrl}', but found '${gitRemoteOriginUrl.stdout.trim()}'`)
     }
-    const gitFetch = await this._spawn('git', ['fetch', 'origin'])
+    const gitFetch = await this._spawn('git', ['fetch', 'origin'], {cwd: expectedRepoCwd})
     if (gitFetch.status !== 0) {
       return this.error('Error fetching changes from remote repository. Try running\n>git fetch origin')
     }
-    const gitCurrentTrackingBranchName = await this._spawn('git', ['rev-parse', '--abbrev-ref', '--symbolic-full-name', '@{u}'])
+    const gitCurrentTrackingBranchName = await this._spawn('git', ['rev-parse', '--abbrev-ref', '--symbolic-full-name', '@{u}'], {cwd: expectedRepoCwd})
     const expectedCurrentTrackingBranchName = gitCurrentTrackingBranchName.stdout.trim()
     if (expectedCurrentTrackingBranchName !== `origin/${branchInfo.name}`) {
       this.log(`Currently on branch '${expectedCurrentTrackingBranchName}'. Checking out branch '${branchInfo.name}'`)
-      const gitCheckout = await this._spawn('git', ['checkout', branchInfo.name])
+      const gitCheckout = await this._spawn('git', ['checkout', branchInfo.name], {cwd: expectedRepoCwd})
       if (gitCheckout.status !== 0) {
         return this.error(`Error checkout branch ${branchInfo.name}. Try running\n>git checkout ${branchInfo.name}`)
       }
     }
     this.log('Updating local branch with remote branch')
-    const gitRebase = await this._spawn('git', ['rebase', `origin/${branchInfo.name}`])
+    const gitRebase = await this._spawn('git', ['rebase', `origin/${branchInfo.name}`], {cwd: expectedRepoCwd})
     if (gitRebase.status !== 0) {
       return this.error(`Error rebasing/updating branch ${branchInfo.name}. Try running\n>git rebase origin/${branchInfo.name}`)
     }

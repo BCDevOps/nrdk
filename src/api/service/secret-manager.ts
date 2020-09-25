@@ -57,15 +57,16 @@ class EntryAccessor {
 }
 
 type Entry = any
-export interface ServiceFieldSpec {name: string; hint?: string; type: string}
-export interface ServiceSpec {name: string; fields: object}
+export interface ServiceFieldSpec {name: string; prompt?: string; hint?: string; type: string}
+export interface ServiceSpec {name: string; host: string; fields: object}
 export interface IdirServiceSpec extends ServiceSpec {fields: {UPN: ServiceFieldSpec; USERNAME: ServiceFieldSpec; PASSWORD: ServiceFieldSpec}}
 
 export const SVC_IDIR_SPEC = {
   name: 'IDIR',
+  host: 'bwa.nrs.gov.bc.ca',
   fields: {
-    UPN: {name: 'userPrincipalName', hint: 'e-mail format'},
-    USERNAME: {name: 'sAMAccountName'},
+    UPN: {name: 'userPrincipalName', hint: 'e-mail format- e.g.: john.doe@gov.bc.ca'},
+    USERNAME: {name: 'sAMAccountName', hint: 'username without domain - e.g. jdoe'},
     PASSWORD: {name: 'password', type: 'password'},
   },
 } as IdirServiceSpec
@@ -101,14 +102,19 @@ export class SecretManager {
   }
 
   async getEntry(service: ServiceSpec): Promise<EntryAccessor> {
-    const svc = this.entries[service.name] as Entry
+    const svc = this.entries[service.name] as Entry || {}
+    this.entries[service.name] = svc
     if (svc) {
       const prompts = []
       const fieldsSpec = service.fields as any
       for (const fieldName of Object.keys(fieldsSpec)) {
-        const fieldSpec = fieldsSpec[fieldName]
+        const fieldSpec = fieldsSpec[fieldName] as ServiceFieldSpec
         if (!svc[fieldSpec.name]) {
-          prompts.push({type: fieldSpec.type || 'input', name: fieldSpec.name, message: `'${fieldSpec.name}' for '${service.name}'`})
+          let message = fieldSpec.prompt || `'${fieldSpec.name}' for '${service.name}'`
+          if (fieldSpec.hint) {
+            message += ` (${fieldSpec.hint})`
+          }
+          prompts.push({type: fieldSpec.type || 'input', name: fieldSpec.name, message: message})
         }
       }
       const answers = await prompt(prompts)
