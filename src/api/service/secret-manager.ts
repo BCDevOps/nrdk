@@ -58,15 +58,21 @@ class EntryAccessor {
 
 type Entry = any
 export interface ServiceFieldSpec {name: string; prompt?: string; hint?: string; type: string}
-export interface ServiceSpec {name: string; host: string; fields: object}
-export interface IdirServiceSpec extends ServiceSpec {fields: {UPN: ServiceFieldSpec; USERNAME: ServiceFieldSpec; PASSWORD: ServiceFieldSpec}}
+export interface ServiceSpec {name: string; url: string; fields: object}
+export interface IdirServiceSpec extends ServiceSpec {
+  fields: {
+    UPN: ServiceFieldSpec;
+    // USERNAME: ServiceFieldSpec;
+    PASSWORD: ServiceFieldSpec;
+  };
+}
 
 export const SVC_IDIR_SPEC = {
   name: 'IDIR',
-  host: 'bwa.nrs.gov.bc.ca',
+  url: 'https://bwa.nrs.gov.bc.ca/int/jira/rest/api/2/myself',
   fields: {
     UPN: {name: 'userPrincipalName', hint: 'e-mail format- e.g.: john.doe@gov.bc.ca'},
-    USERNAME: {name: 'sAMAccountName', hint: 'username without domain - e.g. jdoe'},
+    // USERNAME: {name: 'sAMAccountName', hint: 'username without domain - e.g. jdoe'},
     PASSWORD: {name: 'password', type: 'password'},
   },
 } as IdirServiceSpec

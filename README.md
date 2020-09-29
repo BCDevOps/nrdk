@@ -52,6 +52,9 @@ Push local changes (commits) to the remote repository
 ```
 USAGE
   $ nrdk backlog:checkin
+
+OPTIONS
+  --pr  Create Pull-Request
 ```
 
 _See code: [src/commands/backlog/checkin.ts](./src/commands/backlog/checkin.ts)_
@@ -66,11 +69,6 @@ USAGE
 
 ARGUMENTS
   ISSUE  Jira issue key (e.g.: WEBADE-123)
-
-OPTIONS
-  -b, --branch=branch          Remote Branch Name
-  -p, --project=project        BitBucket Project/Group Name
-  -r, --repository=repository  BitBucket Repository Name
 ```
 
 _See code: [src/commands/backlog/checkout.ts](./src/commands/backlog/checkout.ts)_

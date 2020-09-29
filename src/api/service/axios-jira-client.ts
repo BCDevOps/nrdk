@@ -1,4 +1,5 @@
 import {AxiosInstance} from 'axios'
+import {AxiosBitBucketClient} from './axios-bitbucket-client'
 
 type Issue = any
 
@@ -13,7 +14,8 @@ export class AxiosJiraClient {
   }
 
   public async getIssue(issueKey: string, params?: any): Promise<Issue> {
-    return this.client.get(`rest/api/2/issue/${issueKey}`, {params: params}).then(response => {
+    return this.client.get(`rest/api/2/issue/${issueKey}`, {params: params})
+    .then(response => {
       return response.data
     })
   }
@@ -42,11 +44,10 @@ export class AxiosJiraClient {
   }
 
   public async getComponentRepositoryInfo(component: any) {
-    const regex = /https:\/\/(apps|bwa)\.nrs\.gov\.bc\.ca\/int\/stash\/projects\/(?<project>[^/]+)\/repos\/(?<repository>[^/\s]+)/gm
-    const m = regex.exec(component.description)
-    if (m === null) {
+    try {
+      return await AxiosBitBucketClient.parseUrl(component.description)
+    } catch (error) {
       throw new Error(`Unable to parse component description for ${component.name}`)
     }
-    return {provider: 'bitbucket', project: m.groups?.project as string, name: m.groups?.repository as string}
   }
 }

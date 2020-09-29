@@ -5,38 +5,53 @@
  * https://bwa.nrs.gov.bc.ca/int/jira/rest/dev-status/1.0/issue/detail?issueId=131578&applicationType=stash&dataType=pullrequest
  */
 import {flags} from '@oclif/command'
-import {SecretManager, SVC_IDIR_SPEC} from '../../api/service/secret-manager'
 import {AxiosJiraClient} from '../../api/service/axios-jira-client'
 import {GitBaseCommand} from '../../git-base'
 import * as inquirer from 'inquirer'
 import * as path from 'path'
+import {BranchReference, RepositoryReference} from '../../api/service/axios-bitbucket-client'
+import cli from 'cli-ux'
 
 export default class GitCheckout extends GitBaseCommand {
   static description = 'Create (if required), and checkout the git branch supporting a Jira issue (bug, new feature, improvement, etc...)'
 
   static flags = {
-    project: flags.string({char: 'p', description: 'BitBucket Project/Group Name'}),
-    repository: flags.string({char: 'r', description: 'BitBucket Repository Name'}),
-    branch: flags.string({char: 'b', description: 'Remote Branch Name'}),
-    personal: flags.boolean({hidden: true, description: 'Append username to branch name'}),
+    project: flags.string({hidden: true, char: 'p', description: 'BitBucket Project/Group Name'}),
+    repository: flags.string({hidden: true, char: 'r', description: 'BitBucket Repository Name'}),
+    branch: flags.string({hidden: true, char: 'b', description: 'Remote Branch Name'}),
+    username: flags.string({hidden: true, char: 'u', description: 'Username to be appended to branch names'}),
   }
 
   static args = [{name: 'issue', description: 'Jira issue key (e.g.: WEBADE-123)'}]
 
+  async action(message: string, promise: Promise<any>) {
+    return Promise.resolve(true)
+    .then(() => {
+      cli.action.start(message)
+      return promise
+    }).finally(() => {
+      cli.action.stop()
+    })
+  }
+
   async run() {
-    const idirSecret = await (await SecretManager.getInstance()).getEntry(SVC_IDIR_SPEC)
     const {args, flags} = this.parse(GitCheckout)
     const jira = this.jira as AxiosJiraClient
-    const issue = await jira.getIssue(args.issue, {fields: 'issuetype,components'})
-    if (issue.fields.components.length !== 1) {
-      return this.error(`Expected at least 1 component set for issue '${issue.key}', but found '${issue.fields.components.length}'`)
+    const issue = await this.action(`Fetching Jira Issue ${args.issue}`, jira.getIssue(args.issue, {fields: 'issuetype,components'}))
+    if (!flags.repository || !flags.project) {
+      if (issue.fields.components.length !== 1) {
+        return this.error(`Expected at least 1 component set for issue '${issue.key}', but found '${issue.fields.components.length}'`)
+      }
+      const component = issue.fields.components[0]
+      const repositoryReference = await jira.getComponentRepositoryInfo(component)
+      flags.repository = repositoryReference.slug
+      flags.project = repositoryReference.project.key
     }
-    const component = issue.fields.components[0]
-    const repository = await jira.getComponentRepositoryInfo(component)
-    let branchInfo: any = null
+    const repository: RepositoryReference = {slug: flags.repository, project: {key: flags.project as string}}
+    let branchInfo: BranchReference
     // RFC issues
     if (issue.fields.issuetype.name === 'RFC') {
-      branchInfo = this.createReleaseBranch(issue, repository)
+      branchInfo = await this.createReleaseBranch(issue, repository)
     } else {
     // non-RFC issues
       this.log(`Finding RFC for issue ${issue.key}`)
@@ -44,13 +59,12 @@ export default class GitCheckout extends GitBaseCommand {
       this.log(`Found RFC ${rfc.key}`)
       const releaseBranch = await this.createReleaseBranch(rfc, repository)
       let branchName = `feature/${issue.key}`
-      if (flags.personal) {
-        const username = (await idirSecret.getProperty(SVC_IDIR_SPEC.fields.USERNAME.name)).getPlainText()
-        branchName += `-${username}`
+      if (flags.username) {
+        branchName += `-${flags.username}`
       }
       branchInfo = await this.createBranch(issue, repository, branchName, releaseBranch.name)
     }
-    const expectedGitRemoteOriginUrl = `https://bwa.nrs.gov.bc.ca/int/stash/scm/${branchInfo.repository.project}/${branchInfo.repository.name}.git`
+    const expectedGitRemoteOriginUrl = `https://bwa.nrs.gov.bc.ca/int/stash/scm/${branchInfo.repository.project.key}/${branchInfo.repository.slug}.git`
     const gitTopLevel = await this._spawn('git', ['rev-parse', '--show-toplevel'])
     let expectedRepoCwd = process.cwd()
     if (gitTopLevel.status !== 0) {
@@ -60,7 +74,7 @@ export default class GitCheckout extends GitBaseCommand {
       if (answer.clone !== true) {
         return this.exit(1)
       }
-      expectedRepoCwd = path.resolve(process.cwd(), `${branchInfo.repository.project}-${branchInfo.repository.name}`)
+      expectedRepoCwd = path.resolve(process.cwd(), `${branchInfo.repository.project.key}-${branchInfo.repository.slug}`)
       answer = await prompt([{type: 'input', name: 'path', message: 'Where would you like to clone?', default: expectedRepoCwd}])
       expectedRepoCwd = answer.path
       const gitClone = await this._spawn('git', ['clone', expectedGitRemoteOriginUrl, expectedRepoCwd])

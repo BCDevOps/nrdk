@@ -1,9 +1,14 @@
 import {GitBaseCommand} from '../../git-base'
+import {flags} from '@oclif/command'
 import {AxiosJiraClient} from '../../api/service/axios-jira-client'
 import {AxiosBitBucketClient} from '../../api/service/axios-bitbucket-client'
 
 export default class GitPush extends GitBaseCommand {
   static description = 'Push local changes (commits) to the remote repository'
+
+  static flags = {
+    pr: flags.boolean({description: 'Create Pull-Request', default: true}),
+  }
 
   async run() {
     const jira = this.jira as AxiosJiraClient

@@ -1,5 +1,5 @@
 import {Command} from '@oclif/command'
-import {AxiosBitBucketClient} from './api/service/axios-bitbucket-client'
+import {AxiosBitBucketClient, RepositoryReference} from './api/service/axios-bitbucket-client'
 import {AxiosJiraClient} from './api/service/axios-jira-client'
 import {AxiosFactory} from './api/service/axios-factory'
 import {SpawnOptions, spawn} from 'child_process'
@@ -46,22 +46,22 @@ export abstract class GitBaseCommand extends Command {
     })
   }
 
-  async createBranch(issue: any, repository: any, branchName: string, startPoint = 'master') {
+  async createBranch(issue: any, repository: RepositoryReference, branchName: string, startPoint = 'master') {
     const jira = this.jira as AxiosJiraClient
     const bitBucket = this.bitBucket as AxiosBitBucketClient
     const devDetails = (await jira.getBranches(issue.id))
     const branches = devDetails.branches.filter((item: { name: string }) => item.name === branchName)
     // this.log('branches:', branches)
     if (branches.length === 0) {
-      this.log(`Creating branch '${branchName}' from '${startPoint}' in repository '${repository.name}' in project '${repository.project}'`)
-      await bitBucket.createBranch(repository.project, repository.name, branchName, startPoint)
+      this.log(`Creating branch '${branchName}' from '${startPoint}' in repository '${repository.slug}' in project '${repository.project.key}'`)
+      await bitBucket.createBranch(repository.project.key, repository.slug, branchName, startPoint)
     } else if (branches.length > 1) {
       return this.error(`Expected 1 release but found '${branches.length}'`)
     }
     return {name: branchName, repository}
   }
 
-  async createReleaseBranch(rfc: any, repository: any) {
+  async createReleaseBranch(rfc: any, repository: RepositoryReference) {
     const releaseBranch = `release/${rfc.key}`
     return this.createBranch(rfc, repository, releaseBranch)
   }
