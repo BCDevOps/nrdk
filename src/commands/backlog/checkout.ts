@@ -54,9 +54,9 @@ export default class GitCheckout extends GitBaseCommand {
       branchInfo = await this.createReleaseBranch(issue, repository)
     } else {
     // non-RFC issues
-      this.log(`Finding RFC for issue ${issue.key}`)
+      this.log(`Finding RFC for issue ${issue.key}/${issue.id}`)
       const rfc = await jira.getRfcByIssue(issue.key)
-      this.log(`Found RFC ${rfc.key}`)
+      this.log(`Found RFC ${rfc.key}/${rfc.id}`)
       const releaseBranch = await this.createReleaseBranch(rfc, repository)
       let branchName = `feature/${issue.key}`
       if (flags.username) {

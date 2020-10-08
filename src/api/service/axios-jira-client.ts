@@ -1,5 +1,6 @@
 import {AxiosInstance} from 'axios'
 import {AxiosBitBucketClient} from './axios-bitbucket-client'
+import {GeneralError} from '../../error'
 
 type Issue = any
 
@@ -23,6 +24,11 @@ export class AxiosJiraClient {
   public getBranches(issueId: string, params?: any) {
     return this.client.get('rest/dev-status/1.0/issue/detail', {params: Object.assign({}, params, {issueId: issueId, applicationType: 'stash', dataType: 'pullrequest'})}).then(response => {
       return response.data.detail[0]
+    }).catch(error => {
+      if (error.response.status === 403) {
+        throw new GeneralError(`Access denied retrieving development feature for issue ${issueId}. Verify you have "developer" role in the project`, error)
+      }
+      throw error
     })
   }
 

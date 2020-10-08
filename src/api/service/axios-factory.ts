@@ -12,7 +12,9 @@ export class AxiosFactory {
     return new AxiosJiraClient(axios.create({
       baseURL: 'https://bwa.nrs.gov.bc.ca/int/jira',
       timeout: 10000,
-      auth: {username: idirUsername, password: idirPassword.getPlainText()},
+      headers: {
+        Authorization: `Basic ${Buffer.from(idirUsername + ':' + idirPassword.getPlainText(), 'utf8').toString('base64')}`,
+      },
     }))
   }
 
@@ -24,7 +26,9 @@ export class AxiosFactory {
     return new AxiosBitBucketClient(axios.create({
       baseURL: 'https://bwa.nrs.gov.bc.ca/int/stash',
       timeout: 10000,
-      auth: {username: idirUsername, password: idirPassword.getPlainText()},
+      headers: {
+        Authorization: `Basic ${Buffer.from(idirUsername + ':' + idirPassword.getPlainText(), 'utf8').toString('base64')}`,
+      },
     }))
   }
 }

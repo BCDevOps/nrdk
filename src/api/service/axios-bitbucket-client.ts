@@ -1,5 +1,4 @@
 import {AxiosInstance} from 'axios'
-import {ConsoleTransportOptions} from 'winston/lib/winston/transports'
 
 export const FIELDS = Object.freeze({
   ISSUE_TYPE: 'issuetype',
