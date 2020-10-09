@@ -1,5 +1,5 @@
 import {BaseCommand} from '../base'
-import {FlagNames, flagConfigScript, flagGitRemoteName, flagGitRemoteUrl, flagGitBranch, flagGitBranchRemote, flagEnvSpec, flagPullRequestNumberSpec, applyFlagDefaults, flagDeployScript, loadConfigScript, loadScript} from '../flags'
+import * as FLAGS from '../flags'
 
 export default class Deploy extends BaseCommand {
   static description = 'describe the command here'
@@ -7,21 +7,32 @@ export default class Deploy extends BaseCommand {
   static hidden = true
 
   static flags = {
-    [FlagNames.CONFIG_SCRIPT]: flagConfigScript,
-    [FlagNames.DEPLOY_SCRIPT]: flagDeployScript,
-    [FlagNames.ENV]: flagEnvSpec,
-    [FlagNames.PULL_REQUEST_NUMBER]: flagPullRequestNumberSpec,
-    [FlagNames.GIT_REMOTE_NAME]: flagGitRemoteName,
-    [FlagNames.GIT_REMOTE_URL]: flagGitRemoteUrl,
-    [FlagNames.GIT_BRANCH]: flagGitBranch,
-    [FlagNames.GIT_BRANCH_REMOTE]: flagGitBranchRemote,
+    [FLAGS.FlagNames.CONFIG_SCRIPT]: FLAGS.flagConfigScript,
+    [FLAGS.FlagNames.DEPLOY_SCRIPT]: FLAGS.flagDeployScript,
+    [FLAGS.FlagNames.ENV]: FLAGS.flagEnvSpec,
+    [FLAGS.FlagNames.PULL_REQUEST_NUMBER]: FLAGS.flagPullRequestNumberSpec,
+    [FLAGS.FlagNames.GIT_REMOTE_NAME]: FLAGS.flagGitRemoteName,
+    [FLAGS.FlagNames.GIT_REMOTE_URL]: FLAGS.flagGitRemoteUrl,
+    [FLAGS.FlagNames.GIT_BRANCH]: FLAGS.flagGitBranch,
+    [FLAGS.FlagNames.GIT_BRANCH_REMOTE]: FLAGS.flagGitBranchRemote,
+    [FLAGS.FlagNames.ARCHETYPE]: FLAGS.flagArchetype,
   }
 
   async run() {
     const {flags} = this.parse(Deploy)
-    await applyFlagDefaults(flags)
-    const settings = loadConfigScript(flags)
-    const task = loadScript(flags, FlagNames.DEPLOY_SCRIPT)
-    task(Object.assign(settings, {phase: settings.options.env}))
+    await FLAGS.applyFlagDefaults(flags)
+    if (flags.archetype) {
+      const settings = FLAGS.loadConfigScript(flags)
+      const task = FLAGS.loadScript(flags, FLAGS.FlagNames.DEPLOY_SCRIPT)
+      if (task.__esModule === true) {
+        task.default(Object.assign(settings, {phase: settings.options.env}))
+      } else {
+        task(Object.assign(settings, {phase: settings.options.env}))
+      }
+    } else {
+      const settings = FLAGS.loadConfigScript(flags)
+      const task = FLAGS.loadScript(flags, FLAGS.FlagNames.DEPLOY_SCRIPT)
+      task(Object.assign(settings, {phase: settings.options.env}))
+    }
   }
 }

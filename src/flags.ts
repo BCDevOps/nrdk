@@ -16,6 +16,7 @@ export enum FlagNames {
   DEPLOY_SCRIPT = 'deploy-script',
   CLEAN_SCRIPT = 'clean-script',
   DEV_MODE = 'dev-mode',
+  ARCHETYPE = 'archetype',
 }
 
 const defaultValues = {
@@ -43,11 +44,25 @@ const defaultValues = {
       flags[FlagNames.GIT_CHANGE_TARGET] = process.env.CHANGE_TARGET
     }
   },
+  [FlagNames.BUILD_SCRIPT]: async (flags: any) => {
+    if (flags[FlagNames.ARCHETYPE] && !flags[FlagNames.BUILD_SCRIPT]) {
+      flags[FlagNames.BUILD_SCRIPT] = resolve(__dirname, `./archetypes/${flags[FlagNames.ARCHETYPE]}/build`)
+    } else {
+      flags[FlagNames.BUILD_SCRIPT] = `${relative(process.cwd(), '.pipeline/lib/build')}`
+    }
+  },
+  [FlagNames.DEPLOY_SCRIPT]: async (flags: any) => {
+    if (flags[FlagNames.ARCHETYPE] && !flags[FlagNames.DEPLOY_SCRIPT]) {
+      flags[FlagNames.DEPLOY_SCRIPT] = resolve(__dirname, `./archetypes/${flags[FlagNames.ARCHETYPE]}/deploy`)
+    } else {
+      flags[FlagNames.DEPLOY_SCRIPT] = `${relative(process.cwd(), '.pipeline/lib/deploy')}`
+    }
+  },
 }
 
 export const flagConfigScript = flags.string({name: FlagNames.CONFIG_SCRIPT, hidden: true, default: `${relative(process.cwd(), '.pipeline/lib/config.js')}`})
-export const flagBuildScript = flags.string({name: FlagNames.BUILD_SCRIPT, hidden: true, default: `${relative(process.cwd(), '.pipeline/lib/build.js')}`})
-export const flagDeployScript = flags.string({name: FlagNames.DEPLOY_SCRIPT, hidden: true, default: `${relative(process.cwd(), '.pipeline/lib/deploy.js')}`})
+export const flagBuildScript = flags.string({name: FlagNames.BUILD_SCRIPT, hidden: true})
+export const flagDeployScript = flags.string({name: FlagNames.DEPLOY_SCRIPT, hidden: true})
 export const flagCleanScript = flags.string({name: FlagNames.CLEAN_SCRIPT, hidden: true, default: `${relative(process.cwd(), '.pipeline/lib/clean.js')}`})
 export const flagGitRemoteName = flags.string({description: 'GIT remote name', required: false, default: 'origin'})
 export const flagGitUrl = flags.string({description: 'GIT URL', required: false})
@@ -57,7 +72,8 @@ export const flagGitBranchRemote = flags.string({description: 'GIT remote branch
 export const flagGitChangeTarget = flags.string({description: 'Target branch of the pull request (env:CHANGE_TARGET)'})
 export const flagPullRequestNumberSpec = flags.string({name: FlagNames.PULL_REQUEST_NUMBER, description: 'Pull Request number'})
 export const flagEnvSpec = flags.string({name: 'env', description: 'Environment'})
-export const flagDevMode = flags.boolean({name: FlagNames.DEV_MODE, description: 'Developer Mode (local)'})
+export const flagDevMode = flags.string({name: FlagNames.DEV_MODE, description: 'Developer Mode (local)', options: ['true', 'false'], default: 'false'})
+export const flagArchetype = flags.string({name: 'archetype', description: 'Application Archetype/Pattern', options: ['java-web-app']})
 
 export async function applyFlagDefaults(flags: any) {
   for (const key of Object.keys(defaultValues)) {
