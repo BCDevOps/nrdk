@@ -47,14 +47,14 @@ const defaultValues = {
   [FlagNames.BUILD_SCRIPT]: async (flags: any) => {
     if (flags[FlagNames.ARCHETYPE] && !flags[FlagNames.BUILD_SCRIPT]) {
       flags[FlagNames.BUILD_SCRIPT] = resolve(__dirname, `./archetypes/${flags[FlagNames.ARCHETYPE]}/build`)
-    } else {
+    } else if (!flags[FlagNames.BUILD_SCRIPT]) {
       flags[FlagNames.BUILD_SCRIPT] = `${relative(process.cwd(), '.pipeline/lib/build')}`
     }
   },
   [FlagNames.DEPLOY_SCRIPT]: async (flags: any) => {
     if (flags[FlagNames.ARCHETYPE] && !flags[FlagNames.DEPLOY_SCRIPT]) {
       flags[FlagNames.DEPLOY_SCRIPT] = resolve(__dirname, `./archetypes/${flags[FlagNames.ARCHETYPE]}/deploy`)
-    } else {
+    } else if (!flags[FlagNames.DEPLOY_SCRIPT]) {
       flags[FlagNames.DEPLOY_SCRIPT] = `${relative(process.cwd(), '.pipeline/lib/deploy')}`
     }
   },

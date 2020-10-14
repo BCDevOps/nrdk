@@ -7,6 +7,11 @@
     "nrdk": "./bin/run"
   },
   "bugs": "https://github.com/bcdevops/nrdk/issues",
+  "mocha": {
+    "require": [
+      "ts-node/register"
+    ]
+  },
   "dependencies": {
     "@bcgov/nr-pipeline-ext": "0.1.0-rc.9",
     "@bcgov/pipeline-cli": "^1.0.1-2",
