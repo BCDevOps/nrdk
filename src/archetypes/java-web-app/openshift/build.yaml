@@ -150,6 +150,7 @@ objects:
         from:
           kind: ImageStreamTag
           name: ${TOMCAT_IMAGE_NAME}:${TOMCAT_IMAGE_TAG}
+          namespace: ${TOMCAT_IMAGE_NAMESPACE}
         env:
           - name: ENABLE_ACCESS_LOG
             value: 'true'
@@ -164,6 +165,7 @@ objects:
         from:
           kind: ImageStreamTag
           name: ${TOMCAT_IMAGE_NAME}:${TOMCAT_IMAGE_TAG}
+          namespace: ${TOMCAT_IMAGE_NAMESPACE}
       type: ImageChange
     - type: ConfigChange
 parameters:
@@ -181,10 +183,12 @@ parameters:
   value: 1.6-23
 - name: OPENJDK18_IMAGE_NAME
   value: openjdk18-openshift
+- name: TOMCAT_IMAGE_NAMESPACE
+  value: perrsi-prod
 - name: TOMCAT_IMAGE_NAME
   value: ha-tomcat9
 - name: TOMCAT_IMAGE_TAG
-  value: 9.0.27-cvarjao
+  value: 9.0.27-stable
 - name: WEBAPP_NAME
   description: folder name under /usr/local/tomcat/webapps, can be ${NAME} or pub#${NAME} based on type of app
 - name: ARTIFACT_ID
