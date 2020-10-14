@@ -69,14 +69,6 @@ objects:
 - kind: Secret
   apiVersion: v1
   metadata:
-    name: "${NAME}${SUFFIX}-webade-jar"
-    annotations:
-      as-copy-of: ${NAME}-webade-connection-generic-jar
-  stringData:
-    webade-connection-4.2.0.jar: ''
-- kind: Secret
-  apiVersion: v1
-  metadata:
     name: "${NAME}${SUFFIX}-webade-properties"
     annotations:
       as-copy-of: ${NAME}-webade-connection-properties
