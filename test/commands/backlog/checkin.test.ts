@@ -4,12 +4,14 @@ import sinon from 'sinon'
 import * as MochaNockBack from '../../util/mocha-nock-back'
 import {AxiosJiraClient} from '../../../src/api/service/axios-jira-client'
 import {AxiosBitBucketClient} from '../../../src/api/service/axios-bitbucket-client'
+import {SecretManager} from '../../../src/api/service/secret-manager'
 
 describe('backlog:checkin', () => {
   beforeEach(MochaNockBack.beforeEach())
   afterEach(MochaNockBack.afterEach)
 
   test
+  .stub(SecretManager.prototype, 'promptMissingFields', sinon.stub().resolves({UPN: 'semeone@localhost', PASSWORD: '--'}))
   .stub(GitCheckin.prototype, '_spawn', sinon.stub()
   .callsFake(async (...args) => {
     if (sinon.match.array.deepEquals(['git', ['rev-parse', '--show-toplevel']]).test(args)) {
@@ -35,6 +37,7 @@ describe('backlog:checkin', () => {
 
   test
   .skip()
+  .stub(SecretManager.prototype, 'promptMissingFields', sinon.stub().resolves({UPN: 'semeone@localhost', PASSWORD: '--'}))
   .stub(AxiosJiraClient.prototype, 'getBranches', sinon.stub().resolves({branches: [], pullRequests: []}))
   .stub(GitCheckin.prototype, '_spawn', sinon.stub()
   .callsFake(async (...args) => {
@@ -62,6 +65,7 @@ describe('backlog:checkin', () => {
 
   test
   .skip()
+  .stub(SecretManager.prototype, 'promptMissingFields', sinon.stub().resolves({UPN: 'semeone@localhost', PASSWORD: '--'}))
   .stub(AxiosJiraClient.prototype, 'getBranches', sinon.stub().resolves(
     {branches: [
       {

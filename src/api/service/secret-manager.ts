@@ -107,23 +107,27 @@ export class SecretManager {
     }
   }
 
+  async promptMissingFields(spec: ServiceSpec, svc: any) {
+    const prompts = []
+    const fieldsSpec = spec.fields as any
+    for (const fieldName of Object.keys(fieldsSpec)) {
+      const fieldSpec = fieldsSpec[fieldName] as ServiceFieldSpec
+      if (!svc[fieldSpec.name]) {
+        let message = fieldSpec.prompt || `'${fieldSpec.name}' for '${spec.name}'`
+        if (fieldSpec.hint) {
+          message += ` (${fieldSpec.hint})`
+        }
+        prompts.push({type: fieldSpec.type || 'input', name: fieldSpec.name, message: message})
+      }
+    }
+    return prompt(prompts)
+  }
+
   async getEntry(service: ServiceSpec): Promise<EntryAccessor> {
     const svc = this.entries[service.name] as Entry || {}
     this.entries[service.name] = svc
     if (svc) {
-      const prompts = []
-      const fieldsSpec = service.fields as any
-      for (const fieldName of Object.keys(fieldsSpec)) {
-        const fieldSpec = fieldsSpec[fieldName] as ServiceFieldSpec
-        if (!svc[fieldSpec.name]) {
-          let message = fieldSpec.prompt || `'${fieldSpec.name}' for '${service.name}'`
-          if (fieldSpec.hint) {
-            message += ` (${fieldSpec.hint})`
-          }
-          prompts.push({type: fieldSpec.type || 'input', name: fieldSpec.name, message: message})
-        }
-      }
-      const answers = await prompt(prompts)
+      const answers = await this.promptMissingFields(service, svc)
       for (const fieldName of Object.keys(answers)) {
         svc[fieldName] = answers[fieldName]
       }

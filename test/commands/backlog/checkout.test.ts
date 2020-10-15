@@ -2,12 +2,15 @@ import {expect, test} from '@oclif/test'
 import GitCheckout from '../../../src/commands/backlog/checkout'
 import sinon from 'sinon'
 import * as MochaNockBack from '../../util/mocha-nock-back'
+import {SecretManager} from '../../../src/api/service/secret-manager'
 
-describe('backlog:checkin', () => {
+describe('backlog:checkout', () => {
   const mock_cwd = '/tmp/.mock'
   beforeEach(MochaNockBack.beforeEach())
   afterEach(MochaNockBack.afterEach)
+
   test
+  .stub(SecretManager.prototype, 'promptMissingFields', sinon.stub().resolves({UPN: 'semeone@localhost', PASSWORD: '--'}))
   .stub(GitCheckout.prototype, 'cwd', sinon.stub().resolves(mock_cwd))
   .stub(GitCheckout.prototype, '_spawn', sinon.stub()
   .callsFake(async (...args) => {
