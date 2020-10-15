@@ -1,0 +1,114 @@
+[
+    {
+        "scope": "https://bwa.nrs.gov.bc.ca:443",
+        "method": "GET",
+        "path": "/int/jira/rest/api/2/issue/IRS-216?fields=issuetype,components,project",
+        "body": "",
+        "status": 200,
+        "response": {
+            "expand": "renderedFields,names,schema,operations,editmeta,changelog,versionedRepresentations",
+            "id": "135218",
+            "key": "IRS-216",
+            "fields": {
+                "issuetype": {
+                    "id": "3",
+                    "description": "A task that needs to be done.",
+                    "name": "Task",
+                    "subtask": false,
+                    "avatarId": 10318
+                },
+                "project": {
+                    "id": "10724",
+                    "key": "IRS",
+                    "name": "IRS - Infrastructure Reporting System",
+                    "projectTypeKey": "software",
+                    "projectCategory": {
+                        "id": "10600",
+                        "name": "Standard Application"
+                    }
+                },
+                "components": [
+                    {
+                        "id": "15614",
+                        "name": "irs-war",
+                        "description": "https://apps.nrs.gov.bc.ca/int/stash/projects/IRS/repos/irs-war/browse"
+                    }
+                ]
+            }
+        },
+        "responseIsBinary": false
+    },
+    {
+        "scope": "https://bwa.nrs.gov.bc.ca:443",
+        "method": "GET",
+        "path": "/int/jira/rest/dev-status/1.0/issue/detail?issueId=135218&applicationType=stash&dataType=pullrequest",
+        "body": "",
+        "status": 200,
+        "response": {
+            "errors": [],
+            "detail": [
+                {
+                    "branches": [
+                        {
+                            "name": "feature/IRS-216",
+                            "url": "https://apps.nrs.gov.bc.ca/int/stash/projects/IRS/repos/irs-war/commits?until=refs/heads/feature/IRS-216",
+                            "createPullRequestUrl": "https://apps.nrs.gov.bc.ca/int/stash/projects/IRS/repos/irs-war/pull-requests?create&sourceBranch=refs/heads/feature/IRS-216",
+                            "repository": {
+                                "name": "irs-war",
+                                "avatar": "https://apps.nrs.gov.bc.ca/int/stash/projects/IRS/avatar.png?s=32&v=1554770482987",
+                                "avatarDescription": "IRS - Infrastructure Reporting System",
+                                "url": "https://apps.nrs.gov.bc.ca/int/stash/projects/IRS/repos/irs-war/browse"
+                            }
+                        }
+                    ],
+                    "pullRequests": [
+                        {
+                            "author": {
+                                "name": "Somebody"
+                            },
+                            "id": "#13",
+                            "name": "IRS-216",
+                            "commentCount": 0,
+                            "source": {
+                                "branch": "feature/IRS-216",
+                                "repository": {
+                                    "name": "irs-war",
+                                    "avatar": "https://apps.nrs.gov.bc.ca/int/stash/projects/IRS/avatar.png?s=32&v=1554770482987",
+                                    "avatarDescription": "IRS - Infrastructure Reporting System",
+                                    "url": "https://apps.nrs.gov.bc.ca/int/stash/projects/IRS/repos/irs-war/browse"
+                                },
+                                "url": "https://apps.nrs.gov.bc.ca/int/stash/projects/IRS/repos/irs-war/commits?until=refs/heads/feature/IRS-216"
+                            },
+                            "destination": {
+                                "branch": "release/IRS-215",
+                                "repository": {
+                                    "name": "irs-war",
+                                    "avatar": "https://apps.nrs.gov.bc.ca/int/stash/projects/IRS/avatar.png?s=32&v=1554770482987",
+                                    "avatarDescription": "IRS - Infrastructure Reporting System",
+                                    "url": "https://apps.nrs.gov.bc.ca/int/stash/projects/IRS/repos/irs-war/browse"
+                                },
+                                "url": "https://apps.nrs.gov.bc.ca/int/stash/projects/IRS/repos/irs-war/commits?until=refs/heads/release/IRS-215"
+                            },
+                            "reviewers": [],
+                            "status": "OPEN",
+                            "url": "https://apps.nrs.gov.bc.ca/int/stash/projects/IRS/repos/irs-war/pull-requests/13",
+                            "lastUpdate": "2020-10-14T14:08:09.701-0700"
+                        }
+                    ],
+                    "repositories": [],
+                    "_instance": {
+                        "baseUrl": "https://apps.nrs.gov.bc.ca/int/stash",
+                        "primary": true,
+                        "singleInstance": false,
+                        "applicationLinkId": "30c09515-c438-3c99-b6b8-7516adacbf48",
+                        "name": "Bitbucket",
+                        "typeName": "Bitbucket Server",
+                        "id": "30c09515-c438-3c99-b6b8-7516adacbf48",
+                        "type": "stash"
+                    }
+                }
+            ]
+        },
+        "responseIsBinary": false
+    }
+]
