@@ -2,13 +2,12 @@ import {Command} from '@oclif/command'
 import {AxiosBitBucketClient, RepositoryReference} from './api/service/axios-bitbucket-client'
 import {AxiosJiraClient} from './api/service/axios-jira-client'
 import {AxiosFactory} from './api/service/axios-factory'
-import {SpawnOptions} from 'child_process'
+import {SpawnOptions, SpawnSyncReturns} from 'child_process'
 import * as winston from 'winston'
 import * as Config from '@oclif/config'
 import {_spawn} from './uti/child-process'
 
 export abstract class GitBaseCommand extends Command {
-
   jira?: AxiosJiraClient
 
   bitBucket?: AxiosBitBucketClient
@@ -32,7 +31,7 @@ export abstract class GitBaseCommand extends Command {
     this.bitBucket = await AxiosFactory.bitBucket()
   }
 
-  async _spawn(command: string, argsv?: readonly string[], options?: SpawnOptions): Promise<{status: number; stdout: string; stderr: string}> {
+  async _spawn(command: string, argsv?: readonly string[], options?: SpawnOptions): Promise<SpawnSyncReturns<string>> {
     return _spawn(this.logger, command, argsv, options)
   }
 
@@ -54,5 +53,9 @@ export abstract class GitBaseCommand extends Command {
   async createReleaseBranch(rfc: any, repository: RepositoryReference) {
     const releaseBranch = `release/${rfc.key}`
     return this.createBranch(rfc, repository, releaseBranch)
+  }
+
+  async cwd() {
+    return process.cwd()
   }
 }

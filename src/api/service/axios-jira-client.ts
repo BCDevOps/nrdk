@@ -2,19 +2,26 @@ import {AxiosInstance} from 'axios'
 import {AxiosBitBucketClient} from './axios-bitbucket-client'
 import {GeneralError} from '../../error'
 
-type Issue = any
+export type Issue = any
 
 export const FIELDS = Object.freeze({
   ISSUE_TYPE: 'issuetype',
 })
 export class AxiosJiraClient {
   // eslint-disable-next-line no-useless-escape
-  static JIRA_ISSUE_KEY_REGEX = /(([^\/]+\/)+)?(?<issueKey>[^-]+-\d+)/gm;
+  private static JIRA_ISSUE_KEY_REGEX = /(?<issueKey>\w+-\d+)/gm;
 
   readonly client: AxiosInstance
 
   constructor(client: AxiosInstance) {
     this.client = client
+  }
+
+  public static async parseJiraIssueKeyFromUri(uri: string) {
+    const m = AxiosJiraClient.JIRA_ISSUE_KEY_REGEX.exec(uri)
+    if (!m) throw new Error(`Unable to parse Jira issue key from '${uri}'`)
+    const issueKey = m.groups?.issueKey as string
+    return issueKey
   }
 
   public async getIssue(issueKey: string, params?: any): Promise<Issue> {
@@ -28,7 +35,7 @@ export class AxiosJiraClient {
     return this.client.get('rest/dev-status/1.0/issue/detail', {params: {...params, issueId: issueId, applicationType: 'stash', dataType: 'pullrequest'}}).then(response => {
       return response.data.detail[0]
     }).catch(error => {
-      if (error.response.status === 403) {
+      if (error?.response?.status === 403) {
         throw new GeneralError(`Access denied retrieving development feature for issue ${issueId}. Verify you have "developer" role in the project`, error)
       }
       throw error

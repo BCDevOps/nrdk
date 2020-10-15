@@ -1,7 +1,7 @@
-import {spawn, SpawnOptions} from 'child_process'
+import {spawn, SpawnOptions, SpawnSyncReturns} from 'child_process'
 import winston from 'winston'
 
-export async function _spawn(logger: winston.Logger, command: string, argsv?: readonly string[], options?: SpawnOptions): Promise<{status: number; stdout: string; stderr: string}> {
+export async function _spawn(logger: winston.Logger, command: string, argsv?: readonly string[], options?: SpawnOptions): Promise<SpawnSyncReturns<string>> {
   logger.child({group: ['exec', command], args: argsv}).info('%s %s', command, (argsv || []).join(' '))
   return new Promise(resolve => {
     let stdout = ''
@@ -14,7 +14,7 @@ export async function _spawn(logger: winston.Logger, command: string, argsv?: re
       stderr += data
     })
     child.on('exit', status => {
-      resolve({status: status as number, stdout, stderr})
+      resolve({pid: 0, status: status as number, stdout, stderr, output: (null as unknown) as string[], signal: null})
     })
   })
 }

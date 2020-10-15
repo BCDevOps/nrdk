@@ -4,6 +4,7 @@ export const FIELDS = Object.freeze({
   ISSUE_TYPE: 'issuetype',
 })
 export interface RepositoryReference {
+  cwd?: string;
   slug: string;
   project: {key: string};
 }
