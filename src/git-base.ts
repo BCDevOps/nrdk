@@ -2,13 +2,12 @@ import {Command} from '@oclif/command'
 import {AxiosBitBucketClient, RepositoryReference} from './api/service/axios-bitbucket-client'
 import {AxiosJiraClient} from './api/service/axios-jira-client'
 import {AxiosFactory} from './api/service/axios-factory'
-import {SpawnOptions, spawn} from 'child_process'
+import {SpawnOptions} from 'child_process'
 import * as winston from 'winston'
 import * as Config from '@oclif/config'
+import {_spawn} from './uti/child-process'
 
 export abstract class GitBaseCommand extends Command {
-  // eslint-disable-next-line no-useless-escape
-  static JIRA_ISSUE_KEY_REGEX = /(([^\/]+\/)+)?(?<issueKey>[^-]+-\d+)/gm;
 
   jira?: AxiosJiraClient
 
@@ -28,22 +27,13 @@ export abstract class GitBaseCommand extends Command {
     })
   }
 
+  async init() {
+    this.jira = await AxiosFactory.jira()
+    this.bitBucket = await AxiosFactory.bitBucket()
+  }
+
   async _spawn(command: string, argsv?: readonly string[], options?: SpawnOptions): Promise<{status: number; stdout: string; stderr: string}> {
-    this.logger.child({group: ['exec', command], args: argsv}).info('%s %s', command, (argsv || []).join(' '))
-    return new Promise(resolve => {
-      let stdout = ''
-      let stderr = ''
-      const child = spawn(command, argsv, options)
-      child.stdout.on('data', data => {
-        stdout += data
-      })
-      child.stderr.on('data', data => {
-        stderr += data
-      })
-      child.on('exit', status => {
-        resolve({status: status as number, stdout, stderr})
-      })
-    })
+    return _spawn(this.logger, command, argsv, options)
   }
 
   async createBranch(issue: any, repository: RepositoryReference, branchName: string, startPoint = 'master') {
@@ -64,10 +54,5 @@ export abstract class GitBaseCommand extends Command {
   async createReleaseBranch(rfc: any, repository: RepositoryReference) {
     const releaseBranch = `release/${rfc.key}`
     return this.createBranch(rfc, repository, releaseBranch)
-  }
-
-  async init() {
-    this.jira = await AxiosFactory.jira()
-    this.bitBucket = await AxiosFactory.bitBucket()
   }
 }

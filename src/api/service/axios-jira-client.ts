@@ -8,6 +8,9 @@ export const FIELDS = Object.freeze({
   ISSUE_TYPE: 'issuetype',
 })
 export class AxiosJiraClient {
+  // eslint-disable-next-line no-useless-escape
+  static JIRA_ISSUE_KEY_REGEX = /(([^\/]+\/)+)?(?<issueKey>[^-]+-\d+)/gm;
+
   readonly client: AxiosInstance
 
   constructor(client: AxiosInstance) {
@@ -22,7 +25,7 @@ export class AxiosJiraClient {
   }
 
   public getBranches(issueId: string, params?: any) {
-    return this.client.get('rest/dev-status/1.0/issue/detail', {params: Object.assign({}, params, {issueId: issueId, applicationType: 'stash', dataType: 'pullrequest'})}).then(response => {
+    return this.client.get('rest/dev-status/1.0/issue/detail', {params: {...params, issueId: issueId, applicationType: 'stash', dataType: 'pullrequest'}}).then(response => {
       return response.data.detail[0]
     }).catch(error => {
       if (error.response.status === 403) {

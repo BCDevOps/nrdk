@@ -17,7 +17,7 @@ export default class GitPush extends GitBaseCommand {
     const expectedCurrentTrackingBranchName = gitCurrentTrackingBranchName.stdout.trim()
     const baseBranchName = expectedCurrentTrackingBranchName.split('/').slice(1).join('/')
     this.log('expectedCurrentTrackingBranchName', expectedCurrentTrackingBranchName)
-    const issueKey = GitBaseCommand.JIRA_ISSUE_KEY_REGEX.exec(expectedCurrentTrackingBranchName)?.groups?.issueKey as string
+    const issueKey = AxiosJiraClient.JIRA_ISSUE_KEY_REGEX.exec(expectedCurrentTrackingBranchName)?.groups?.issueKey as string
     const issue = await jira.getIssue(issueKey, {fields: 'issuetype,components,project'})
 
     const gitPush = await this._spawn('git', ['push', 'origin'])

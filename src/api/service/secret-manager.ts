@@ -128,7 +128,7 @@ export class SecretManager {
         svc[fieldName] = answers[fieldName]
       }
     }
-    if (!svc && !svc.name) {
+    if (!svc?.name) {
       svc.name = service
     }
     return new EntryAccessor(svc)

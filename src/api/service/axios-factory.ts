@@ -4,30 +4,29 @@ import {AxiosJiraClient} from './axios-jira-client'
 import {AxiosBitBucketClient} from './axios-bitbucket-client'
 
 export class AxiosFactory {
-  static async jira(): Promise<AxiosJiraClient> {
+  static async createIdirAuthorizationHeader() {
     const entry = await (await SecretManager.getInstance()).getEntry(SVC_IDIR_SPEC)
     const idirUsername = (await entry.getProperty(SVC_IDIR_SPEC.fields.UPN.name)).getPlainText()
     const idirPassword = (await entry.getProperty(SVC_IDIR_SPEC.fields.PASSWORD.name))
+    return `Basic ${Buffer.from(idirUsername + ':' + idirPassword.getPlainText(), 'utf8').toString('base64')}`
+  }
 
+  static async jira(): Promise<AxiosJiraClient> {
     return new AxiosJiraClient(axios.create({
-      baseURL: 'https://bwa.nrs.gov.bc.ca/int/jira',
+      baseURL: process.env.JIRA_URL || 'https://bwa.nrs.gov.bc.ca/int/jira',
       timeout: 10000,
       headers: {
-        Authorization: `Basic ${Buffer.from(idirUsername + ':' + idirPassword.getPlainText(), 'utf8').toString('base64')}`,
+        Authorization: await AxiosFactory.createIdirAuthorizationHeader(),
       },
     }))
   }
 
   static async bitBucket(): Promise<AxiosBitBucketClient> {
-    const entry = await (await SecretManager.getInstance()).getEntry(SVC_IDIR_SPEC)
-    const idirUsername = (await entry.getProperty(SVC_IDIR_SPEC.fields.UPN.name)).getPlainText()
-    const idirPassword = (await entry.getProperty(SVC_IDIR_SPEC.fields.PASSWORD.name))
-
     return new AxiosBitBucketClient(axios.create({
-      baseURL: 'https://bwa.nrs.gov.bc.ca/int/stash',
+      baseURL: process.env.BITBUCKET_URL || 'https://bwa.nrs.gov.bc.ca/int/stash',
       timeout: 10000,
       headers: {
-        Authorization: `Basic ${Buffer.from(idirUsername + ':' + idirPassword.getPlainText(), 'utf8').toString('base64')}`,
+        Authorization: await AxiosFactory.createIdirAuthorizationHeader(),
       },
     }))
   }
