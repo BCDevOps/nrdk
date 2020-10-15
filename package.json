@@ -1,7 +1,7 @@
 {
   "name": "@bcgov/nrdk",
   "description": "NR Developer/Deployment Kit",
-  "version": "0.1.0-rc.45",
+  "version": "0.1.0-rc.49",
   "author": "Clecio Varjao",
   "bin": {
     "nrdk": "./bin/run"
@@ -13,7 +13,7 @@
     ]
   },
   "dependencies": {
-    "@bcgov/nr-pipeline-ext": "0.1.0-rc.9",
+    "@bcgov/nr-pipeline-ext": "0.1.0-rc.10",
     "@bcgov/pipeline-cli": "^1.0.1-2",
     "@oclif/command": "^1.8.0",
     "@oclif/plugin-help": "^3.2.0",
