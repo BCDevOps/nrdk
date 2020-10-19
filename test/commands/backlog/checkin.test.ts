@@ -36,7 +36,6 @@ describe('backlog:checkin', () => {
   })
 
   test
-  .skip()
   .stub(SecretManager.prototype, 'promptMissingFields', sinon.stub().resolves({UPN: 'semeone@localhost', PASSWORD: '--'}))
   .stub(AxiosJiraClient.prototype, 'getBranches', sinon.stub().resolves({branches: [], pullRequests: []}))
   .stub(GitCheckin.prototype, '_spawn', sinon.stub()
@@ -64,7 +63,6 @@ describe('backlog:checkin', () => {
   })
 
   test
-  .skip()
   .stub(SecretManager.prototype, 'promptMissingFields', sinon.stub().resolves({UPN: 'semeone@localhost', PASSWORD: '--'}))
   .stub(AxiosJiraClient.prototype, 'getBranches', sinon.stub().resolves(
     {branches: [

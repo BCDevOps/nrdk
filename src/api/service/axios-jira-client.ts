@@ -9,7 +9,7 @@ export const FIELDS = Object.freeze({
 })
 export class AxiosJiraClient {
   // eslint-disable-next-line no-useless-escape
-  private static JIRA_ISSUE_KEY_REGEX = /(?<issueKey>\w+-\d+)/gm;
+  private static JIRA_ISSUE_KEY_REGEX = /(?<issueKey>\w+-\d+)/m;
 
   readonly client: AxiosInstance
 
