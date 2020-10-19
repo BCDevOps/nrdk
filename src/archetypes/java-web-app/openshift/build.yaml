@@ -1,0 +1,202 @@
+---
+apiVersion: template.openshift.io/v1
+kind: Template
+objects:
+- apiVersion: v1
+  kind: ImageStream
+  metadata:
+    annotations: {}
+    creationTimestamp: null
+    labels:
+      shared: "true"
+    name: "${OPENJDK18_IMAGE_NAME}"
+  spec:
+   lookupPolicy:
+     local: true
+   tags:
+   - annotations: null
+     from:
+       kind: DockerImage
+       name: "registry.access.redhat.com/redhat-openjdk-18/${OPENJDK18_IMAGE_NAME}:${OPENJDK18_IMAGE_TAG}"
+     importPolicy: {}
+     name: "${OPENJDK18_IMAGE_TAG}"
+     referencePolicy:
+       type: Local
+- apiVersion: v1
+  kind: ImageStream
+  metadata:
+    annotations: null
+    creationTimestamp: null
+    labels:
+      shared: "true"
+    name: ${NAME}-app
+  spec:
+    lookupPolicy:
+      local: true
+- apiVersion: v1
+  kind: ImageStream
+  metadata:
+    annotations: null
+    creationTimestamp: null
+    labels:
+      shared: "true"
+    name: ${NAME}
+  spec:
+    lookupPolicy:
+      local: false
+- apiVersion: v1
+  kind: BuildConfig
+  metadata:
+    annotations: {}
+    creationTimestamp: null
+    labels: {}
+    name: ${NAME}-app${SUFFIX}
+  spec:
+    completionDeadlineSeconds: 1440
+    failedBuildsHistoryLimit: 4
+    nodeSelector: null
+    output:
+      to:
+        kind: ImageStreamTag
+        name: ${NAME}-app:${VERSION}
+    postCommit: {}
+    resources:
+      limits:
+        cpu: 500m
+        memory: 2Gi
+      requests:
+        cpu: 250m
+        memory: 1Gi
+    runPolicy: SerialLatestOnly
+    source:
+      git:
+        ref: ${SOURCE_GIT_REF}
+        uri: ${SOURCE_GIT_URL}
+      sourceSecret:
+        name: bitbucket-account
+      type: Git
+      contextDir: "ear"
+      configMaps:
+       - configMap:
+           name: mvn-settings
+         destinationDir: .m2
+    strategy:
+      sourceStrategy:
+        from:
+          kind: ImageStreamTag
+          name: ${OPENJDK18_IMAGE_NAME}:${OPENJDK18_IMAGE_TAG}
+        env:
+          - name: BUILD_LOGLEVEL
+            value: '2'
+          - name: S2I_SOURCE_DEPLOYMENTS_FILTER
+            value: '*.ear *.war *.jar'
+          - name: MAVEN_S2I_ARTIFACT_DIRS
+            value: 'target/'
+          - name: MAVEN_SETTINGS_XML
+            value: '/home/jboss/.m2/settings.xml'
+          - name: MAVEN_CLEAR_REPO
+            value: 'true'
+        incremental: true
+      type: Source
+    successfulBuildsHistoryLimit: 3
+    triggers:
+    - imageChange:
+        from:
+          kind: ImageStreamTag
+          name: ${OPENJDK18_IMAGE_NAME}:${OPENJDK18_IMAGE_TAG}
+      type: ImageChange
+    - type: ConfigChange
+  
+#Chained build 2
+- apiVersion: v1
+  kind: BuildConfig
+  metadata:
+    creationTimestamp: null
+    labels:
+      build: ${NAME}${SUFFIX}
+    name: ${NAME}${SUFFIX}
+  spec:
+    nodeSelector: null
+    output:
+      to:
+        kind: ImageStreamTag
+        name: ${NAME}:${VERSION}
+    postCommit: {}
+    resources:
+      requests:
+        cpu: 1
+      limits:
+        cpu: 2
+    source:
+      dockerfile: |-
+        FROM tomcat9
+        RUN mkdir -p /usr/local/tomcat/webapps/${WEBAPP_NAME}
+        COPY ./deployments/${ARTIFACT_ID}-${ARTIFACT_VERSION}.${PACKAGING_TYPE} /usr/local/tomcat/webapps
+        RUN mkdir -p /usr/local/tomcat/webapps/${WEBAPP_NAME} && \
+        unzip -oq /usr/local/tomcat/webapps/${ARTIFACT_ID}-${ARTIFACT_VERSION}.${PACKAGING_TYPE} -d /usr/local/tomcat/webapps/${WEBAPP_NAME} && \
+        rm /usr/local/tomcat/webapps/${ARTIFACT_ID}-${ARTIFACT_VERSION}.${PACKAGING_TYPE}
+        EXPOSE 8080 8778
+      images:
+        - from:
+            kind: ImageStreamTag
+            name: '${NAME}-app:${VERSION}'
+          paths:
+            - destinationDir: '.'
+              sourcePath: /deployments/
+      type: Dockerfile
+    strategy:
+      dockerStrategy:
+        imageOptimizationPolicy: SkipLayers
+        from:
+          kind: ImageStreamTag
+          name: ${TOMCAT_IMAGE_NAME}:${TOMCAT_IMAGE_TAG}
+          namespace: ${TOMCAT_IMAGE_NAMESPACE}
+        env:
+          - name: ENABLE_ACCESS_LOG
+            value: 'true'
+      type: Docker
+    triggers:
+    - imageChange:
+        from:
+          kind: ImageStreamTag
+          name: ${NAME}-app:${VERSION}
+      type: ImageChange
+    - imageChange:
+        from:
+          kind: ImageStreamTag
+          name: ${TOMCAT_IMAGE_NAME}:${TOMCAT_IMAGE_TAG}
+          namespace: ${TOMCAT_IMAGE_NAMESPACE}
+      type: ImageChange
+    - type: ConfigChange
+parameters:
+- name: NAME
+  description: name for build artifacts and labels
+- name: SUFFIX
+  description: suffix to distinguish parallel build, using the format -build-${changeId}
+- name: VERSION
+  description: image tags, using the format -build-${version}-${changeId}
+- name: SOURCE_GIT_URL
+  description: git url pointing to repo for s2i build
+- name: SOURCE_GIT_REF
+  description: source branch for s2i build
+- name: OPENJDK18_IMAGE_TAG
+  value: 1.6-23
+- name: OPENJDK18_IMAGE_NAME
+  value: openjdk18-openshift
+- name: TOMCAT_IMAGE_NAMESPACE
+  value: perrsi-prod
+- name: TOMCAT_IMAGE_NAME
+  value: ha-tomcat9
+- name: TOMCAT_IMAGE_TAG
+  value: 9.0.27-stable
+- name: WEBAPP_NAME
+  description: folder name under /usr/local/tomcat/webapps, can be ${NAME} or pub#${NAME} based on type of app
+- name: ARTIFACT_ID
+  description: artifact id from pom.xml
+- name: PACKAGING_TYPE
+  description: packaging from pom.xml
+- name: ARTIFACT_VERSION
+  description: artifact version from pom.xml
+- name: ENV_PROXY_HOST
+  description: proxy host configuration
+

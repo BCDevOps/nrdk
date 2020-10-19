@@ -24,7 +24,7 @@ $ npm install -g @bcgov/nrdk
 $ nrdk COMMAND
 running command...
 $ nrdk (-v|--version|version)
-@bcgov/nrdk/0.1.0-rc.39 darwin-x64 node-v12.14.1
+@bcgov/nrdk/0.1.0-rc.49 darwin-x64 node-v12.14.1
 $ nrdk --help [COMMAND]
 USAGE
   $ nrdk COMMAND
@@ -42,34 +42,126 @@ USAGE
 
 # Commands
 <!-- commands -->
-* [`nrdk backlog:checkin`](#nrdk-backlogcheckin)
-* [`nrdk backlog:checkout [ISSUE]`](#nrdk-backlogcheckout-issue)
+* [`nrdk build`](#nrdk-build)
+* [`nrdk clean`](#nrdk-clean)
+* [`nrdk deploy`](#nrdk-deploy)
+* [`nrdk functionaltest`](#nrdk-functionaltest)
+* [`nrdk help [COMMAND]`](#nrdk-help-command)
+* [`nrdk on:jira.issue`](#nrdk-onjiraissue)
 
-## `nrdk backlog:checkin`
+## `nrdk build`
 
-Push local changes (commits) to the remote repository
+describe the command here
 
 ```
 USAGE
-  $ nrdk backlog:checkin
+  $ nrdk build
 
 OPTIONS
-  --pr  Create Pull-Request
+  -b, --git.branch.name=git.branch.name  GIT local branch name
+  --archetype=java-web-app               Application Archetype/Pattern
+  --dev-mode=true|false                  [default: false] Developer Mode (local)
+  --env=env                              Environment
+  --git.branch.merge=git.branch.merge    GIT remote branch name
+  --git.change.target=git.change.target  Target branch of the pull request (env:CHANGE_TARGET)
+  --git.remote.name=git.remote.name      [default: origin] GIT remote name
+  --git.remote.url=git.remote.url        GIT remote URL
+  --pr=pr                                Pull Request number
 ```
 
-_See code: [src/commands/backlog/checkin.ts](./src/commands/backlog/checkin.ts)_
+_See code: [src/commands/build.ts](./src/commands/build.ts)_
 
-## `nrdk backlog:checkout [ISSUE]`
+## `nrdk clean`
 
-Create (if required), and checkout the git branch supporting a Jira issue (bug, new feature, improvement, etc...)
+describe the command here
 
 ```
 USAGE
-  $ nrdk backlog:checkout [ISSUE]
+  $ nrdk clean
 
-ARGUMENTS
-  ISSUE  Jira issue key (e.g.: WEBADE-123)
+OPTIONS
+  -b, --git.branch.name=git.branch.name  GIT local branch name
+  --env=env                              Environment
+  --git.branch.merge=git.branch.merge    GIT remote branch name
+  --git.remote.name=git.remote.name      [default: origin] GIT remote name
+  --git.remote.url=git.remote.url        GIT remote URL
+  --pr=pr                                Pull Request number
 ```
 
-_See code: [src/commands/backlog/checkout.ts](./src/commands/backlog/checkout.ts)_
+_See code: [src/commands/clean.ts](./src/commands/clean.ts)_
+
+## `nrdk deploy`
+
+describe the command here
+
+```
+USAGE
+  $ nrdk deploy
+
+OPTIONS
+  -b, --git.branch.name=git.branch.name  GIT local branch name
+  --archetype=java-web-app               Application Archetype/Pattern
+  --env=env                              Environment
+  --git.branch.merge=git.branch.merge    GIT remote branch name
+  --git.remote.name=git.remote.name      [default: origin] GIT remote name
+  --git.remote.url=git.remote.url        GIT remote URL
+  --pr=pr                                Pull Request number
+```
+
+_See code: [src/commands/deploy.ts](./src/commands/deploy.ts)_
+
+## `nrdk functionaltest`
+
+command to run functional tests for projects
+
+```
+USAGE
+  $ nrdk functionaltest
+
+OPTIONS
+  -b, --git.branch.name=git.branch.name  GIT local branch name
+  --env=env                              Environment
+  --git.branch.merge=git.branch.merge    GIT remote branch name
+  --git.remote.name=git.remote.name      [default: origin] GIT remote name
+  --git.remote.url=git.remote.url        GIT remote URL
+  --pr=pr                                Pull Request number
+```
+
+_See code: [src/commands/functionaltest.ts](./src/commands/functionaltest.ts)_
+
+## `nrdk help [COMMAND]`
+
+display help for nrdk
+
+```
+USAGE
+  $ nrdk help [COMMAND]
+
+ARGUMENTS
+  COMMAND  command to show help for
+
+OPTIONS
+  --all  see all commands in CLI
+```
+
+_See code: [@oclif/plugin-help](https://github.com/oclif/plugin-help/blob/v3.2.0/src/commands/help.ts)_
+
+## `nrdk on:jira.issue`
+
+describe the command here
+
+```
+USAGE
+  $ nrdk on:jira.issue
+
+OPTIONS
+  -b, --git.branch.name=git.branch.name  GIT local branch name
+  --env=env                              Environment
+  --git.branch.merge=git.branch.merge    GIT remote branch name
+  --git.remote.name=git.remote.name      [default: origin] GIT remote name
+  --git.remote.url=git.remote.url        GIT remote URL
+  --pr=pr                                Pull Request number
+```
+
+_See code: [src/commands/on/jira.issue.ts](./src/commands/on/jira.issue.ts)_
 <!-- commandsstop -->

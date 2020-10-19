@@ -17,15 +17,26 @@ export default class Build extends BaseCommand {
     [FLAGS.FlagNames.GIT_BRANCH_REMOTE]: FLAGS.flagGitBranchRemote,
     [FLAGS.FlagNames.DEV_MODE]: FLAGS.flagDevMode,
     [FLAGS.FlagNames.GIT_CHANGE_TARGET]: FLAGS.flagGitChangeTarget,
+    [FLAGS.FlagNames.ARCHETYPE]: FLAGS.flagArchetype,
   }
 
   async run() {
     const {flags} = this.parse(Build)
     await FLAGS.applyFlagDefaults(flags)
     this.debug('flags', flags)
-    const settings = FLAGS.loadConfigScript(flags)
-    this.debug('settings', settings)
-    const task = FLAGS.loadScript(flags, FLAGS.FlagNames.BUILD_SCRIPT)
-    task(Object.assign(settings, {phase: 'build'}))
+    if (flags.archetype) {
+      const settings = FLAGS.loadConfigScript(flags)
+      const task = FLAGS.loadScript(flags, FLAGS.FlagNames.BUILD_SCRIPT)
+      if (task.__esModule === true) {
+        task.default(Object.assign(settings, {phase: 'build'}))
+      } else {
+        task(Object.assign(settings, {phase: 'build'}))
+      }
+    } else {
+      const settings = FLAGS.loadConfigScript(flags)
+      this.debug('settings', settings)
+      const task = FLAGS.loadScript(flags, FLAGS.FlagNames.BUILD_SCRIPT)
+      task(Object.assign(settings, {phase: 'build'}))
+    }
   }
 }

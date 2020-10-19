@@ -1,0 +1,243 @@
+---
+kind: Template
+apiVersion: v1
+metadata:
+  name: irs
+  annotations:
+    description: Deployment template for a java app.
+    tags: node
+    iconClass: icon-node
+objects:
+- apiVersion: v1
+  kind: ServiceAccount
+  metadata:
+    creationTimestamp: null
+    name: ${NAME}${SUFFIX}-tomcat
+- kind: Role
+  apiVersion: rbac.authorization.k8s.io/v1
+  metadata:
+    name: ${NAME}${SUFFIX}-tomcat
+  rules:
+  - apiGroups: [""] # "" indicates the core API group
+    resources: ["pods"]
+    verbs: ["get", "watch", "list"]
+- apiVersion: rbac.authorization.k8s.io/v1
+  kind: RoleBinding
+  metadata:
+    creationTimestamp: null
+    name: ${NAME}${SUFFIX}-tomcat
+  roleRef:
+    apiGroup: rbac.authorization.k8s.io
+    kind: Role
+    name: ${NAME}${SUFFIX}-tomcat
+  subjects:
+  - kind: ServiceAccount
+    name: ${NAME}${SUFFIX}-tomcat
+- apiVersion: v1
+  kind: ImageStream
+  metadata:
+    annotations: null
+    creationTimestamp: null
+    labels:
+      shared: "true"
+    name: ${NAME}
+  spec:
+    lookupPolicy:
+      local: false
+- apiVersion: v1
+  kind: PersistentVolumeClaim
+  metadata:
+    name: ${NAME}${SUFFIX}-log-pvc-vol
+  spec:
+    accessModes:
+      - ReadWriteMany
+    resources:
+      requests:
+        storage: ${LOG_PVC_SIZE}
+    storageClassName: netapp-file-standard
+- apiVersion: v1
+  kind: PersistentVolumeClaim
+  metadata:
+    name: ${NAME}${SUFFIX}-app-data-vol
+  spec:
+    accessModes:
+      - ReadWriteMany
+    resources:
+      requests:
+        storage: ${APPDATA_PVC_SIZE}
+    storageClassName: netapp-file-standard
+- kind: Secret
+  apiVersion: v1
+  metadata:
+    name: "${NAME}${SUFFIX}-webade-properties"
+    annotations:
+      as-copy-of: ${NAME}-webade-connection-properties
+  stringData:
+    WebADEConnection.properties: ''
+- kind: Secret
+  apiVersion: v1
+  metadata:
+    name: "${NAME}${SUFFIX}-wallet"
+    annotations:
+      as-copy-of: ${NAME}-wallet
+  stringData:
+    keystore.p12 : ''
+    ojdbc.properties: ''
+    tnsnames.ora: ''
+    truststore.p12: ''
+- kind: Service
+  apiVersion: v1
+  metadata:
+    name: "${NAME}${SUFFIX}"
+    annotations:
+      description: Exposes and load balances the application pods
+    labels:
+      app: "${NAME}${SUFFIX}"
+  spec:
+    ports:
+    - name: 8080-tcp
+      port: 8080
+      targetPort: 8080
+    selector:
+      deploymentconfig: "${NAME}${SUFFIX}"
+
+- kind: Route
+  apiVersion: v1
+  metadata:
+    name: "${NAME}${SUFFIX}"
+    labels:
+      app: "${NAME}${SUFFIX}"
+    annotations:
+      haproxy.router.openshift.io/balance: "roundrobin"
+      haproxy.router.openshift.io/disable_cookies: "true"
+  spec:
+    host: "${HOST}"
+    port:
+      targetPort: 8080-tcp
+    path: "/${ROUTE_PATH}/"
+    to:
+      kind: Service
+      name: "${NAME}${SUFFIX}"
+      weight: 100
+    tls:
+      termination: edge
+
+- kind: DeploymentConfig
+  apiVersion: v1
+  metadata:
+    name: "${NAME}${SUFFIX}"
+    annotations:
+      description: Defines how to deploy the application server
+  spec:
+    strategy:
+      type: Rolling
+    triggers:
+    - type: ImageChange
+      imageChangeParams:
+        automatic: true
+        containerNames:
+        - tomcat
+        from:
+          kind: ImageStreamTag
+          name: "${NAME}:${VERSION}"
+    - type: ConfigChange
+    replicas: 2
+    selector:
+      name: "${NAME}"
+    template:
+      metadata:
+        name: "${NAME}"
+        labels:
+          name: "${NAME}"
+      spec:
+        serviceAccountName: "${NAME}${SUFFIX}-tomcat"
+        containers:
+          - name:  tomcat
+            image: " "
+            ports:
+              - name:  ${NAME}
+                containerPort: 8080
+                protocol: TCP
+              - name: jolokia
+                containerPort: 8778
+                protocol: TCP
+              - containerPort: 8443
+                protocol: TCP
+              - name: debug
+                containerPort: 8090
+                protocol: TCP
+            env:
+              - name: PORT
+                value: "8080"
+              - name: PROXY_HOST
+                value: ${ENV_PROXY_HOST}
+              - name: TNS_ADMIN
+                value: /usr/local/tomcat/wallet/
+              - name: OPENSHIFT_KUBE_PING_LABELS
+                value: "deploymentConfig=${NAME}${SUFFIX}"
+              - name: OPENSHIFT_KUBE_PING_NAMESPACE
+                valueFrom:
+                  fieldRef:
+                    fieldPath: metadata.namespace
+              - name: CATALINA_OPTS
+                value: "-Djava.security.egd=file:/dev/./urandom -agentlib:jdwp=transport=dt_socket,address=8090,server=y,suspend=n"
+            livenessProbe:
+              failureThreshold: 4
+              httpGet:
+                path: "${ROUTE_PATH}/${INDEX}"
+                port: 8080
+                scheme: HTTP
+              initialDelaySeconds: 130
+              periodSeconds: 10
+              successThreshold: 1
+              timeoutSeconds: 6
+            readinessProbe:
+              failureThreshold: 4
+              httpGet:
+                path: "${ROUTE_PATH}/${INDEX}"
+                port: 8080
+                scheme: HTTP
+              initialDelaySeconds: 130
+              periodSeconds: 10
+              successThreshold: 1
+              timeoutSeconds: 6  
+            volumeMounts:   
+              - mountPath: /usr/local/tomcat/ext/webade/classes
+                name: webade-properties
+              - mountPath: /apps_ux/logs/
+                name: app-logs
+              - mountPath: /apps_data/${NAME}/
+                name: app-data
+              - mountPath: /usr/local/tomcat/wallet/
+                name: wallet
+        volumes:
+         - name: webade-properties
+           secret:
+             secretName: ${NAME}${SUFFIX}-webade-properties
+         - name: app-data
+           persistentVolumeClaim:
+             claimName: ${NAME}${SUFFIX}-app-data-vol
+         - name: app-logs
+           persistentVolumeClaim:
+             claimName: ${NAME}${SUFFIX}-log-pvc-vol
+         - name: wallet
+           secret:
+             secretName: ${NAME}${SUFFIX}-wallet
+parameters:
+- name: NAME
+  description: The name assigned to all of the objects defined in this template.  You
+    should keep this as default unless your know what your doing. Name of image
+- name: SUFFIX
+- name: VERSION
+  description: The tag given to the built image.
+- name: HOST
+- name: LOG_PVC_SIZE
+- name: ROUTE_PATH
+- name: APPDATA_PVC_SIZE
+- name: WEBAPP_NAME
+  description: folder name under /usr/local/tomcat/webapps, can be ${NAME} or pub#${NAME} based on type of app
+- name: ENV_PROXY_HOST
+  description: proxy host configuration
+- name: INDEX
+  description: index page for application
+
