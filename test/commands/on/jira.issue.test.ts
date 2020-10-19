@@ -6,7 +6,7 @@ import {toMatchSnapshot} from '../../util/expect-mocha-snapshot'
 jExpect.extend({toMatchSnapshot})
 import * as nock from 'nock'
 import {saveJiraRequests} from '../../util/record-jira-requests'
-import {RfcWorkflow, RfdWorkflow} from 'nr-pipeline-ext'
+import {RfcWorkflow, RfdWorkflow} from '@bcgov/nr-pipeline-ext'
 
 const _merge = require('lodash.merge')
 const recordJiraRequests = false
@@ -34,43 +34,55 @@ describe('on/jira.issue', () => {
     }
   })
 
-  test
-  .nock(`${RFC2127.scope}`, api => api.get(RFC2127.path).reply(200, () => {
-    return _merge({}, RFC2127.response, {fields: {status: RfcWorkflow.STATUS_APPROVED}})
-  }).get(RFD2131.path).reply(200, () => {
-    return _merge({}, RFD2131.response, {fields: {status: RfdWorkflow.STATUS_APPROVED}})
-  }))
-  .stdout()
-  .stderr()
-  .command([
-    'on:jira.issue',
-    `--${FlagNames.CONFIG_SCRIPT}=${path.resolve(__dirname, '../build.config.js')}`,
-    `--${FlagNames.GIT_BRANCH_REMOTE}=${RFC2127.response.key}-fix-title-color`,
-    `--${FlagNames.GIT_REMOTE_URL}=some-remote-url`,
-    `--${FlagNames.ENV}=dlvr`,
-  ])
-  .exit(0)
-  .it('RFC-Approved,RFD-Approved', ctx => {
-    mExpect(ctx.stdout.split('\n')).to.include.members(['=>   READY'])
-  })
-
-  test
-  .stdout()
-  .stderr()
-  .nock(`${RFC2127.scope}`, api => api.get(RFC2127.path).reply(200, () => {
-    return _merge({}, RFC2127.response, {fields: {status: RfcWorkflow.STATUS_APPROVED}})
-  }).get(RFD2131.path).reply(200, () => {
-    return _merge({}, RFD2131.response, {fields: {status: RfdWorkflow.STATUS_RESOLVED}})
-  }))
-  .command([
-    'on:jira.issue',
-    `--${FlagNames.CONFIG_SCRIPT}=${path.resolve(__dirname, '../build.config.js')}`,
-    `--${FlagNames.GIT_BRANCH_REMOTE}=${RFC2127.response.key}-fix-title-color`,
-    `--${FlagNames.GIT_REMOTE_URL}=some-remote-url`,
-    `--${FlagNames.ENV}=dlvr`,
-  ])
-  .exit(1)
-  .it('RFC-Approved,RFD-Resolved', ctx => {
-    mExpect(ctx.stdout.split('\n')).to.include.members(['=>    NOT READY'])
-  })
+  for (const rfcStatus of RfcWorkflow.ALL_STATUS) {
+    for (const rfdStatus of RfdWorkflow.ALL_STATUS) {
+      if (rfcStatus.name === RfcWorkflow.STATUS_APPROVED.name && rfdStatus.name === RfdWorkflow.STATUS_APPROVED.name) {
+        // READY cases
+        test
+        .nock(`${RFC2127.scope}`, api => api.get(RFC2127.path).reply(200, () => {
+          return _merge({}, RFC2127.response, {fields: {status: rfcStatus}})
+        }).get(RFD2131.path).reply(200, () => {
+          return _merge({}, RFD2131.response, {fields: {status: rfdStatus}})
+        }))
+        .stdout()
+        .stderr()
+        .command([
+          'on:jira.issue',
+          `--${FlagNames.CONFIG_SCRIPT}=${path.resolve(__dirname, '../build.config.js')}`,
+          `--${FlagNames.GIT_BRANCH_REMOTE}=${RFC2127.response.key}-fix-title-color`,
+          `--${FlagNames.GIT_REMOTE_URL}=some-remote-url`,
+          `--${FlagNames.ENV}=dlvr`,
+        ])
+        .exit(0)
+        .it(`RFC-${rfcStatus.name.toUpperCase()},RFD-${rfdStatus.name.toUpperCase()}-READY`, ctx => {
+          mExpect(ctx.stdout.split('\n')).to.include.members(['=>   READY'])
+        })
+      } else if (rfcStatus.name === RfcWorkflow.STATUS_APPROVED.name && rfdStatus.name === RfdWorkflow.STATUS_RESOLVED.name) {
+        // NOT READY cases
+        test
+        .stdout()
+        .stderr()
+        .nock(`${RFC2127.scope}`, api => api.get(RFC2127.path).reply(200, () => {
+          return _merge({}, RFC2127.response, {fields: {status: RfcWorkflow.STATUS_APPROVED}})
+        }).get(RFD2131.path).reply(200, () => {
+          return _merge({}, RFD2131.response, {fields: {status: RfdWorkflow.STATUS_RESOLVED}})
+        }))
+        .command([
+          'on:jira.issue',
+          `--${FlagNames.CONFIG_SCRIPT}=${path.resolve(__dirname, '../build.config.js')}`,
+          `--${FlagNames.GIT_BRANCH_REMOTE}=${RFC2127.response.key}-fix-title-color`,
+          `--${FlagNames.GIT_REMOTE_URL}=some-remote-url`,
+          `--${FlagNames.ENV}=dlvr`,
+        ])
+        .exit(0)
+        .it(`RFC-${rfcStatus.name.toUpperCase()},RFD-${rfdStatus.name.toUpperCase()}-NOT_READY`, ctx => {
+          mExpect(ctx.stdout.split('\n')).to.include.members(['=>   READY'])
+        })
+      } else {
+        it.skip(`RFC-${rfcStatus.name.toUpperCase()},RFD-${rfdStatus.name.toUpperCase()}-MISSING`, () => {
+          mExpect(1).to.be.equal(1)
+        })
+      }
+    }
+  }
 })

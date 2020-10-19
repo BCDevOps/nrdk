@@ -1,5 +1,6 @@
 import {FlagNames} from '../../src/flags'
 import {expect, test} from '@oclif/test'
+
 describe('build', () => {
   test
   .stdout()

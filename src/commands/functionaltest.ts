@@ -13,7 +13,9 @@ import {
 } from '../flags'
 
 export default class FunctionalTest extends BaseCommand {
-  static description = 'command to run functional tests for projects';
+  static description = 'command to run functional tests for projects'
+
+  static hidden = true
 
   static flags = {
     [FlagNames.CONFIG_SCRIPT]: flagConfigScript,
@@ -29,7 +31,7 @@ export default class FunctionalTest extends BaseCommand {
     const {flags} = this.parse(FunctionalTest)
     await applyFlagDefaults(flags)
     const settings = loadConfigScript(flags)
-    const {BasicFunctionalTester} = require('nr-pipeline-ext')
+    const {BasicFunctionalTester} = require('@bcgov/nr-pipeline-ext')
     new BasicFunctionalTester(settings).runFunctionalTests()
   }
 }

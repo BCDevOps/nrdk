@@ -1,1 +1,1 @@
-declare module 'nr-pipeline-ext';
+declare module '@bcgov/nr-pipeline-ext';

@@ -4,6 +4,8 @@ import {FlagNames, flagConfigScript, flagGitRemoteName, flagGitRemoteUrl, flagGi
 export default class Deploy extends BaseCommand {
   static description = 'describe the command here'
 
+  static hidden = true
+
   static flags = {
     [FlagNames.CONFIG_SCRIPT]: flagConfigScript,
     [FlagNames.DEPLOY_SCRIPT]: flagDeployScript,

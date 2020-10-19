@@ -5,6 +5,8 @@ import {BaseCommand} from '../../base'
 export default class OnJiraIssue extends BaseCommand {
   static description = 'describe the command here'
 
+  static hidden = true
+
   static flags = {
     [FlagNames.CONFIG_SCRIPT]: flagConfigScript,
     [FlagNames.BUILD_SCRIPT]: flagBuildScript,
@@ -19,7 +21,7 @@ export default class OnJiraIssue extends BaseCommand {
   async run() {
     const {flags} = this.parse(OnJiraIssue)
     await applyFlagDefaults(flags)
-    const {InputDeployerVerify} = require('nr-pipeline-ext')
+    const {InputDeployerVerify} = require('@bcgov/nr-pipeline-ext')
     const settings = loadConfigScript(flags)
     const verify = new InputDeployerVerify(Object.assign(settings))
     const result = await verify.verifyBeforeDeployment()
