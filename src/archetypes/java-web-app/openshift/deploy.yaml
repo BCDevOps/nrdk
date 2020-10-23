@@ -77,6 +77,14 @@ objects:
 - kind: Secret
   apiVersion: v1
   metadata:
+    name: "${NAME}${SUFFIX}-keycloak-config"
+    annotations:
+      as-copy-of: ${NAME}-keycloak-config
+  stringData:
+    keycloak.json: ''
+- kind: Secret
+  apiVersion: v1
+  metadata:
     name: "${NAME}${SUFFIX}-wallet"
     annotations:
       as-copy-of: ${NAME}-wallet
@@ -173,6 +181,8 @@ objects:
                 value: ${ENV_PROXY_HOST}
               - name: TNS_ADMIN
                 value: /usr/local/tomcat/wallet/
+              - name: FLAG_OIDC_ENABLED
+                value: "true"
               - name: OPENSHIFT_KUBE_PING_LABELS
                 value: "deploymentConfig=${NAME}${SUFFIX}"
               - name: OPENSHIFT_KUBE_PING_NAMESPACE
@@ -180,7 +190,7 @@ objects:
                   fieldRef:
                     fieldPath: metadata.namespace
               - name: CATALINA_OPTS
-                value: "-Djava.security.egd=file:/dev/./urandom -agentlib:jdwp=transport=dt_socket,address=8090,server=y,suspend=n"
+                value: "-Djava.security.egd=file:/dev/./urandom"
             livenessProbe:
               failureThreshold: 4
               httpGet:
@@ -204,6 +214,8 @@ objects:
             volumeMounts:   
               - mountPath: /usr/local/tomcat/ext/webade/classes
                 name: webade-properties
+              - mountPath: /usr/local/tomcat/ext/keycloak/classes
+                name: keycloak-config
               - mountPath: /apps_ux/logs/
                 name: app-logs
               - mountPath: /apps_data/${NAME}/
@@ -214,6 +226,9 @@ objects:
          - name: webade-properties
            secret:
              secretName: ${NAME}${SUFFIX}-webade-properties
+         - name: keycloak-config
+           secret:
+             secretName: ${NAME}${SUFFIX}-keycloak-config
          - name: app-data
            persistentVolumeClaim:
              claimName: ${NAME}${SUFFIX}-app-data-vol
@@ -240,4 +255,5 @@ parameters:
   description: proxy host configuration
 - name: INDEX
   description: index page for application
-
+- name: EXTRA_ENV
+  value: ''
