@@ -2,7 +2,7 @@ import {BaseCommand} from '../base'
 import * as FLAGS from '../flags'
 
 export default class Deploy extends BaseCommand {
-  static description = 'describe the command here'
+  static description = 'Deploy changes to an environment.'
 
   static hidden = true
 
@@ -16,6 +16,7 @@ export default class Deploy extends BaseCommand {
     [FLAGS.FlagNames.GIT_BRANCH]: FLAGS.flagGitBranch,
     [FLAGS.FlagNames.GIT_BRANCH_REMOTE]: FLAGS.flagGitBranchRemote,
     [FLAGS.FlagNames.ARCHETYPE]: FLAGS.flagArchetype,
+    [FLAGS.FlagNames.RFC_VALIDATION]: FLAGS.flagRfcValidation,
   }
 
   async run() {

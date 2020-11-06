@@ -18,6 +18,7 @@ export default class Build extends BaseCommand {
     [FLAGS.FlagNames.DEV_MODE]: FLAGS.flagDevMode,
     [FLAGS.FlagNames.GIT_CHANGE_TARGET]: FLAGS.flagGitChangeTarget,
     [FLAGS.FlagNames.ARCHETYPE]: FLAGS.flagArchetype,
+    [FLAGS.FlagNames.RFC_VALIDATION]: FLAGS.flagRfcValidation,
   }
 
   async run() {

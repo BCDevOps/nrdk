@@ -17,6 +17,7 @@ export enum FlagNames {
   CLEAN_SCRIPT = 'clean-script',
   DEV_MODE = 'dev-mode',
   ARCHETYPE = 'archetype',
+  RFC_VALIDATION = 'rfc-validation',
 }
 
 const defaultValues = {
@@ -73,7 +74,8 @@ export const flagGitChangeTarget = flags.string({description: 'Target branch of 
 export const flagPullRequestNumberSpec = flags.string({name: FlagNames.PULL_REQUEST_NUMBER, description: 'Pull Request number'})
 export const flagEnvSpec = flags.string({name: 'env', description: 'Environment'})
 export const flagDevMode = flags.string({name: FlagNames.DEV_MODE, description: 'Developer Mode (local)', options: ['true', 'false'], default: 'false'})
-export const flagArchetype = flags.string({name: 'archetype', description: 'Application Archetype/Pattern', options: ['java-web-app']})
+export const flagArchetype = flags.string({name: 'archetype', description: 'Application Archetype/Pattern', options: ['java-web-app', 'liquibase']})
+export const flagRfcValidation = flags.boolean({name: FlagNames.RFC_VALIDATION, description: 'Validate RFC?', default: true, allowNo: true})
 
 export async function applyFlagDefaults(flags: any) {
   for (const key of Object.keys(defaultValues)) {
