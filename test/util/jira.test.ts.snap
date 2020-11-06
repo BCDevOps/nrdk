@@ -1,0 +1,302 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Jira @jira RFDs and RFD-Subtasks create: 72829b90-f2e8-4569-92d8-10a7c889c8cc 1`] = `
+Array [
+  Object {
+    "inwardIssue": Object {
+      "key": "FAKE-123",
+    },
+    "outwardIssue": Object {
+      "key": "FAKE-1000",
+    },
+    "type": Object {
+      "id": "10300",
+    },
+  },
+  Object {
+    "inwardIssue": Object {
+      "key": "FAKE-123",
+    },
+    "outwardIssue": Object {
+      "key": "FAKE-1002",
+    },
+    "type": Object {
+      "id": "10300",
+    },
+  },
+  Object {
+    "inwardIssue": Object {
+      "key": "FAKE-123",
+    },
+    "outwardIssue": Object {
+      "key": "FAKE-1004",
+    },
+    "type": Object {
+      "id": "10300",
+    },
+  },
+]
+`;
+
+exports[`Jira @jira RFDs and RFD-Subtasks create: a7c66bfb-a011-4adc-9b10-6dda737a2d5b 1`] = `
+Array [
+  Object {
+    "fields": Object {
+      "fixVersions": Array [
+        "0.0.0",
+      ],
+      "issuelinks": Array [
+        Object {
+          "inwardIssue": Object {
+            "key": "FAKE-123",
+          },
+          "outwardIssue": Object {
+            "key": "FAKE-1000",
+          },
+          "type": Object {
+            "id": "10300",
+          },
+        },
+        Object {
+          "inwardIssue": Object {
+            "key": "FAKE-123",
+          },
+          "outwardIssue": Object {
+            "key": "FAKE-1002",
+          },
+          "type": Object {
+            "id": "10300",
+          },
+        },
+        Object {
+          "inwardIssue": Object {
+            "key": "FAKE-123",
+          },
+          "outwardIssue": Object {
+            "key": "FAKE-1004",
+          },
+          "type": Object {
+            "id": "10300",
+          },
+        },
+      ],
+      "issuetype": Object {
+        "id": "10400",
+        "name": "RFC",
+      },
+      "subtasks": Array [],
+    },
+    "key": "FAKE-123",
+  },
+  Object {
+    "fields": Object {
+      "customfield_10121": Object {
+        "value": "DLVR",
+      },
+      "description": "Deploying changes from PR NO: PR-456 in REPO: FAKE",
+      "fixVersions": Array [
+        Object {},
+      ],
+      "issuelinks": Array [
+        Object {
+          "inwardIssue": Object {
+            "key": "FAKE-123",
+          },
+          "outwardIssue": Object {
+            "key": "FAKE-1000",
+          },
+          "type": Object {
+            "id": "10300",
+          },
+        },
+      ],
+      "issuetype": Object {
+        "name": "RFD",
+      },
+      "labels": Array [
+        "FAKE",
+        "auto",
+      ],
+      "project": Object {
+        "key": "FAKE",
+      },
+      "status": Object {
+        "id": "10316",
+        "name": "Submitted",
+      },
+      "subtasks": Array [],
+      "summary": "RFD-DLVR-FAKE-123-rfc-PR-456",
+    },
+    "key": "FAKE-1000",
+  },
+  Object {
+    "fields": Object {
+      "components": Array [
+        Object {
+          "name": "FAKE",
+        },
+      ],
+      "customfield_10121": Object {
+        "value": "DLVR",
+      },
+      "issuelinks": Array [],
+      "issuetype": Object {
+        "name": "RFD-subtask",
+      },
+      "parent": Object {
+        "key": "FAKE-1000",
+      },
+      "project": Object {
+        "key": "FAKE",
+      },
+      "status": Object {
+        "id": "10316",
+        "name": "Submitted",
+      },
+      "subtasks": Array [],
+      "summary": "RFD-Subtask-DLVR-FAKE-123-rfc-PR-456-Developer-Review",
+    },
+    "key": "FAKE-1001",
+  },
+  Object {
+    "fields": Object {
+      "customfield_10121": Object {
+        "value": "TEST",
+      },
+      "description": "Deploying changes from PR NO: PR-456 in REPO: FAKE",
+      "fixVersions": Array [
+        Object {},
+      ],
+      "issuelinks": Array [
+        Object {
+          "inwardIssue": Object {
+            "key": "FAKE-123",
+          },
+          "outwardIssue": Object {
+            "key": "FAKE-1002",
+          },
+          "type": Object {
+            "id": "10300",
+          },
+        },
+      ],
+      "issuetype": Object {
+        "name": "RFD",
+      },
+      "labels": Array [
+        "FAKE",
+        "auto",
+      ],
+      "project": Object {
+        "key": "FAKE",
+      },
+      "status": Object {
+        "id": "10316",
+        "name": "Submitted",
+      },
+      "subtasks": Array [],
+      "summary": "RFD-TEST-FAKE-123-rfc-PR-456",
+    },
+    "key": "FAKE-1002",
+  },
+  Object {
+    "fields": Object {
+      "components": Array [
+        Object {
+          "name": "FAKE",
+        },
+      ],
+      "customfield_10121": Object {
+        "value": "TEST",
+      },
+      "issuelinks": Array [],
+      "issuetype": Object {
+        "name": "RFD-subtask",
+      },
+      "parent": Object {
+        "key": "FAKE-1002",
+      },
+      "project": Object {
+        "key": "FAKE",
+      },
+      "status": Object {
+        "id": "10316",
+        "name": "Submitted",
+      },
+      "subtasks": Array [],
+      "summary": "RFD-Subtask-TEST-FAKE-123-rfc-PR-456-IIT-Review",
+    },
+    "key": "FAKE-1003",
+  },
+  Object {
+    "fields": Object {
+      "customfield_10121": Object {
+        "value": "PROD",
+      },
+      "description": "Deploying changes from PR NO: PR-456 in REPO: FAKE",
+      "fixVersions": Array [
+        Object {},
+      ],
+      "issuelinks": Array [
+        Object {
+          "inwardIssue": Object {
+            "key": "FAKE-123",
+          },
+          "outwardIssue": Object {
+            "key": "FAKE-1004",
+          },
+          "type": Object {
+            "id": "10300",
+          },
+        },
+      ],
+      "issuetype": Object {
+        "name": "RFD",
+      },
+      "labels": Array [
+        "FAKE",
+        "auto",
+      ],
+      "project": Object {
+        "key": "FAKE",
+      },
+      "status": Object {
+        "id": "10316",
+        "name": "Submitted",
+      },
+      "subtasks": Array [],
+      "summary": "RFD-PROD-FAKE-123-rfc-PR-456",
+    },
+    "key": "FAKE-1004",
+  },
+  Object {
+    "fields": Object {
+      "components": Array [
+        Object {
+          "name": "FAKE",
+        },
+      ],
+      "customfield_10121": Object {
+        "value": "PROD",
+      },
+      "issuelinks": Array [],
+      "issuetype": Object {
+        "name": "RFD-subtask",
+      },
+      "parent": Object {
+        "key": "FAKE-1004",
+      },
+      "project": Object {
+        "key": "FAKE",
+      },
+      "status": Object {
+        "id": "10316",
+        "name": "Submitted",
+      },
+      "subtasks": Array [],
+      "summary": "RFD-Subtask-PROD-FAKE-123-rfc-PR-456-Business-Review",
+    },
+    "key": "FAKE-1005",
+  },
+]
+`;

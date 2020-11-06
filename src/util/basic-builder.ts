@@ -1,7 +1,8 @@
 /* eslint-disable valid-jsdoc */
 /* eslint-disable max-params */
 /* eslint-disable unicorn/import-index */
-import {Jira, OpenShiftClientX, GitOperation} from '../'
+import {OpenShiftClientX, GitOperation} from '../'
+import {Jira} from '../util/jira'
 import {AxiosFactory} from '../api/service/axios-factory'
 import {AxiosJiraClient} from '../api/service/axios-jira-client'
 
