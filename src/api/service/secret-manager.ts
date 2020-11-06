@@ -81,11 +81,12 @@ export const SVC_IDIR = SVC_IDIR_SPEC.name
 export const SVC_IDIR_USERNAME = 'sAMAccountName'
 export const SVC_IDIR_UPN = 'userPrincipalName'
 export const SVC_IDIR_PASSWORD = 'password'
+const DEFAULT_ENTRIES = {}
 
 export class SecretManager {
   private static instance: SecretManager;
 
-  private entries: any = {}
+  private entries: any = (JSON.parse(JSON.stringify(DEFAULT_ENTRIES)))
 
   private location = '~/nrdk/.secrets.json'
 
@@ -103,8 +104,12 @@ export class SecretManager {
     if (fs.existsSync(location)) {
       const readFile = util.promisify(fs.readFile)
       const content = await readFile(location, {encoding: 'utf8'})
-      this.entries = JSON.parse(content)
+      Object.assign(this.entries, JSON.parse(content))
     }
+  }
+
+  public static loadEntries(entries: any) {
+    Object.assign(DEFAULT_ENTRIES, entries)
   }
 
   async promptMissingFields(spec: ServiceSpec, svc: any) {
