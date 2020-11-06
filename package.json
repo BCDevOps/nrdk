@@ -18,9 +18,11 @@
     "@oclif/command": "^1.8.0",
     "@oclif/plugin-help": "^3.2.0",
     "axios": "^0.20.0",
+    "chalk": "^4.1.0",
     "cli-ux": "^5.5.0",
     "inquirer": "^7.3.3",
     "isomorphic-git": "^1.7.8",
+    "jira-connector": "^3.1.0",
     "lodash.merge": "^4.6.2",
     "rsync": "^0.6.1",
     "safe-buffer": "^5.2.1",
@@ -121,6 +123,8 @@
     "safe-buffer",
     "inquirer",
     "axios",
-    "cli-ux"
+    "cli-ux",
+    "jira-connector",
+    "chalk"
   ]
 }
