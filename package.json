@@ -13,7 +13,7 @@
     ]
   },
   "dependencies": {
-    "@bcgov/nr-pipeline-ext": "0.1.0-rc.11",
+    "@bcgov/nr-pipeline-ext": "0.1.0-rc.12",
     "@bcgov/pipeline-cli": "^1.0.1-2",
     "@oclif/command": "^1.8.0",
     "@oclif/plugin-help": "^3.2.0",
@@ -97,7 +97,7 @@
     "posttest": "eslint . --ext .ts --config .eslintrc",
     "prepack": "rm -rf lib && tsc -b && oclif-dev manifest && oclif-dev readme && cpx 'src/**/*.yaml' lib",
     "ncc": "ncc build bin/run -o dist --minify",
-    "test": "NOCK_BACK_MODE=lockdown nyc --reporter=html --reporter=text --extension .ts mocha --forbid-only \"test/**/*.test.ts\"",
+    "test": "NOCK_BACK_MODE=lockdown nyc --reporter=html --reporter=text --extension .ts mocha --timeout 99999 --forbid-only \"test/**/*.test.ts\"",
     "mocha:all": "mocha --forbid-only --timeout 99999 \"test/**/*.test.ts\"",
     "mocha": "mocha --forbid-only --timeout 99999",
     "version": "oclif-dev readme && git add README.md",
