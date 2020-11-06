@@ -6,11 +6,13 @@ import {
   BasicFunctionalTester,
   InputDeployerVerify,
   Liquibase,
+  Jira,
 } from '@bcgov/nr-pipeline-ext'
-import {OpenShiftClient} from '@bcgov/pipeline-cli'
+import {OpenShiftClient, OpenShiftClientX} from '@bcgov/pipeline-cli'
 
 export {
   OpenShiftClient,
+  OpenShiftClientX,
   BasicBuilder,
   BasicDeployer,
   BasicJavaApplicationBuilder,
@@ -18,6 +20,7 @@ export {
   BasicFunctionalTester,
   InputDeployerVerify,
   Liquibase,
+  Jira,
 }
 
 export {run} from '@oclif/command'
