@@ -22,10 +22,18 @@ function httpGet(url: URL, callback: (res: http.IncomingMessage) => void): http.
   }
   return http.get(url, callback)
 }
+
+function toJavaClassPath(items: string[]): string {
+  if (require('os').platform() === 'win32') {
+    return items.join(';')
+  }
+  return items.join(':')
+}
+
 export default class Liquibase {
   remoteMavenRepositoryUrl = 'https://repo1.maven.org/maven2'
 
-  jdbcDrivers: MavenGAV[] = [{groupId: 'com.oracle.database.jdbc', artifactId: 'ojdbc8', version: '18.3.0.0'}]
+  jdbcDrivers: MavenGAV[] = [{groupId: 'com.oracle.database.jdbc', artifactId: 'ojdbc8', version: '19.8.0.0'}]
 
   liquibase: MavenGAV = {groupId: 'org.liquibase', artifactId: 'liquibase-core', version: '4.1.1', ext: 'tar.gz'}
 
@@ -107,14 +115,16 @@ export default class Liquibase {
     return this.install().then(liquibaseHomeDir => {
       return this.downloadDrivers().then(drivers => {
         return new Promise(resolve => {
+          const classpath = [path.join(liquibaseHomeDir, 'liquibase.jar'), path.join(liquibaseHomeDir, 'lib'), path.join(liquibaseHomeDir, 'lib', '*')]
+          classpath.push(...drivers)
           const _args = [
             '-cp',
-            `${liquibaseHomeDir}/liquibase.jar:${liquibaseHomeDir}/lib/:${liquibaseHomeDir}/lib/*:${drivers.join(
-              ':'
-            )}`,
+            toJavaClassPath(classpath),
             'liquibase.integration.commandline.Main',
           ]
           _args.push(...args)
+          // eslint-disable-next-line no-console
+          console.log(_args.join(' '))
           resolve(spawn('java', _args, {...options}))
         })
       })

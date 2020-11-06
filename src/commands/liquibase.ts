@@ -2,6 +2,7 @@ import {Command} from '@oclif/command'
 // const LiquibaseRunner = require.main?.exports.Liquibase as any
 import {flags} from '@oclif/command'
 import Liquibase from '../util/liquibase'
+
 export default class LiquibaseCommand extends Command {
   static description = 'Run Liquibase'
 
@@ -10,7 +11,6 @@ export default class LiquibaseCommand extends Command {
   static hidden = true
 
   static flags = {
-    help: flags.string({char: 'h', hidden: true}),
     defaultsFile: flags.string({description: 'Propery file', default: 'deployment.properties'}),
   }
 
@@ -22,8 +22,9 @@ export default class LiquibaseCommand extends Command {
     if (flags.defaultsFile) {
       _argv.push(`--defaultsFile=${flags.defaultsFile}`)
     }
-    if (flags.help) {
+    if (argv[0] === 'help') {
       _argv.push('--help')
+      argv.shift()
     }
     _argv.push(...argv)
     // eslint-disable-next-line no-console
