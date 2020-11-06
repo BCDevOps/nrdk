@@ -188,7 +188,7 @@ parameters:
 - name: TOMCAT_IMAGE_NAME
   value: ha-tomcat9
 - name: TOMCAT_IMAGE_TAG
-  value: 9.0.27-stable
+  value: "0.1"
 - name: WEBAPP_NAME
   description: folder name under /usr/local/tomcat/webapps, can be ${NAME} or pub#${NAME} based on type of app
 - name: ARTIFACT_ID

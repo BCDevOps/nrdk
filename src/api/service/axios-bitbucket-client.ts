@@ -24,6 +24,7 @@ export class AxiosBitBucketClient {
 
   static parseUrl(url: string): RepositoryReference {
     if (url.match(/https:\/\/(apps|bwa)\.nrs\.gov\.bc\.ca\/int\/stash\/scm\//m)) {
+      // eslint-disable-next-line no-useless-escape
       const m = url.match(/https:\/\/(apps|bwa)\.nrs\.gov\.bc\.ca\/int\/stash\/scm\/(?<project>[^/]+)\/(?<repository>[^\s\.]+)(\.git)?/m)
       if (!m) throw new Error(`Unable to parse BitBucket Url from ${url}`)
       return {slug: m.groups?.repository as string, project: {key: m.groups?.project as string}}

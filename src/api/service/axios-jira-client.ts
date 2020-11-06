@@ -2,7 +2,7 @@ import {AxiosInstance} from 'axios'
 import {AxiosBitBucketClient} from './axios-bitbucket-client'
 import {GeneralError} from '../../error'
 
-export type Issue = any
+export type Issue = {key: string; id: string; fields: any}
 
 export const FIELDS = Object.freeze({
   ISSUE_TYPE: 'issuetype',
