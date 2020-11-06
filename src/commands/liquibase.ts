@@ -2,6 +2,7 @@ import {Command} from '@oclif/command'
 // const LiquibaseRunner = require.main?.exports.Liquibase as any
 import {flags} from '@oclif/command'
 import Liquibase from '../util/liquibase'
+import * as fs from 'fs'
 
 export default class LiquibaseCommand extends Command {
   static description = 'Run Liquibase'
@@ -20,6 +21,9 @@ export default class LiquibaseCommand extends Command {
     console.dir(flags)
     const _argv: string[] = []
     if (flags.defaultsFile) {
+      if (!fs.existsSync(flags.defaultsFile)) {
+        return this.error(`Create liquibase properties files called '${flags.defaultsFile}`)
+      }
       _argv.push(`--defaultsFile=${flags.defaultsFile}`)
     }
     if (argv[0] === 'help') {

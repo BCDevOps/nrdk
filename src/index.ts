@@ -7,6 +7,7 @@ import {
   InputDeployerVerify,
   Liquibase,
   Jira,
+  GitOperation,
 } from '@bcgov/nr-pipeline-ext'
 import {OpenShiftClient, OpenShiftClientX} from '@bcgov/pipeline-cli'
 
@@ -21,6 +22,7 @@ export {
   InputDeployerVerify,
   Liquibase,
   Jira,
+  GitOperation,
 }
 
 export {run} from '@oclif/command'

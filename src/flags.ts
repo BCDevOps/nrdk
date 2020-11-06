@@ -43,6 +43,8 @@ const defaultValues = {
   [FlagNames.GIT_CHANGE_TARGET]: async (flags: any) => {
     if (!flags[FlagNames.GIT_CHANGE_TARGET] && process.env.CHANGE_TARGET) {
       flags[FlagNames.GIT_CHANGE_TARGET] = process.env.CHANGE_TARGET
+    } else if (!flags[FlagNames.GIT_CHANGE_TARGET]) {
+      flags[FlagNames.GIT_CHANGE_TARGET] = await GitClient.getInstance().getRemoteBranchName()
     }
   },
   [FlagNames.BUILD_SCRIPT]: async (flags: any) => {

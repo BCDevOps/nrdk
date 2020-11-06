@@ -1,5 +1,4 @@
 import * as readline from 'readline'
-import * as fs from 'fs'
 
 export default class PropertiesFile {
   static async read(input: NodeJS.ReadableStream):  Promise<Map<string, string>> {
