@@ -15,19 +15,19 @@ const STATUS_REOPENED = {id: '4', name: 'Reopened'}
 
 const ACTION_921 = {name: 'Cancel', id: '921', to: {...STATUS_CLOSED}}
 const ACTION_801 = {name: 'Request  info', id: '801', to: {...STATUS_WAITING_FOR_INFO}}
-const ACTION_961 = {name: 'Re-open', id: '961', to: {...STATUS_REOPENED}}
-const ACTION_4 = {name: 'Start progress', id: '4', to: {...STATUS_IN_PROGRESS}}
-const ACTION_731 = {name: 'Submit', id: '731', to: {...STATUS_SUBMITTED}}
+export const ACTION_961 = {name: 'Re-open', id: '961', to: {...STATUS_REOPENED}}
+export const ACTION_4 = {name: 'Start progress', id: '4', to: {...STATUS_IN_PROGRESS}}
+export const ACTION_731 = {name: 'Submit', id: '731', to: {...STATUS_SUBMITTED}}
 const ACTION_301 = {name: 'Stop Progress', id: '301', to: {...STATUS_WAITING_FOR_INFO}}
-const ACTION_781 = {name: 'Resolve', id: '781', to: {...STATUS_RESOLVED}}
-const ACTION_701 = {name: 'Close issue', id: '701', to: {...STATUS_CLOSED}}
-const ACTION_881 = {name: 'Start review', id: '881', to: {...STATUS_IN_REVIEW}}
-const ACTION_711 = {name: 'Schedule', id: '711', to: {...STATUS_SCHEDULED}}
+export const ACTION_781 = {name: 'Resolve', id: '781', to: {...STATUS_RESOLVED}}
+export const ACTION_701 = {name: 'Close issue', id: '701', to: {...STATUS_CLOSED}}
+export const ACTION_881 = {name: 'Start review', id: '881', to: {...STATUS_IN_REVIEW}}
+export const ACTION_711 = {name: 'Schedule', id: '711', to: {...STATUS_SCHEDULED}}
 const ACTION_941 = {name: 'Back to Submitted', id: '941', to: {...STATUS_SUBMITTED}}
 const ACTION_751 = {name: 'Info  provided', id: '751', to: {...STATUS_SUBMITTED}}
 const ACTION_811 = {name: 'Info provided', id: '811', to: {...STATUS_IN_PROGRESS}}
 const ACTION_911 = {name: 'Info   provided', id: '911', to: {...STATUS_IN_REVIEW}}
-const ACTION_721 = {name: 'Approve', id: '721', to: {...STATUS_APPROVED}}
+export const ACTION_721 = {name: 'Approve', id: '721', to: {...STATUS_APPROVED}}
 const ACTION_951 = {name: 'Re-close', id: '951', to: {...STATUS_CLOSED}}
 
 const ACTIONS = {

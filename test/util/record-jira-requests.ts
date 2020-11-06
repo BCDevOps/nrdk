@@ -5,12 +5,15 @@ import * as crypto from 'crypto'
 
 // eslint-disable-next-line complexity
 function cleanFields(fields: any) {
+  if (!fields) return
   for (const field of Object.keys(fields)) {
     const value = fields[field]
     if (value === null) {
       delete fields[field]
-    } else if (field === 'creator' || field === 'reporter' || field === 'assignee' || field === 'aggregateprogress' || field === 'timetracking' || field === 'subtasks' || field === 'workratio' || field === 'worklog' || field === 'watches' || field === 'votes' || field === 'progress' || field === 'comment' || field === 'customfield_11200' || field === 'customfield_10009' || field === 'customfield_10500' || field === 'customfield_10800') {
+    } else if (field === 'creator' || field === 'reporter' || field === 'assignee' || field === 'aggregateprogress' || field === 'timetracking' || field === 'subtasks' || field === 'workratio' || field === 'worklog' || field === 'watches' || field === 'votes' || field === 'progress' || field === 'comment' || field === 'customfield_11200' || field === 'customfield_10009' || field === 'customfield_10500' || field === 'customfield_10800' || field === 'self') {
       delete fields[field]
+    } else if (field === 'parent') {
+      cleanFields(value)
     } else if (field.startsWith('customfield_') &&
       !(
         field === 'customfield_10126' /* Deployed in Environment */ ||
@@ -44,7 +47,7 @@ export function sanitizeNockDefinition(nockCall: nock.Definition) {
   delete ((nockCall as unknown) as any)['rawHeaders']
   const response = ((nockCall.response as unknown) as any)
 
-  if (nockCall.path.match(/int\/jira\/rest\/api\/2\/issue\//g)) {
+  if (nockCall.path.match(/int\/jira\/rest\/api\/2\/issue/) || nockCall.path.match(/int\/jira\/rest\/agile\/1\.0\/issue/)) {
     cleanFields(response.fields)
     if (response.self) delete response.self
   } else if (nockCall.path.match(/int\/jira\/rest\/api\/2\/search\?/g)) {
@@ -53,7 +56,7 @@ export function sanitizeNockDefinition(nockCall: nock.Definition) {
       cleanFields(issue.fields)
     }
     if (response.self) delete response.self
-  } else if (nockCall.path.match(/int\/jira\/rest\/dev-status\/1\.0\/issue\/detail/g)) {
+  } else if (nockCall.path.match(/int\/jira\/rest\/dev-status\/1\.0\/issue\/detail/) || nockCall.path.match(/int\/jira\/rest\/api\/2\/version/)) {
     if (response.detail) {
       for (const detail of response.detail) {
         if (detail.pullRequests) {

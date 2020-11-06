@@ -42,14 +42,30 @@ export class AxiosJiraClient {
     })
   }
 
-  public async getRfcByIssue(issueKey: string): Promise<Issue> {
-    const issue = await this.getIssue(issueKey, {fields: 'fixVersions'})
+  public async deleteIssue(params: {issueIdOrKey: string; deleteSubtasks?: string}) {
+    return this.client.delete(`rest/api/2/issue/${params.issueIdOrKey}`, {params: {deleteSubtasks: params.deleteSubtasks || 'false'}})
+    .then(response => {
+      return response.data
+    })
+  }
+
+  public async search(params: {fields: string; jql: string; maxResults?: number}): Promise<any> {
+    return this.client.get('rest/api/2/search', {params}).then(response => {
+      return response.data
+    })
+  }
+
+  public async getRfcByIssue(issueKey: string, fields = 'fixVersions,issuetype,project'): Promise<Issue> {
+    const issue = await this.getIssue(issueKey, {fields: fields})
+    if (issue.fields.issuetype.name === 'RFC') {
+      return issue
+    }
     if (issue.fields.fixVersions.length === 0) {
       throw new Error(`Expected to find at least '1' value for fix version, but found '${issue.fields.fixVersions.length}' for issue ${issueKey}`)
     }
     const fixVersion = issue.fields.fixVersions[0]
     const jql = `fixVersion  = ${fixVersion.id} AND issuetype = RFC AND statusCategory != Done`
-    const rfcSearchResults = await this.client.get('rest/api/2/search', {params: {fields: 'issuetype,project', jql: jql}}).then(response => {
+    const rfcSearchResults = await this.client.get('rest/api/2/search', {params: {fields: fields, jql: jql}}).then(response => {
       return response.data
     })
     if (rfcSearchResults.total !== 1) {
@@ -65,5 +81,27 @@ export class AxiosJiraClient {
     } catch (error) {
       throw new Error(`Unable to parse component description for ${component.name}`)
     }
+  }
+
+  createIssue(issue: any) {
+    return this.client.post('rest/api/2/issue', issue)
+    .then(response => {
+      return response.data
+    })
+  }
+
+  transitionIssue(params: {
+    issueIdOrKey: string;
+    transition?: any;
+    fields?: any;
+    update?: any;
+    historyMetadata?: any;
+    properties?: Array<any>;
+    [key: string]: any;
+  }): Promise<any> {
+    return this.client.post(`rest/api/2/issue/${params.issueIdOrKey}`, params)
+    .then(response => {
+      return response
+    })
   }
 }

@@ -4,12 +4,19 @@ import * as path from 'path'
 import {Definition} from 'nock'
 import {sanitizeNockDefinition} from './record-jira-requests'
 
+function fullTestCaseName(ctx: any): string {
+  if (ctx.parent) {
+    return fullTestCaseName(ctx.parent) + '-' + sanitize(ctx.title)
+  }
+  return sanitize(ctx.title)
+}
+
 export function beforeEach() {
   return function (this: Mocha.Context, done: Function) {
     const testFile = (this.test as any).file as string
     const fixtures = path.join(path.dirname(testFile), '.fixtures')
     this.__nock_filenames = this.__nock_filenames ||  []
-    const filename =  path.basename(testFile) + '.' + sanitize((this.currentTest as any).title + '.json').replace(' ', '_')
+    const filename =  path.basename(testFile) + '.' + (fullTestCaseName(this.currentTest) + '.json').replace(' ', '_')
     // make sure we're not reusing the nock file
     if (this.__nock_filenames.indexOf(filename) !== -1) {
       return done(new Error('nock-back-mocha does not support multiple tests with the same name. ' + filename + ' cannot be reused.'))
@@ -34,5 +41,8 @@ export function beforeEach() {
 }
 
 export function afterEach(this: Mocha.Context) {
-  (this.currentTest as any).nockDone()
+  (this.currentTest as any)?.nockDone()
+  nock.restore()
+  nock.cleanAll()
+  nock.enableNetConnect()
 }
