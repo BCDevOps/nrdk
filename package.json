@@ -1,7 +1,7 @@
 {
   "name": "@bcgov/nrdk",
   "description": "NR Developer/Deployment Kit",
-  "version": "0.1.0-rc.50",
+  "version": "0.1.0-rc.57",
   "author": "Clecio Varjao",
   "bin": {
     "nrdk": "./bin/run"
@@ -13,11 +13,10 @@
     ]
   },
   "dependencies": {
-    "@bcgov/nr-pipeline-ext": "0.1.0-rc.10",
+    "@bcgov/nr-pipeline-ext": "0.1.0-rc.11",
     "@bcgov/pipeline-cli": "^1.0.1-2",
     "@oclif/command": "^1.8.0",
     "@oclif/plugin-help": "^3.2.0",
-    "@types/rsync": "^0.4.30",
     "axios": "^0.20.0",
     "cli-ux": "^5.5.0",
     "inquirer": "^7.3.3",
@@ -37,6 +36,7 @@
     "@types/lodash.merge": "^4.6.6",
     "@types/mocha": "^8.0.3",
     "@types/node": "^12.19.1",
+    "@types/rsync": "^0.4.30",
     "@types/tar": "^4.0.3",
     "@zeit/ncc": "^0.22.3",
     "chai": "^4",
@@ -109,7 +109,6 @@
   "bundleDependencies": [
     "@bcgov/pipeline-cli",
     "@oclif/plugin-help",
-    "@types/rsync",
     "isomorphic-git",
     "@bcgov/nr-pipeline-ext",
     "rsync",
