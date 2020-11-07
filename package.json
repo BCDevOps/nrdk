@@ -36,6 +36,7 @@
     "@types/lodash.merge": "^4.6.6",
     "@types/mocha": "^8.0.3",
     "@types/node": "^12.19.1",
+    "@types/request": "^2.48.5",
     "@types/rsync": "^0.4.30",
     "@types/tar": "^4.0.3",
     "@zeit/ncc": "^0.22.3",
