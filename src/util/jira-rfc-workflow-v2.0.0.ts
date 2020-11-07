@@ -1,20 +1,26 @@
 /* eslint-disable prettier/prettier */
 'use strict'
 
-const STATUS_OPEN = {id: '1', name: 'Open'}
-const STATUS_SUBMIT = {id: '10500', name: 'Submit'}
+export const STATUS_OPEN = {id: '1', name: 'Open'}
 export const STATUS_APPROVED = {id: '10312', name: 'Approved'}
+export const STATUS_UNDER_REVIEW = {id: '10312', name: 'UNDER REVIEW'}
+/** Resolved */
 const STATUS_RESOLVED = {id: '5', name: 'Resolved'}
 const STATUS_CLOSED = {id: '6', name: 'Closed'}
 
 const ACTION_11 = {name: 'Cancel', id: '11', to: {...STATUS_CLOSED}}
-const ACTION_21 = {name: 'Submit', id: '21', to: {...STATUS_SUBMIT}}
-const ACTION_31 = {name: 'Approve', id: '31', to: {...STATUS_APPROVED}}
+/** Submit */
+export const ACTION_21 = {name: 'Submit', id: '21', to: {...STATUS_UNDER_REVIEW}}
+/** Approve */
+export const ACTION_31 = {name: 'Approve', id: '31', to: {...STATUS_APPROVED}}
+/** Reject */
 const ACTION_41 = {name: 'Reject', id: '41', to: {...STATUS_OPEN}}
-const ACTION_71 = {name: 'Mark Successful', id: '71', to: {...STATUS_RESOLVED}}
-const ACTION_91 = {name: 'Mark Failure', id: '91', to: {...STATUS_SUBMIT}}
+/** Mark Successful */
+export const ACTION_71 = {name: 'All Deployments Done', id: '71', to: {...STATUS_RESOLVED}}
+const ACTION_91 = {name: 'Mark Failure', id: '91', to: {...STATUS_UNDER_REVIEW}}
 const ACTION_101 = {name: 'Re-review', id: '101', to: {...STATUS_OPEN}}
-const ACTION_81 = {name: 'Complete', id: '81', to: {...STATUS_CLOSED}}
+/** Complete */
+export const ACTION_81 = {name: 'Complete', id: '81', to: {...STATUS_CLOSED}}
 
 const ACTIONS = {
   [ACTION_21.id]: ACTION_21,
@@ -31,10 +37,8 @@ const WORKFLOW = {
     ACTION_21, // Submit
     ACTION_11, // Cancel
   ],
-  [STATUS_SUBMIT.id]: [
+  [STATUS_UNDER_REVIEW.id]: [
     ACTION_31, // Approve
-    ACTION_41, // Reject
-    ACTION_11, // Cancel
   ],
   [STATUS_APPROVED.id]: [
     ACTION_71, // Mark Successful
@@ -70,8 +74,6 @@ export default class RfcWorkflow {
 
     static STATUS_OPEN = STATUS_OPEN
 
-    static STATUS_SUBMIT = STATUS_SUBMIT
-
     static STATUS_APPROVED = STATUS_APPROVED
 
     static STATUS_RESOLVED = STATUS_RESOLVED
@@ -80,7 +82,7 @@ export default class RfcWorkflow {
 
     static ALL_STATUS = [
       STATUS_OPEN,
-      STATUS_SUBMIT,
+      STATUS_UNDER_REVIEW,
       STATUS_APPROVED,
       STATUS_RESOLVED,
       STATUS_CLOSED,

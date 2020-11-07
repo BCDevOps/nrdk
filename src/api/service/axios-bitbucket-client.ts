@@ -5,6 +5,7 @@ export const FIELDS = Object.freeze({
 })
 export interface RepositoryReference {
   cwd?: string;
+  url?: string;
   slug: string;
   project: {key: string};
 }
@@ -27,11 +28,11 @@ export class AxiosBitBucketClient {
       // eslint-disable-next-line no-useless-escape
       const m = url.match(/https:\/\/(apps|bwa)\.nrs\.gov\.bc\.ca\/int\/stash\/scm\/(?<project>[^/]+)\/(?<repository>[^\s\.]+)(\.git)?/m)
       if (!m) throw new Error(`Unable to parse BitBucket Url from ${url}`)
-      return {slug: m.groups?.repository as string, project: {key: m.groups?.project as string}}
+      return {url: m[0], slug: m.groups?.repository as string, project: {key: m.groups?.project as string}}
     }
     const m = url.match(/https:\/\/(apps|bwa)\.nrs\.gov\.bc\.ca\/int\/stash\/projects\/(?<project>[^/]+)\/repos\/(?<repository>[^/\s]+)/m)
     if (!m) throw new Error(`Unable to parse BitBucket Url from ${url}`)
-    return {slug: m.groups?.repository as string, project: {key: m.groups?.project as string}}
+    return {url: m[0] as string, slug: m.groups?.repository as string, project: {key: m.groups?.project as string}}
   }
 
   constructor(client: AxiosInstance) {

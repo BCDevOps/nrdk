@@ -1,6 +1,7 @@
 import {AxiosInstance} from 'axios'
 import {AxiosBitBucketClient} from './axios-bitbucket-client'
 import {GeneralError} from '../../error'
+import {IssueReference} from '../model/jira'
 
 export type Issue = {key: string; id: string; fields: any}
 
@@ -50,12 +51,13 @@ export class AxiosJiraClient {
   }
 
   public async search(params: {fields: string; jql: string; maxResults?: number}): Promise<any> {
-    return this.client.get('rest/api/2/search', {params}).then(response => {
+    return this.client.get('rest/api/2/search', {params})
+    .then(response => {
       return response.data
     })
   }
 
-  public async getRfcByIssue(issueKey: string, fields = 'fixVersions,issuetype,project'): Promise<Issue> {
+  public async getRfcByIssue(issueKey: string, fields = 'fixVersions,issuetype,project,status'): Promise<Issue> {
     const issue = await this.getIssue(issueKey, {fields: fields})
     if (issue.fields.issuetype.name === 'RFC') {
       return issue
@@ -83,14 +85,17 @@ export class AxiosJiraClient {
     }
   }
 
-  createIssue(issue: any) {
+  public async createIssue(issue: any) {
     return this.client.post('rest/api/2/issue', issue)
     .then(response => {
-      return response.data
+      return response.data as IssueReference
+    })
+    .catch(error => {
+      throw error
     })
   }
 
-  transitionIssue(params: {
+  public async transitionIssue(params: {
     issueIdOrKey: string;
     transition?: any;
     fields?: any;
@@ -99,9 +104,28 @@ export class AxiosJiraClient {
     properties?: Array<any>;
     [key: string]: any;
   }): Promise<any> {
-    return this.client.post(`rest/api/2/issue/${params.issueIdOrKey}`, params)
+    return this.client.post(`/rest/api/2/issue/${params.issueIdOrKey}/transitions`, params)
+    .then(_response => {
+      return this.getIssue(params.issueIdOrKey, {fields: 'status'})
+    })
+    .catch(error => {
+      throw error
+    })
+  }
+
+  public async createIssueLink(params?: {
+    type?: any;
+    inwardIssue?: any;
+    outwardIssue?: any;
+    comment?: any;
+  }) {
+    return this.client.post('/rest/api/2/issueLink', params)
+  }
+
+  async createIssueRemoteWebLink(issue: IssueReference, link: { url: string; title: string }) {
+    return this.client.post(`/rest/api/2/issue/${issue.key}/remotelink`, {object: link})
     .then(response => {
-      return response
+      return response.data
     })
   }
 }

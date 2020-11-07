@@ -1,19 +1,19 @@
 /* eslint-disable prettier/prettier */
 'use strict'
 
-const STATUS_OPEN = {id: '1', name: 'Open'}
-const STATUS_IN_PROGRESS = {id: '3', name: 'In Progress'}
+export const STATUS_OPEN = {id: '1', name: 'Open'}
+export const STATUS_IN_PROGRESS = {id: '3', name: 'In Progress'}
 export const STATUS_RESOLVED = {id: '5', name: 'Resolved'}
 const STATUS_CLOSED = {id: '6', name: 'Closed'}
 const STATUS_SUBMITTED = {id: '10316', name: 'Submitted'}
-const STATUS_APPROVED = {id: '10312', name: 'Approved'}
-const STATUS_SCHEDULED = {id: '10315', name: 'Scheduled'}
+export const STATUS_APPROVED = {id: '10312', name: 'Approved'}
+export const STATUS_SCHEDULED = {id: '10315', name: 'Scheduled'}
 const STATUS_WAITING_FOR_INFO = {id: '10317', name: 'Waiting for info'}
 const STATUS_IN_REVIEW = {id: '10313', name: 'In  review'}
 const STATUS_ON_HOLD = {id: '10314', name: 'On hold'}
 const STATUS_REOPENED = {id: '4', name: 'Reopened'}
 
-const ACTION_921 = {name: 'Cancel', id: '921', to: {...STATUS_CLOSED}}
+export const ACTION_921 = {name: 'Cancel', id: '921', to: {...STATUS_CLOSED}}
 const ACTION_801 = {name: 'Request  info', id: '801', to: {...STATUS_WAITING_FOR_INFO}}
 export const ACTION_961 = {name: 'Re-open', id: '961', to: {...STATUS_REOPENED}}
 export const ACTION_4 = {name: 'Start progress', id: '4', to: {...STATUS_IN_PROGRESS}}

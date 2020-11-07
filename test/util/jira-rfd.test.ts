@@ -163,6 +163,7 @@ describe('jira:wokrflow', () => {
     })
     it('create-version', async () => {
       chai.expect(rfc).to.not.be.null
+      jira.issueLinks.createIssueLink()
       return jira.projectVersions.createVersion({project: JIRA_PROJECT, name: TEST_CASE_LABEL})
       .then(result => {
         chai.expect(result).to.have.own.property('id')

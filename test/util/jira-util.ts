@@ -4,6 +4,7 @@ import {AxiosJiraClient} from '../../src/api/service/axios-jira-client'
 
 export async function cleanUpTestCase(jira: AxiosJiraClient, testCaseId: string, projectKey: string) {
   if (process.env.NOCK_BACK_MODE === 'lockdown') return Promise.resolve(true)
+  // Delete issues
   await jira.search({jql: `labels = ${testCaseId}`, fields: 'key', maxResults: 100})
   .then(async result => {
     for (const issue of result.issues) {
@@ -11,18 +12,29 @@ export async function cleanUpTestCase(jira: AxiosJiraClient, testCaseId: string,
       await jira.deleteIssue({issueIdOrKey: issue.key, deleteSubtasks: 'true'})
     }
   })
+  // Delete Versions
   await jira.client.get(`/rest/api/2/project/${projectKey}/versions`)
   .then(async result => {
     // eslint-disable-next-line no-console
     for (const version of result.data) {
-      if (version.name === testCaseId) {
+      if (version.name && (version.name as string).startsWith(testCaseId)) {
         // eslint-disable-next-line no-await-in-loop
         await jira.client.delete(`/rest/api/2/version/${version.id}`)
         break
       }
     }
   })
-  // clearVersion(jira)
+  // Delete components
+  await jira.client.get(`/rest/api/2/project/${projectKey}/components`)
+  .then(async result => {
+    // eslint-disable-next-line no-console
+    for (const component of result.data) {
+      if (component.name === testCaseId) {
+        // eslint-disable-next-line no-await-in-loop
+        await jira.client.delete(`/rest/api/2/component/${component.id}`)
+      }
+    }
+  })
 }
 export async function createRFC(jira: AxiosJiraClient, issue: any) {
   if (!issue?.fields?.project?.key) throw new Error('Missing issue "fields.project.key" field')
