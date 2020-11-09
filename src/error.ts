@@ -8,8 +8,8 @@ export class GeneralError extends Error {
     if (parent) {
       const current_stack =  (this.stack as string).split('\n')
       const parent_stack = (parent.stack as string).split('\n')
-
-      this.stack = current_stack.slice(0, 2).join('\n') + '\n' + parent_stack.join('\n')
+      // .slice(0, 2)
+      this.stack = current_stack.join('\n') + '\n' + parent_stack.join('\n')
     }
   }
 }

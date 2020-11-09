@@ -1,3 +1,4 @@
+/* eslint-disable valid-jsdoc */
 import {AxiosInstance} from 'axios'
 import {AxiosBitBucketClient} from './axios-bitbucket-client'
 import {GeneralError} from '../../error'
@@ -122,8 +123,12 @@ export class AxiosJiraClient {
     return this.client.post('/rest/api/2/issueLink', params)
   }
 
-  async createIssueRemoteWebLink(issue: IssueReference, link: { url: string; title: string }) {
-    return this.client.post(`/rest/api/2/issue/${issue.key}/remotelink`, {object: link})
+  /**
+   * Create a remote link to a ticket
+   * @see(https://docs.atlassian.com/software/jira/docs/api/REST/8.5.3/#api/2/issue-createOrUpdateRemoteIssueLink)
+   */
+  async createIssueRemoteWebLink(issue: IssueReference, link: { globalId: string; relationship: string; object: {url: string; title: string }}) {
+    return this.client.post(`/rest/api/2/issue/${issue.key}/remotelink`, link)
     .then(response => {
       return response.data
     })

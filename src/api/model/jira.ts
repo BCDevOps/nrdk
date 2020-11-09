@@ -1,4 +1,10 @@
-import { RepositoryReference } from '../service/axios-bitbucket-client';
+import {RepositoryReference} from '../service/axios-bitbucket-client'
+
+export enum IssueTypeNames {
+  RFC = 'RFC',
+  RFD = 'RFD',
+  RFDSubtask = 'RFD-subtask'
+}
 
 export interface IssueReferenceByUrl {
   url: string;
@@ -54,7 +60,7 @@ export type IssueReference = Issue
 export interface DeploymentArgument {
   issue: IssueReference;
   pullRequest: PullRequestReference;
-  targetEnvironment: string;
+  targetEnvironment: string | string[];
 }
 export interface StartDeploymentArgument extends DeploymentArgument {
   dryrun?: boolean;

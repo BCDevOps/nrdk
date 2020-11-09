@@ -102,7 +102,7 @@
     "ncc": "ncc build bin/run -o dist --minify",
     "test": "NOCK_BACK_MODE=lockdown nyc --reporter=html --reporter=text --extension .ts mocha --timeout 99999 --forbid-only \"test/**/*.test.ts\"",
     "mocha:all": "mocha --forbid-only --timeout 99999 \"test/**/*.test.ts\"",
-    "mocha": "mocha --forbid-only --timeout 99999",
+    "mocha": "mocha --timeout 99999",
     "version": "oclif-dev readme && git add README.md",
     "oclif": "oclif",
     "link": "npm link @bcgov/nr-pipeline-ext && npm link @bcgov/pipeline-cli",

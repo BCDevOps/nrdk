@@ -4,7 +4,7 @@
 export const STATUS_OPEN = {id: '1', name: 'Open'}
 export const STATUS_IN_PROGRESS = {id: '3', name: 'In Progress'}
 export const STATUS_RESOLVED = {id: '5', name: 'Resolved'}
-const STATUS_CLOSED = {id: '6', name: 'Closed'}
+export const STATUS_CLOSED = {id: '6', name: 'Closed'}
 const STATUS_SUBMITTED = {id: '10316', name: 'Submitted'}
 export const STATUS_APPROVED = {id: '10312', name: 'Approved'}
 export const STATUS_SCHEDULED = {id: '10315', name: 'Scheduled'}
