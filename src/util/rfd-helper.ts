@@ -360,8 +360,8 @@ export class RfdHelper {
     param.dryrun = param.dryrun || false
     for (const issue of issues) {
       if (issue.fields?.issuetype?.name === 'RFD') {
-        if (!(issue.fields?.status?.id === RFD.STATUS_APPROVED.id || issue.fields?.status?.id === RFD.STATUS_SCHEDULED.id || issue.fields?.status?.id === RFD.STATUS_APPROVED.id)) {
-          errors.push({cause: `${issue.fields?.issuetype?.name} '${issue.key}' is currently in '${issue.fields?.status?.name}' state but expected to be in '${RFD.STATUS_APPROVED.name}', '${RFD.STATUS_SCHEDULED.name}', or '${RFD.STATUS_APPROVED.name}'`})
+        if (!(issue.fields?.status?.id === RFD.STATUS_APPROVED.id || issue.fields?.status?.id === RFD.STATUS_SCHEDULED.id || issue.fields?.status?.id === RFD.STATUS_IN_PROGRESS.id)) {
+          errors.push({cause: `${issue.fields?.issuetype?.name} '${issue.key}' is currently in '${issue.fields?.status?.name}' state but expected to be in '${RFD.STATUS_APPROVED.name}', '${RFD.STATUS_SCHEDULED.name}', or '${RFD.STATUS_IN_PROGRESS.name}'`})
         }
         rfds.push(issue.key as string)
       } else if (issue.fields?.issuetype?.name === 'RFC') {
@@ -410,11 +410,32 @@ export class RfdHelper {
     return output
   }
 
-  async deploymentFailed(_rfcIssueKey: string) {
-    // no-op
+  async deploymentFailed(param: StartDeploymentArgument) {
+    const jira = await this.createJiraClient()
+    const issues = await this.createDeployments(param)
+    for (const issue of issues) {
+      if (issue.fields?.issuetype?.name === IssueTypeNames.RFD) {
+        // eslint-disable-next-line no-await-in-loop
+        await jira.transitionIssue({issueIdOrKey: issue.key as string, transition: {id: RFD.ACTION_921.id}})
+      }
+    }
   }
 
-  async deploymentSuccessful(_rfcIssueKey: string) {
-    // no-op
+  async deploymentSuccessful(param: StartDeploymentArgument) {
+    const issues = await this.createDeployments(param)
+    // Transition RFD-Subtasks first
+    for (const issue of issues) {
+      if (issue.fields?.issuetype?.name === IssueTypeNames.RFDSubtask) {
+        // eslint-disable-next-line no-await-in-loop
+        await this.transitionRFDForward(issue, RFD.STATUS_RESOLVED)
+      }
+    }
+    // Transition RFDs
+    for (const issue of issues) {
+      if (issue.fields?.issuetype?.name === IssueTypeNames.RFD) {
+        // eslint-disable-next-line no-await-in-loop
+        await this.transitionRFDForward(issue, RFD.STATUS_RESOLVED)
+      }
+    }
   }
 }

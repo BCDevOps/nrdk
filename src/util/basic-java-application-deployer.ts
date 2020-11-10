@@ -1,9 +1,12 @@
 /* eslint-disable valid-jsdoc */
 /* eslint-disable max-params */
 /* eslint-disable unicorn/import-index */
-import {Jira, OpenShiftClientX, CONST, InputDeployerVerify as Verifier} from '../'
-import {AxiosFactory} from '../api/service/axios-factory'
+import {OpenShiftClientX, CONST} from '../'
+import {AxiosBitBucketClient} from '../api/service/axios-bitbucket-client'
 import {AxiosJiraClient} from '../api/service/axios-jira-client'
+import {GeneralError} from '../error'
+import {RfdHelper} from '../util/rfd-helper'
+import { ValidationError } from '../validation-error'
 
 export class BasicJavaApplicationDeployer {
   settings: any
@@ -32,37 +35,64 @@ export class BasicJavaApplicationDeployer {
   }
 
   async deploy() {
-    const env = this.settings.options.env
-
     if (this.settings.options['local-mode'] === 'true' || !this.isCDdeployment()) {
       await this.deployOpenshift()
     } else {
-      const verify = new Verifier(Object.assign(this.settings))
-      const verifyStatus = await verify.verifyBeforeDeployment()
-
-      if (verifyStatus.status === 'Ready') {
-        await this.deployOpenshift()
-        const jiraUrl = this.settings.jiraUrl
-        const username = this.settings.phases[env].credentials.idir.user
-        const password = this.settings.phases[env].credentials.idir.pass
-        const changeBranch = this.settings.options.git.branch.merge
-        const issueKey = await AxiosJiraClient.parseJiraIssueKeyFromUri(changeBranch)
-        const jiraAxiosClient = await AxiosFactory.jira()
-        const rfcIssueKey = (await jiraAxiosClient.getRfcByIssue(issueKey)).key
-
-        const jiraSettings = {
-          url: jiraUrl,
-          username: username,
-          password: password,
-          rfcIssueKey: rfcIssueKey,
+      const helper = new RfdHelper({})
+      const sourceBranch = this.settings.options.git.branch.merge
+      const targetBranch = (this.settings?.options?.git?.change?.target || '').trim()
+      const repo = AxiosBitBucketClient.parseUrl(this.settings.options.git.url)
+      const issueKey =  await AxiosJiraClient.parseJiraIssueKeyFromUri(sourceBranch)
+      await helper.deploymentStarted({
+        issue: {key: issueKey},
+        pullRequest: {
+          url: `https://apps.nrs.gov.bc.ca/int/stash/projects/${repo.project.key}/repos/${repo.slug}/pull-requests/${this.settings.options.pr}/overview`,
+          number: this.settings.options.pr,
+          sourceBranch: sourceBranch,
+          targetBranch: targetBranch,
+          repository: repo,
+        },
+        targetEnvironment: this.settings.options.env,
+      })
+      .then(async result => {
+        helper.print(result.issues)
+        if (result.errors && result.errors.length !== 0) {
+          for (const error of result?.errors) {
+            // eslint-disable-next-line no-console
+            console.error(error.cause)
+          }
+          throw new ValidationError('Validation Errors', result.errors)
         }
-        // Create the jira object of the type Jira
-        const jira = new Jira(Object.assign({phase: 'jira-transition', jira: jiraSettings}))
-        return jira.transitionRFDpostDeployment(env)
-      }
-      throw new Error(
-        '\n ----------------------------------------------------- \n Not Ready for Deployment, Check the Jira Statuses to know what you need to do \n -----------------------------------------------------'
-      )
+        await this.deployOpenshift()
+        .then(async () => {
+          return helper.deploymentSuccessful({
+            issue: {key: issueKey},
+            pullRequest: {
+              url: `https://apps.nrs.gov.bc.ca/int/stash/projects/${repo.project.key}/repos/${repo.slug}/pull-requests/${this.settings.options.pr}/overview`,
+              number: this.settings.options.pr,
+              sourceBranch: sourceBranch,
+              targetBranch: targetBranch,
+              repository: repo,
+            },
+            targetEnvironment: this.settings.options.env,
+          })
+        })
+        .catch(async error => {
+          await helper.deploymentFailed({
+            issue: {key: issueKey},
+            pullRequest: {
+              url: `https://apps.nrs.gov.bc.ca/int/stash/projects/${repo.project.key}/repos/${repo.slug}/pull-requests/${this.settings.options.pr}/overview`,
+              number: this.settings.options.pr,
+              sourceBranch: sourceBranch,
+              targetBranch: targetBranch,
+              repository: repo,
+            },
+            targetEnvironment: this.settings.options.env,
+          })
+          throw new GeneralError(error)
+        })
+        return result
+      })
     }
   }
 
