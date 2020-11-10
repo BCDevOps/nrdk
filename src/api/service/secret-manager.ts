@@ -5,6 +5,7 @@ import * as util from 'util'
 import * as inquirer from 'inquirer'
 
 const prompt = inquirer.createPromptModule()
+declare let __SecretManager: any
 
 class Secret {
   private _value: string
@@ -81,12 +82,11 @@ export const SVC_IDIR = SVC_IDIR_SPEC.name
 export const SVC_IDIR_USERNAME = 'sAMAccountName'
 export const SVC_IDIR_UPN = 'userPrincipalName'
 export const SVC_IDIR_PASSWORD = 'password'
-const DEFAULT_ENTRIES = {}
 
 export class SecretManager {
   private static instance: SecretManager;
 
-  private entries: any = (JSON.parse(JSON.stringify(DEFAULT_ENTRIES)))
+  private entries: any = {}
 
   private location = '~/nrdk/.secrets.json'
 
@@ -109,7 +109,9 @@ export class SecretManager {
   }
 
   public static loadEntries(entries: any) {
-    Object.assign(DEFAULT_ENTRIES, entries)
+    const gbl = global as any
+    gbl.__SecretManager =  gbl.__SecretManager || {}
+    Object.assign(gbl.__SecretManager, entries)
   }
 
   async promptMissingFields(spec: ServiceSpec, svc: any) {
@@ -125,11 +127,13 @@ export class SecretManager {
         prompts.push({type: fieldSpec.type || 'input', name: fieldSpec.name, message: message})
       }
     }
+    // console.log(`Prompting \n:${new Error().stack}`)
     return prompt(prompts)
   }
 
   async getEntry(service: ServiceSpec): Promise<EntryAccessor> {
-    const svc = this.entries[service.name] as Entry || {}
+    const defaults: any = __SecretManager || {}
+    const svc = this.entries[service.name] as Entry || defaults[service.name] as Entry || {}
     this.entries[service.name] = svc
     if (svc) {
       const answers = await this.promptMissingFields(service, svc)

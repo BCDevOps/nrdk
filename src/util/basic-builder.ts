@@ -2,9 +2,9 @@
 /* eslint-disable max-params */
 /* eslint-disable unicorn/import-index */
 import {OpenShiftClientX, GitOperation} from '../'
-import {Jira} from '../util/jira'
-import {AxiosFactory} from '../api/service/axios-factory'
 import {AxiosJiraClient} from '../api/service/axios-jira-client'
+import {RfdHelper} from '../util/rfd-helper'
+import {AxiosBitBucketClient} from '../api/service/axios-bitbucket-client'
 
 export class BasicBuilder {
     settings: any
@@ -24,27 +24,36 @@ export class BasicBuilder {
       const username = settings.phases[env].credentials.idir.user
       const password = settings.phases[env].credentials.idir.pass
       Object.assign(settings.options.git, {credentials: {username: username, password: password}})
-      const changeBranch = settings.options.git.branch.merge
-      const gitUrl = settings.options.git.url
-      const gitElements = gitUrl.split('/')
-      const repoName = gitElements[7].split('.')[0]
+      const sourceBranch = settings.options.git.branch.merge
+      // const EMPTY = ''
+      const targetBranch = (settings?.options?.git?.change?.target || '').trim()
 
-      const EMPTY = ''
-      const changeTarget = (settings?.options?.git?.change?.target || '').trim()
+      // if (targetBranch && targetBranch.toLowerCase() === 'master') {
+      // Build for target = 'master'
+      const repo = AxiosBitBucketClient.parseUrl(settings.options.git.url)
+      const issueKey =  await AxiosJiraClient.parseJiraIssueKeyFromUri(settings.options.git.branch.merge)
 
-      if (changeTarget && changeTarget.toLowerCase() === 'master') {
-        // Build for target = 'master'
+      const helper = new RfdHelper({})
+      await helper.createDeployments({
+        issue: {key: issueKey},
+        pullRequest: {
+          url: `https://apps.nrs.gov.bc.ca/int/stash/projects/${repo.project.key}/repos/${repo.slug}/pull-requests/${settings.options.pr}/overview`,
+          number: settings.options.pr,
+          sourceBranch: sourceBranch,
+          targetBranch: targetBranch,
+          repository: repo,
+        },
+        targetEnvironment: settings.environments,
+      }).then(issues => {
+        helper.print(issues)
+      })
+      // await this._createJiraAutoRFDs(jiraUrl, repoName, changeBranch, branchName, username, password)
 
-        const jiraUrl = settings.jiraUrl
-        const branchName = 'PR-' + settings.options.pr
-
-        await this._createJiraAutoRFDs(jiraUrl, repoName, changeBranch, branchName, username, password)
-
-        await this._gitTargetSyncVerify()
-      } else if (changeTarget !== EMPTY) {
-        // Build for target = 'other branch'
-        await this._gitTargetSyncVerify()
-      }
+      await this._gitTargetSyncVerify()
+      // } else if (targetBranch !== EMPTY) {
+      //  // Build for target = 'other branch'
+      //  await this._gitTargetSyncVerify()
+      // }
 
       const oc = new OpenShiftClientX(Object.assign({namespace: phases.build.namespace}, settings.options))
       const processedTemplate = this.processTemplates(oc)
@@ -70,30 +79,5 @@ export class BasicBuilder {
         // eslint-disable-next-line no-console
         console.log('Successfully Verified that branch is not out of sync with target')
       }
-    }
-
-    /**
-     * This create JIRA RFDs labled with 'auto' to be used only for our pipeiline deployment.
-     * It creates 1 auto RFD for each environment for DLVR, TEST, PROD.
-     */
-    async _createJiraAutoRFDs(jiraUrl: string, repoName: string, changeBranch: string, branchName: string, username: string, password: string) {
-      const jiraAxiosClient = await AxiosFactory.jira()
-      const issueKey = await AxiosJiraClient.parseJiraIssueKeyFromUri(changeBranch)
-      const rfcIssueKey = (await jiraAxiosClient.getRfcByIssue(issueKey)).key
-      const projectName = rfcIssueKey.split('-')[0].toUpperCase()
-
-      const jiraSettings = {
-        url: jiraUrl,
-        username: username,
-        password: password,
-        rfcIssueKey: rfcIssueKey,
-        changeBranch: changeBranch,
-        branchName: branchName,
-        repoName: repoName,
-        projectName: projectName,
-      }
-
-      const jira = new Jira(Object.assign({phase: 'jira-update', jira: jiraSettings}))
-      return jira.createRFD()
     }
 }

@@ -7,7 +7,7 @@ export class LoggerFactory {
     return winston.createLogger({
       levels: winston.config.cli.levels,
       level: 'info',
-      format: winston.format.json(),
+      format: winston.format.combine(winston.format.timestamp(), winston.format.colorize(), winston.format.simple()),
       // defaultMeta: ,
       transports: [
         new winston.transports.Console(),

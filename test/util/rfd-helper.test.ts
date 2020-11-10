@@ -14,6 +14,7 @@ import {DeploymentArgument, Issue, IssueTypeNames} from '../../src/api/model/jir
 import jest_expect, {extend as jest_extend} from 'expect'
 import {toMatchSnapshot} from './expect-mocha-snapshot'
 import {Context} from 'mocha'
+import { GeneralError } from '../../src/error'
 jest_extend({toMatchSnapshot})
 
 const TEST_SUITE_ID = 'bf00473b394a'
@@ -94,7 +95,7 @@ describe('jira:wokrflow @type=system', () => {
   after(async function () {
     if (process.env.NOCK_BACK_MODE === 'lockdown') return Promise.resolve(true)
     MochaNockBack.afterEach.call(this)
-    await cleanUpTestCase(await helper.createJiraClient(), TEST_SUITE_ID, TEST_CASE_JIRA_PROJECT)
+    // await cleanUpTestCase(await helper.createJiraClient(), TEST_SUITE_ID, TEST_CASE_JIRA_PROJECT)
   })
 
   describe('RFC', () => {
@@ -322,17 +323,26 @@ describe('jira:wokrflow @type=system', () => {
               },
               targetEnvironment: targetEnvironment,
             })
-            .then(() => {
+            .then(result => {
+              if (result.errors && result.errors.length > 0) {
+                if (rfcState.name === RFCwkf.STATUS_APPROVED.name || rfdState.name === RFDwkf.STATUS_APPROVED.name) {
+                  expect(result.errors).to.have.lengthOf(1)
+                } else {
+                  expect(result.errors).to.have.lengthOf(2)
+                }
+                return
+              }
               expect(rfcState.name).to.be.eql(RFCwkf.STATUS_APPROVED.name)
               expect(rfdState.name).to.be.eql(RFDwkf.STATUS_APPROVED.name)
+              expect(result.errors).to.have.lengthOf(0)
+              for (const issue of result.issues) {
+                if (issue?.fields?.issuetype?.name === IssueTypeNames.RFD || issue?.fields?.issuetype?.name === IssueTypeNames.RFDSubtask) {
+                  expect(issue?.fields?.status?.name).to.be.eql(RFDwkf.STATUS_IN_PROGRESS.name, issue?.key)
+                }
+              }
             })
             .catch(error => {
-              expect(error).instanceOf(ValidationError)
-              if (rfcState.name === RFCwkf.STATUS_APPROVED.name || rfdState.name === RFDwkf.STATUS_APPROVED.name) {
-                expect((error as ValidationError).errors).to.have.lengthOf(1)
-              } else {
-                expect((error as ValidationError).errors).to.have.lengthOf(2)
-              }
+              throw new GeneralError('Something went wrong', error)
             })
           })
         }

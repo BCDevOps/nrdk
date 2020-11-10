@@ -64,7 +64,9 @@ export interface DeploymentArgument {
 }
 export interface StartDeploymentArgument extends DeploymentArgument {
   dryrun?: boolean;
+}
+export interface StartDeploymentResult {
+  issues: Issue[];
   errors?: any[];
 }
-
 export type ProjectReference = ReferenceByKey
