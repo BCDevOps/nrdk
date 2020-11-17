@@ -5,7 +5,7 @@ import * as util from 'util'
 import * as inquirer from 'inquirer'
 
 const prompt = inquirer.createPromptModule()
-declare let __SecretManager: any
+declare let __SecretManager: any | undefined | null
 
 class Secret {
   private _value: string
@@ -132,7 +132,10 @@ export class SecretManager {
   }
 
   async getEntry(service: ServiceSpec): Promise<EntryAccessor> {
-    const defaults: any = __SecretManager || {}
+    const defaults: any =  {}
+    if (typeof __SecretManager !== 'undefined') {
+      Object.assign(defaults, __SecretManager)
+    }
     const svc = this.entries[service.name] as Entry || defaults[service.name] as Entry || {}
     this.entries[service.name] = svc
     if (svc) {
