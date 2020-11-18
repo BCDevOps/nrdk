@@ -26,7 +26,7 @@ export class LiquibaseDeployer {
     }
 
     if (isValid === true) {
-      await this.migrateAll(path.resolve(this.cwd(), './migrations'))
+          await this.migrateAll(path.resolve(this.cwd(), './migrations'))
     }
   }
 
@@ -59,8 +59,9 @@ export class LiquibaseDeployer {
 
     const oc = new OpenShiftClientX(Object.assign({namespace: namespace}))
     const dbsecret = oc.get(`secret/db-${schemaName.toLowerCase().replace(/_/g, '-')}-${env}`)[0]
-
-    const baseDirPath = path.relative(this.cwd(), migrationDirPath)
+    const posixCwd = this.cwd().replace(/\\/g, '/')
+    const posixMigrationDirPath = migrationDirPath.replace(/\\/g, '/')
+    const baseDirPath = path.posix.relative(posixCwd, posixMigrationDirPath)
 
     const cleanUpFiles = []
     // No need for keystore for now.
@@ -91,8 +92,8 @@ export class LiquibaseDeployer {
     const dbpassword = Buffer.from(dbsecret.data.password, 'base64').toString('utf-8')
     const tnsname = Buffer.from(dbsecret.data['tnsnames.ora'], 'base64').toString('utf-8')
     const tnsentry = tnsname.split('=')[0].trim()
-    const changeLogFile = path.join(baseDirPath, 'changelog.xml')
-    const logFile = path.join(baseDirPath, 'deployment.log')
+    const changeLogFile = path.posix.join(baseDirPath, 'changelog.xml')
+    const logFile = path.posix.join(baseDirPath, 'deployment.log')
 
     const propertiesFilePath = path.join(migrationDirPath, 'deployment.properties')
     const propertiesFileStream = fs.createWriteStream(propertiesFilePath)
@@ -104,7 +105,7 @@ export class LiquibaseDeployer {
     propertiesFileStream.write(Buffer.from('logLevel: debug\n'))
     propertiesFileStream.write(Buffer.from(`logFile: ${logFile}\n`))
     propertiesFileStream.close()
-
+    
     return new Promise(resolve => {
       propertiesFileStream.on('close', () => {
         resolve(propertiesFilePath)
