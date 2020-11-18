@@ -1,7 +1,6 @@
 import * as path from 'path'
 import * as fs from 'fs'
 import Liquibase from '../../util/liquibase'
-import { cwd } from 'process'
 const OpenShiftClientX = require.main?.exports.OpenShiftClientX as any
 const Verifier = require.main?.exports.InputDeployerVerify as any
 
@@ -26,7 +25,7 @@ export class LiquibaseDeployer {
     }
 
     if (isValid === true) {
-          await this.migrateAll(path.resolve(this.cwd(), './migrations'))
+      await this.migrateAll(path.resolve(this.cwd(), './migrations'))
     }
   }
 
@@ -105,7 +104,7 @@ export class LiquibaseDeployer {
     propertiesFileStream.write(Buffer.from('logLevel: debug\n'))
     propertiesFileStream.write(Buffer.from(`logFile: ${logFile}\n`))
     propertiesFileStream.close()
-    
+
     return new Promise(resolve => {
       propertiesFileStream.on('close', () => {
         resolve(propertiesFilePath)
