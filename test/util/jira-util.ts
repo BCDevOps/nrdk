@@ -20,7 +20,6 @@ export async function cleanUpTestCase(jira: AxiosJiraClient, testCaseId: string,
       if (version.name && (version.name as string).startsWith(testCaseId)) {
         // eslint-disable-next-line no-await-in-loop
         await jira.client.delete(`/rest/api/2/version/${version.id}`)
-        break
       }
     }
   })

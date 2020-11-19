@@ -13,6 +13,14 @@ export interface CreateRfdParameters {
   issue: Issue;
   pullRequest: PullRequestReference;
   targetEnvironment: string | string[];
+  dryrun: boolean;
+}
+
+export type RfdPerEnvironment = Map<string, Issue | null>
+
+function normalizePullRequestUrl(url: string) {
+  if (!url.endsWith('/overview')) return url + '/overview'
+  return url
 }
 
 export class RfdHelper {
@@ -20,8 +28,8 @@ export class RfdHelper {
 
   logger = LoggerFactory.createLogger(RfdHelper)
 
-  constructor(settings: any) {
-    this.settings = settings
+  constructor(settings?: any) {
+    this.settings = settings || {}
   }
 
   async createJiraClient() {
@@ -32,6 +40,9 @@ export class RfdHelper {
     const jira = await this.createJiraClient()
     return jira.client.post('/rest/api/2/version', param).then(response => {
       return response.data
+    })
+    .catch(error => {
+      throw new GeneralError('Error creating version', error)
     })
   }
 
@@ -96,7 +107,7 @@ export class RfdHelper {
           }
         })
         .catch(error => {
-          throw new GeneralError(`Error ${message}\n${JSON.stringify(error.response.data)}`, error)
+          throw new GeneralError(`Error ${message}`, error)
         })
 
         // it may fast forward to resulting status (e.: auto approvals)
@@ -189,7 +200,7 @@ export class RfdHelper {
     .then(async result => {
       let openRFD: Issue | null = null
       for (const issue of result.issues as Issue[]) {
-        if (issue.fields?.status?.id === RFD.STATUS_OPEN.id || issue.fields?.status?.id === RFD.STATUS_IN_PROGRESS.id) {
+        if (issue.fields?.status?.id === RFD.STATUS_OPEN.id || issue.fields?.status?.id === RFD.STATUS_APPROVED.id || issue.fields?.status?.id === RFD.STATUS_SCHEDULED.id || issue.fields?.status?.id === RFD.STATUS_IN_PROGRESS.id) {
           openRFD = issue
         } else {
         // eslint-disable-next-line no-await-in-loop
@@ -238,98 +249,144 @@ export class RfdHelper {
     }
   }
 
-  async _createRFD({rfc, issue, pullRequest, targetEnvironment}: CreateRfdParameters) {
+  async _fetchRFDs({rfc, issue, pullRequest, targetEnvironment}: CreateRfdParameters): Promise<RfdPerEnvironment> {
     if (!issue?.fields?.project?.key) throw new Error('Missing issue "fields.project.key" field')
-    // if (!issue?.fields?.summary) throw new Error('Missing issue "fields.summary" field')
-    // if (!issue?.fields?.description) throw new Error('Missing issue "fields.description" field')
-
-    const jira = await this.createJiraClient()
     const targetEnvironments: string[] = []
     if (Array.isArray(targetEnvironment)) {
       targetEnvironments.push(...targetEnvironment)
     } else {
       targetEnvironments.push(targetEnvironment)
     }
-    const issues: Issue[] = []
+    const jira = await this.createJiraClient()
+    const issuesPerEnvironment = new Map<string, Issue | null>()
+    const pullRequestUrl = normalizePullRequestUrl(pullRequest.url)
+    const jql = `issuetype = "RFD"  and status  != "Closed" and "Target environment" in (${targetEnvironments.map(v => '"' + v.toUpperCase() + '"').join(',')}) and issue in linkedIssues("${rfc.key}", "RFC link to RFD") and issueFunction in linkedIssuesOfRemote("${pullRequestUrl}")`
+    this.logger.debug(`Searching for existing RFDs using jql: ${jql}`)
+    await jira.search({
+      fields: 'fixVersions,issuetype,project,status,labels,issuelinks,customfield_10121',
+      jql: jql,
+    })
+    .then(async result => {
+      for (const issue of result.issues as Issue[]) {
+        const targetEnv = (issue.fields?.customfield_10121?.value as string).toUpperCase()
+        if (issuesPerEnvironment.has(targetEnv)) throw new Error(`Multiple non-closed RFDs has been found for '${targetEnv}' environment linked to RFC '${rfc.key}'`)
+        issuesPerEnvironment.set(targetEnv, issue)
+      }
+      for (const targetEnv of targetEnvironments) {
+        if (!issuesPerEnvironment.has(targetEnv)) {
+          issuesPerEnvironment.set(targetEnv, null)
+        }
+      }
+    })
+    return issuesPerEnvironment
+  }
+
+  async _createRFD({rfc, issue, pullRequest, targetEnvironment, dryrun}: CreateRfdParameters) {
+    if (!issue?.fields?.project?.key) throw new Error('Missing issue "fields.project.key" field')
+    // if (!issue?.fields?.summary) throw new Error('Missing issue "fields.summary" field')
+    // if (!issue?.fields?.description) throw new Error('Missing issue "fields.description" field')
+
+    const jira = await this.createJiraClient()
     let previousRFD: any = null
+    const issues: Issue[] = []
     issues.push(rfc)
-    for (const targetEnv of targetEnvironments) {
-      // Find RFD linked to pull-request and environment
-      const jql = `issuetype = "RFD"  and status  != "Closed" and "Target environment" = "${targetEnv}" and issue in linkedIssues("${rfc.key}", "RFC link to RFD") and issueFunction in linkedIssuesOfRemote("${pullRequest.url}")`
-      this.logger.debug(`Searching for existing RFDs using jql: ${jql}`)
-      // eslint-disable-next-line no-await-in-loop
-      await jira.search({
-        fields: 'fixVersions,issuetype,project,status,labels',
-        jql: jql,
-      })
-      .then(async result => {
-        let openRFD: Issue | null = null
-        for (const issue of result.issues as Issue[]) {
-          if (issue.fields?.status?.id === RFD.STATUS_OPEN.id || issue.fields?.status?.id === RFD.STATUS_IN_PROGRESS.id) {
-            openRFD = issue
-          } else {
-            // eslint-disable-next-line no-await-in-loop
-            await this.closeRFD(issue)
+    await this._fetchRFDs({rfc, issue, pullRequest, targetEnvironment, dryrun})
+    .then(async result => {
+      for (const entry of result.entries()) {
+        const targetEnv = entry[0]
+        const _issue = entry[1]
+        const issueLinks: any[] = []
+        // eslint-disable-next-line no-await-in-loop
+        await Promise.resolve(_issue)
+        .then((issue: Issue | null) => {
+          if (dryrun === true) return issue
+          if (issue === null) return null
+          if (issue.fields?.status?.id === RFD.STATUS_OPEN.id || issue.fields?.status?.id === RFD.STATUS_APPROVED.id || issue.fields?.status?.id === RFD.STATUS_SCHEDULED.id || issue.fields?.status?.id === RFD.STATUS_IN_PROGRESS.id) {
+            return issue
+          }
+          if (issue?.fields?.issuelinks) {
+            for (const existingIssueLink of issue?.fields?.issuelinks) {
+              if (existingIssueLink.outwardIssue.key === issue.key) {
+                issueLinks.push({
+                  type: {name: existingIssueLink.type.name},
+                  inwardIssue: {key: existingIssueLink.inwardIssue.key},
+                  outwardIssue: null,
+                })
+              }
+            }
+          }
+          this.logger.info(`RFD ${issue.key} is being closed as a new one will be created to replace it`)
+          return this.closeRFD(issue)
+          .catch(error => {
+            throw new GeneralError(`Error closing RFD ${issue.key}`, error)
+          }).then(() => {
+            return null
+          })
+        })
+        .then(async result => {
+          if (dryrun === true) return result
+          if (result === null) {
+            const defaultIssue: Issue = {
+              fields: {
+                issuetype: {name: 'RFD'},
+                project: {key: rfc?.fields?.project?.key as string},
+                summary: `Deployment PR-${pullRequest.number} to ${targetEnv}`,
+                description: `Deployment PR-${pullRequest.number} to ${targetEnv}`,
+                customfield_10121: {value: targetEnv.toUpperCase()},
+                fixVersions: rfc.fields?.fixVersions,
+              },
+            }
+            merge(defaultIssue, issue)
+            return jira.createIssue(defaultIssue).then(response => {
+              const issue = merge(response, defaultIssue, {fields: {status: RFD.STATUS_OPEN}}) as Issue
+              // this.logger.info(`Issue ${issue.key} (${issue?.fields?.issuetype?.name}) has been created`)
+              return issue
+            })
             .catch(error => {
-              throw new GeneralError(`Error closing RFD ${issue.key}`, error)
+              throw new GeneralError('Error creating RFD', error)
             })
           }
-        }
-        return openRFD
-      })
-      .then(async result => {
-        if (result === null) {
-          const defaultIssue: Issue = {
-            fields: {
-              issuetype: {name: 'RFD'},
-              project: {key: rfc?.fields?.project?.key as string},
-              summary: `Deployment PR-${pullRequest.number} to ${targetEnv}`,
-              description: `Deployment PR-${pullRequest.number} to ${targetEnv}`,
-              customfield_10121: {value: targetEnv.toUpperCase()},
-              fixVersions: rfc.fields?.fixVersions,
-            },
+          return result as Issue
+        })
+        .then(async rfd => {
+          if (rfd) {
+            issues.push(rfd)
+            if (dryrun) return rfd
+            // Link RFD to RFC
+            issueLinks.push({
+              type: {name: 'RFC-RFD'},
+              inwardIssue: {key: rfc.key},
+              outwardIssue: {key: rfd.key as string},
+            })
+            if (previousRFD) {
+              issueLinks.push({
+                type: {name: 'Blocks'},
+                inwardIssue: {key: previousRFD.key},
+                outwardIssue: {key: rfd.key as string},
+              })
+            }
+            for (const issueLink of issueLinks) {
+              if (issueLink.outwardIssue === null) issueLink.outwardIssue = {key: rfd.key as string}
+              // eslint-disable-next-line no-await-in-loop
+              await jira.createIssueLink(issueLink)
+              .catch(error => {
+                throw new GeneralError(`Error creating '${issueLink.type.name}' link between ${issueLink.inwardIssue.key} and ${issueLink.outwardIssue.key}`, error)
+              })
+            }
+            // Add Pull Request web link to RFD
+            await jira.createIssueRemoteWebLink(rfd, {globalId: pullRequest.url, relationship: 'Pull Request', object: {url: pullRequest.url, title: `Pull Request #${pullRequest.number}`}})
+            .catch(error => {
+              throw new GeneralError('Error creating Pull Request remote link', error)
+            })
+
+            // Create RFD Subtask
+            const subtask = await this._createRFDSubtask({rfd, pullRequest, targetEnv})
+            issues.push(subtask)
+            previousRFD = rfd
           }
-          merge(defaultIssue, issue)
-          return jira.createIssue(defaultIssue).then(response => {
-            return merge(response, defaultIssue, {fields: {status: RFD.STATUS_OPEN}}) as Issue
-          })
-          .catch(error => {
-            throw new GeneralError(`Error creating RFD\n${error.response.data}`, error)
-          })
-        }
-        return result as Issue
-      })
-      .then(async rfd => {
-        // Link RFD to RFC
-        await jira.createIssueLink({
-          type: {name: 'RFC-RFD'},
-          inwardIssue: {key: rfc.key},
-          outwardIssue: {key: rfd.key as string},
         })
-        .catch(error => {
-          throw new GeneralError('Error creating RFC-RFD link', error)
-        })
-        if (previousRFD) {
-          await jira.createIssueLink({
-            type: {name: 'Blocks'},
-            inwardIssue: {key: previousRFD.key},
-            outwardIssue: {key: rfd.key as string},
-          })
-          .catch(error => {
-            throw new GeneralError(`Error creating blocking link between ${previousRFD.key} and ${rfd.key}`, error)
-          })
-        }
-        // Add Pull Request web link to RFD
-        await jira.createIssueRemoteWebLink(rfd, {globalId: pullRequest.url, relationship: 'Pull Request', object: {url: pullRequest.url, title: `Pull Request #${pullRequest.number}`}})
-        .catch(error => {
-          throw new GeneralError('Error creating Pull Request remote link', error)
-        })
-        // Create RFD Subtask
-        const subtask = await this._createRFDSubtask({rfd, pullRequest, targetEnv})
-        issues.push(...[rfd, subtask])
-        previousRFD = rfd
-      })
-    } // end for targetEnvironments
+      }
+    })
     return issues
   }
 
@@ -340,13 +397,18 @@ export class RfdHelper {
 
     // create RFD
     return this._createRFD({
-      rfc, issue: {
+      rfc,
+      issue: {
         fields: {
           project: {key: rfc.fields.project.key},
         },
       },
       pullRequest: param.pullRequest,
       targetEnvironment: param.targetEnvironment,
+      dryrun: param.dryrun || false,
+    })
+    .catch(error => {
+      throw new GeneralError('Error createDeployments', error)
     })
   }
 
@@ -359,7 +421,7 @@ export class RfdHelper {
     const rfds: string[] = []
     param.dryrun = param.dryrun || false
     for (const issue of issues) {
-      if (issue.fields?.issuetype?.name === 'RFD') {
+      if (issue.fields?.issuetype?.name === IssueTypeNames.RFD || issue.fields?.issuetype?.name === IssueTypeNames.RFDSubtask) {
         if (!(issue.fields?.status?.id === RFD.STATUS_APPROVED.id || issue.fields?.status?.id === RFD.STATUS_SCHEDULED.id || issue.fields?.status?.id === RFD.STATUS_IN_PROGRESS.id)) {
           errors.push({cause: `${issue.fields?.issuetype?.name} '${issue.key}' is currently in '${issue.fields?.status?.name}' state but expected to be in '${RFD.STATUS_APPROVED.name}', '${RFD.STATUS_SCHEDULED.name}', or '${RFD.STATUS_IN_PROGRESS.name}'`})
         }
@@ -371,14 +433,16 @@ export class RfdHelper {
       }
     }
     // Check if there is any RFD being blocked by any other non-closed issue
-    await jira.search({jql: rfds.map(v => `issue in linkedIssues("${v}", "is blocked by")`).join(' OR '), fields: 'status'})
-    .then(result => {
-      for (const issue of result.issues) {
-        if (!(issue.fields?.status?.id !== RFD.STATUS_CLOSED.id)) {
-          errors.push({cause: `Issue '${issue.key}' is currently blocking (not "closed") one or more of the following RFDs: ${rfds.join(',')}'`})
+    if (rfds.length > 0) {
+      await jira.search({jql: rfds.map(v => `issue in linkedIssues("${v}", "is blocked by")`).join(' OR '), fields: 'status'})
+      .then(result => {
+        for (const issue of result.issues) {
+          if (!(issue.fields?.status?.id !== RFD.STATUS_CLOSED.id)) {
+            errors.push({cause: `Issue '${issue.key}' is currently blocking (not "closed") one or more of the following RFDs: ${rfds.join(',')}'`})
+          }
         }
-      }
-    })
+      })
+    }
     if (param.dryrun !== true && errors.length === 0) {
       // Because RFD status may impact RFD-Subtask status, we need to do it in 2 phases
       const keys = issues.map(value => '"' + value.key + '"').join(',')
@@ -423,6 +487,8 @@ export class RfdHelper {
 
   async deploymentSuccessful(param: StartDeploymentArgument) {
     const issues = await this.createDeployments(param)
+    const keys = issues.map(value => '"' + value.key + '"').join(',')
+    const jira = await this.createJiraClient()
     // Transition RFD-Subtasks first
     for (const issue of issues) {
       if (issue.fields?.issuetype?.name === IssueTypeNames.RFDSubtask) {
@@ -430,12 +496,19 @@ export class RfdHelper {
         await this.transitionRFDForward(issue, RFD.STATUS_RESOLVED)
       }
     }
-    // Transition RFDs
-    for (const issue of issues) {
-      if (issue.fields?.issuetype?.name === IssueTypeNames.RFD) {
-        // eslint-disable-next-line no-await-in-loop
-        await this.transitionRFDForward(issue, RFD.STATUS_RESOLVED)
+    // re-fetch issues. Transitions may have updated status
+    await jira.search({jql: `key in (${keys})`, fields: 'parent,fixVersions,issuetype,project,status,labels'})
+    .then(result => {
+      return result.issues as Issue[]
+    })
+    .then(async issues => {
+      // Transition RFDs
+      for (const issue of issues) {
+        if (issue.fields?.issuetype?.name === IssueTypeNames.RFD) {
+          // eslint-disable-next-line no-await-in-loop
+          await this.transitionRFDForward(issue, RFD.STATUS_RESOLVED)
+        }
       }
-    }
+    })
   }
 }

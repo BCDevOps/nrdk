@@ -2,7 +2,7 @@ import {spawn, SpawnOptions, SpawnSyncReturns} from 'child_process'
 import winston from 'winston'
 
 export async function _spawn(logger: winston.Logger, command: string, argsv: readonly string[], options: SpawnOptions): Promise<SpawnSyncReturns<string>> {
-  logger.child({group: ['exec', command], args: argsv}).info('%s %s', command, (argsv || []).join(' '))
+  logger.child({group: ['exec', command], args: argsv}).debug('%s %s', command, (argsv || []).join(' '))
   return new Promise(resolve => {
     let stdout = ''
     let stderr = ''

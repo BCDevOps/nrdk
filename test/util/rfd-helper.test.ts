@@ -6,7 +6,6 @@ import Sinon from 'sinon'
 import merge from 'lodash.merge'
 import {expect} from 'chai'
 import {AxiosBitBucketClient} from '../../src/api/service/axios-bitbucket-client'
-import {ValidationError} from '../../src/validation-error'
 import * as RFCwkf from '../../src/util/jira-rfc-workflow-v2.0.0'
 import * as RFDwkf from '../../src/util/jira-rfd-workflow-v1.2.2'
 import {DeploymentArgument, Issue, IssueTypeNames} from '../../src/api/model/jira'
@@ -14,7 +13,8 @@ import {DeploymentArgument, Issue, IssueTypeNames} from '../../src/api/model/jir
 import jest_expect, {extend as jest_extend} from 'expect'
 import {toMatchSnapshot} from './expect-mocha-snapshot'
 import {Context} from 'mocha'
-import { GeneralError } from '../../src/error'
+import {GeneralError} from '../../src/error'
+import {LoggerFactory} from '../../src/util/logger'
 jest_extend({toMatchSnapshot})
 
 const TEST_SUITE_ID = 'bf00473b394a'
@@ -87,15 +87,17 @@ describe('jira:wokrflow @type=system', () => {
   const  helper = new RfdHelper({})
 
   before(async function () {
+    LoggerFactory.ROOT.level = 'ERROR'
     if (process.env.NOCK_BACK_MODE === 'lockdown') return Promise.resolve(true)
     MochaNockBack.afterEach.call(this)
     await cleanUpTestCase(await helper.createJiraClient(), TEST_SUITE_ID, TEST_CASE_JIRA_PROJECT)
   })
 
   after(async function () {
+    LoggerFactory.ROOT.level = 'INFO'
     if (process.env.NOCK_BACK_MODE === 'lockdown') return Promise.resolve(true)
     MochaNockBack.afterEach.call(this)
-    // await cleanUpTestCase(await helper.createJiraClient(), TEST_SUITE_ID, TEST_CASE_JIRA_PROJECT)
+    await cleanUpTestCase(await helper.createJiraClient(), TEST_SUITE_ID, TEST_CASE_JIRA_PROJECT)
   })
 
   describe('RFC', () => {
@@ -178,8 +180,9 @@ describe('jira:wokrflow @type=system', () => {
       it(`Transition RFD from Open to ${rfdStatus.name}`, async function (this: Context) {
         pullRequestNumber++
         const TEST_CASE_ID = `run-3634379f-${rfdStatus.id}`
+        const _version = await helper.createVersion({project: TEST_CASE_JIRA_PROJECT, name: `${TEST_SUITE_ID}-${TEST_CASE_ID}`})
         const stubCreateRFD = sandbox.stub(helper, '_createRFD').callsFake((params: CreateRfdParameters) => {
-          merge(params.issue, {fields: {labels: [TEST_SUITE_ID, TEST_CASE_ID], fixVersions: [version]}})
+          merge(params.issue, {fields: {labels: [TEST_SUITE_ID, TEST_CASE_ID], fixVersions: [_version]}})
           return stubCreateRFD.wrappedMethod.bind(helper)(params)
         })
         const jira = await helper.createJiraClient()
@@ -190,6 +193,7 @@ describe('jira:wokrflow @type=system', () => {
             labels: [TEST_SUITE_ID, TEST_CASE_ID],
             customfield_10119: {name: RFC_CHANGE_SPONSOR}, // Change Sponsor
             customfield_10637: {name: RFC_CHANGE_COORDINATOR}, // Change Coordinator
+            fixVersions: [_version],
           },
         })
         const issues = await helper.createDeployments({
@@ -203,11 +207,17 @@ describe('jira:wokrflow @type=system', () => {
           },
           targetEnvironment: 'dlvr',
         })
+        .catch(error => {
+          throw new GeneralError('Error searching for issue', error)
+        })
         expect(issues).to.have.lengthOf(3)
         for (const issue of issues) {
           if (issue?.fields?.issuetype?.name === IssueTypeNames.RFD) {
             // eslint-disable-next-line no-await-in-loop
             await helper.transitionRFDForward(issue, rfdStatus)
+            .catch(error => {
+              throw new GeneralError('Error transitioning RFD', error)
+            })
           }
         }
         await jira.search({jql: `labels = "${TEST_SUITE_ID}" AND labels = "${TEST_CASE_ID}" ORDER BY created ASC`, fields: 'status,issuetype,components,customfield_10121,issuelinks'})
@@ -239,6 +249,7 @@ describe('jira:wokrflow @type=system', () => {
           labels: [TEST_SUITE_ID, TEST_CASE_ID],
           customfield_10119: {name: RFC_CHANGE_SPONSOR}, // Change Sponsor
           customfield_10637: {name: RFC_CHANGE_COORDINATOR}, // Change Coordinator
+          fixVersions: [version],
         },
       })
       await helper.createDeployments({
@@ -280,6 +291,7 @@ describe('jira:wokrflow @type=system', () => {
                 labels: [TEST_SUITE_ID, TEST_CASE_ID],
                 customfield_10119: {name: RFC_CHANGE_SPONSOR}, // Change Sponsor
                 customfield_10637: {name: RFC_CHANGE_COORDINATOR}, // Change Coordinator
+                fixVersions: [version],
               },
             })
 
@@ -325,10 +337,15 @@ describe('jira:wokrflow @type=system', () => {
             })
             .then(result => {
               if (result.errors && result.errors.length > 0) {
-                if (rfcState.name === RFCwkf.STATUS_APPROVED.name || rfdState.name === RFDwkf.STATUS_APPROVED.name) {
-                  expect(result.errors).to.have.lengthOf(1)
-                } else {
-                  expect(result.errors).to.have.lengthOf(2)
+                if (rfcState.name !== RFCwkf.STATUS_APPROVED.name) {
+                  // eslint-disable-next-line max-nested-callbacks
+                  expect(result.errors.map(v => v.cause).filter((v: string) => v.match(/RFC '[^']+' is currently in '[^']+' state but expected to be/))).to.have.lengthOf(1)
+                }
+                if (rfdState.name !== RFDwkf.STATUS_APPROVED.name) {
+                  // eslint-disable-next-line max-nested-callbacks
+                  expect(result.errors.map(v => v.cause).filter((v: string) => v.match(/RFD '[^']+' is currently in '[^']+' state but expected to be/))).to.have.lengthOf(1)
+                  // eslint-disable-next-line max-nested-callbacks
+                  expect(result.errors.map(v => v.cause).filter((v: string) => v.match(/RFD-subtask '[^']+' is currently in '[^']+' state but expected to be/))).to.have.lengthOf(1)
                 }
                 return
               }
@@ -341,9 +358,9 @@ describe('jira:wokrflow @type=system', () => {
                 }
               }
             })
-            .catch(error => {
-              throw new GeneralError('Something went wrong', error)
-            })
+            // .catch(error => {
+            //   throw new GeneralError('Something went wrong', error)
+            // })
           })
         }
       }

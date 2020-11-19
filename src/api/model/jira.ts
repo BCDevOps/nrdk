@@ -52,6 +52,7 @@ export interface Issue {
     /** Target Environment */
     customfield_10121?: ValueAndId;
     labels?: string[];
+    issuelinks?: any[];
     [key: string]: any;
   };
 }
@@ -61,10 +62,10 @@ export interface DeploymentArgument {
   issue: IssueReference;
   pullRequest: PullRequestReference;
   targetEnvironment: string | string[];
-}
-export interface StartDeploymentArgument extends DeploymentArgument {
   dryrun?: boolean;
 }
+export type StartDeploymentArgument = DeploymentArgument
+
 export interface StartDeploymentResult {
   issues: Issue[];
   errors?: any[];

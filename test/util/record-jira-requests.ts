@@ -58,6 +58,8 @@ export function sanitizeNockDefinition(nockCall: nock.Definition) {
     if (response.self) delete response.self
   } else if (nockCall.path.match(/int\/jira\/rest\/api\/2\/project\/SAMPLE\/components/g)) {
     // do nothing
+  } else if (nockCall.path.match(/int\/stash\/rest\/api\/1\.0\/projects\/.*/g)) {
+    // do nothing
   } else if (nockCall.path.match(/int\/jira\/rest\/dev-status\/1\.0\/issue\/detail/) || nockCall.path.match(/int\/jira\/rest\/api\/2\/version/)) {
     if (response.detail) {
       for (const detail of response.detail) {

@@ -6,7 +6,7 @@ import {AxiosBitBucketClient} from '../api/service/axios-bitbucket-client'
 import {AxiosJiraClient} from '../api/service/axios-jira-client'
 import {GeneralError} from '../error'
 import {RfdHelper} from '../util/rfd-helper'
-import { ValidationError } from '../validation-error'
+import {ValidationError} from '../validation-error'
 
 export class BasicJavaApplicationDeployer {
   settings: any
@@ -78,6 +78,8 @@ export class BasicJavaApplicationDeployer {
           })
         })
         .catch(async error => {
+          // eslint-disable-next-line no-console
+          console.error(error)
           await helper.deploymentFailed({
             issue: {key: issueKey},
             pullRequest: {

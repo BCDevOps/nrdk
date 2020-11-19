@@ -1,0 +1,268 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`jira:wokrflow @type=system RFC Transition RFD from Open to Approved: 7857dbdeace55ed9c80160d474c6975e-10312 1`] = `
+Array [
+  Object {
+    "fields": Object {
+      "components": Array [],
+      "issuelinks": Array [
+        Object {
+          "outwardIssue": Object {
+            "fields": Object {
+              "issuetype": Object {
+                "name": "RFD",
+              },
+              "priority": Object {
+                "name": "Medium",
+              },
+              "status": Object {
+                "name": "Approved",
+              },
+            },
+          },
+          "type": Object {
+            "name": "RFC-RFD",
+          },
+        },
+      ],
+      "issuetype": Object {
+        "name": "RFC",
+      },
+      "status": Object {
+        "name": "Open",
+      },
+    },
+  },
+  Object {
+    "fields": Object {
+      "components": Array [],
+      "customfield_10121": Object {
+        "value": "DLVR",
+      },
+      "issuelinks": Array [
+        Object {
+          "inwardIssue": Object {
+            "fields": Object {
+              "issuetype": Object {
+                "name": "RFC",
+              },
+              "priority": Object {
+                "name": "Medium",
+              },
+              "status": Object {
+                "name": "Open",
+              },
+            },
+          },
+          "type": Object {
+            "name": "RFC-RFD",
+          },
+        },
+      ],
+      "issuetype": Object {
+        "name": "RFD",
+      },
+      "status": Object {
+        "name": "Approved",
+      },
+    },
+  },
+  Object {
+    "fields": Object {
+      "components": Array [
+        Object {
+          "name": "bf00473b394a-run-3634379f-10312",
+        },
+      ],
+      "customfield_10121": Object {
+        "value": "DLVR",
+      },
+      "issuelinks": Array [],
+      "issuetype": Object {
+        "name": "RFD-subtask",
+      },
+      "status": Object {
+        "name": "Approved",
+      },
+    },
+  },
+]
+`;
+
+exports[`jira:wokrflow @type=system RFC Transition RFD from Open to Scheduled: 7857dbdeace55ed9c80160d474c6975e-10315 1`] = `
+Array [
+  Object {
+    "fields": Object {
+      "components": Array [],
+      "issuelinks": Array [
+        Object {
+          "outwardIssue": Object {
+            "fields": Object {
+              "issuetype": Object {
+                "name": "RFD",
+              },
+              "priority": Object {
+                "name": "Medium",
+              },
+              "status": Object {
+                "name": "Scheduled",
+              },
+            },
+          },
+          "type": Object {
+            "name": "RFC-RFD",
+          },
+        },
+      ],
+      "issuetype": Object {
+        "name": "RFC",
+      },
+      "status": Object {
+        "name": "Open",
+      },
+    },
+  },
+  Object {
+    "fields": Object {
+      "components": Array [],
+      "customfield_10121": Object {
+        "value": "DLVR",
+      },
+      "issuelinks": Array [
+        Object {
+          "inwardIssue": Object {
+            "fields": Object {
+              "issuetype": Object {
+                "name": "RFC",
+              },
+              "priority": Object {
+                "name": "Medium",
+              },
+              "status": Object {
+                "name": "Open",
+              },
+            },
+          },
+          "type": Object {
+            "name": "RFC-RFD",
+          },
+        },
+      ],
+      "issuetype": Object {
+        "name": "RFD",
+      },
+      "status": Object {
+        "name": "Scheduled",
+      },
+    },
+  },
+  Object {
+    "fields": Object {
+      "components": Array [
+        Object {
+          "name": "bf00473b394a-run-3634379f-10315",
+        },
+      ],
+      "customfield_10121": Object {
+        "value": "DLVR",
+      },
+      "issuelinks": Array [],
+      "issuetype": Object {
+        "name": "RFD-subtask",
+      },
+      "status": Object {
+        "name": "Scheduled",
+      },
+    },
+  },
+]
+`;
+
+exports[`jira:wokrflow @type=system RFC multiple deployment request of the same component on open RFD should reuse RFD: 7b1f94cb7dfcdb5ed2d1e9775766c8c6 1`] = `
+Array [
+  Object {
+    "fields": Object {
+      "components": Array [],
+      "issuelinks": Array [
+        Object {
+          "outwardIssue": Object {
+            "fields": Object {
+              "issuetype": Object {
+                "name": "RFD",
+              },
+              "priority": Object {
+                "name": "Medium",
+              },
+              "status": Object {
+                "name": "Open",
+              },
+            },
+          },
+          "type": Object {
+            "name": "RFC-RFD",
+          },
+        },
+      ],
+      "issuetype": Object {
+        "name": "RFC",
+      },
+      "status": Object {
+        "name": "Open",
+      },
+    },
+  },
+  Object {
+    "fields": Object {
+      "components": Array [],
+      "customfield_10121": Object {
+        "value": "DLVR",
+      },
+      "issuelinks": Array [
+        Object {
+          "inwardIssue": Object {
+            "fields": Object {
+              "issuetype": Object {
+                "name": "RFC",
+              },
+              "priority": Object {
+                "name": "Medium",
+              },
+              "status": Object {
+                "name": "Open",
+              },
+            },
+          },
+          "type": Object {
+            "name": "RFC-RFD",
+          },
+        },
+      ],
+      "issuetype": Object {
+        "name": "RFD",
+      },
+      "status": Object {
+        "name": "Open",
+      },
+    },
+  },
+  Object {
+    "fields": Object {
+      "components": Array [
+        Object {
+          "name": "bf00473b394a-A",
+        },
+      ],
+      "customfield_10121": Object {
+        "value": "DLVR",
+      },
+      "issuelinks": Array [],
+      "issuetype": Object {
+        "name": "RFD-subtask",
+      },
+      "status": Object {
+        "name": "Open",
+      },
+    },
+  },
+]
+`;

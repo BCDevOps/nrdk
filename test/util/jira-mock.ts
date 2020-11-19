@@ -41,7 +41,7 @@ export class JiraMock {
           fixVersions: ['0.0.0'],
           issuetype: {id: '10400', name: 'RFC'},
           issuelinks: [],
-          status: RFCWORKFLOW.STATUS_SUBMIT,
+          status: RFCWORKFLOW.STATUS_OPEN,
         },
       },
       issue || {}
