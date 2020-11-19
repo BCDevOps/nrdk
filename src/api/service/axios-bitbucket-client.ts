@@ -23,11 +23,13 @@ export class AxiosBitBucketClient {
   readonly client: AxiosInstance
 
   static parseUrl(url: string): RepositoryReference {
-    const regex = /https:\/\/(apps|bwa)\.nrs\.gov\.bc\.ca\/int\/stash\/projects\/(?<project>[^/]+)\/repos\/(?<repository>[^/\s]+)/gm
-    const m = regex.exec(url)
-    if (m === null) {
-      throw new Error(`Unable to parse BitBucket Url from ${url}`)
+    if (url.match(/https:\/\/(apps|bwa)\.nrs\.gov\.bc\.ca\/int\/stash\/scm\//m)) {
+      const m = url.match(/https:\/\/(apps|bwa)\.nrs\.gov\.bc\.ca\/int\/stash\/scm\/(?<project>[^/]+)\/(?<repository>[^\s\.]+)(\.git)?/m)
+      if (!m) throw new Error(`Unable to parse BitBucket Url from ${url}`)
+      return {slug: m.groups?.repository as string, project: {key: m.groups?.project as string}}
     }
+    const m = url.match(/https:\/\/(apps|bwa)\.nrs\.gov\.bc\.ca\/int\/stash\/projects\/(?<project>[^/]+)\/repos\/(?<repository>[^/\s]+)/m)
+    if (!m) throw new Error(`Unable to parse BitBucket Url from ${url}`)
     return {slug: m.groups?.repository as string, project: {key: m.groups?.project as string}}
   }
 

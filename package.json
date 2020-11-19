@@ -1,7 +1,7 @@
 {
   "name": "@bcgov/nrdk",
   "description": "NR Developer/Deployment Kit",
-  "version": "0.1.0-rc.50",
+  "version": "0.1.0-rc.58",
   "author": "Clecio Varjao",
   "bin": {
     "nrdk": "./bin/run"
@@ -13,11 +13,10 @@
     ]
   },
   "dependencies": {
-    "@bcgov/nr-pipeline-ext": "0.1.0-rc.10",
+    "@bcgov/nr-pipeline-ext": "0.1.0-rc.11",
     "@bcgov/pipeline-cli": "^1.0.1-2",
     "@oclif/command": "^1.8.0",
     "@oclif/plugin-help": "^3.2.0",
-    "@types/rsync": "^0.4.30",
     "axios": "^0.20.0",
     "cli-ux": "^5.5.0",
     "inquirer": "^7.3.3",
@@ -36,7 +35,10 @@
     "@types/inquirer": "^7.3.1",
     "@types/lodash.merge": "^4.6.6",
     "@types/mocha": "^8.0.3",
-    "@types/node": "^10.17.35",
+    "@types/node": "^12.19.1",
+    "@types/request": "^2.48.5",
+    "@types/rsync": "^0.4.30",
+    "@types/tar": "^4.0.3",
     "@zeit/ncc": "^0.22.3",
     "chai": "^4",
     "cpx": "^1.5.0",
@@ -87,6 +89,7 @@
   },
   "repository": "https://github.com/bcdevops/nrdk",
   "scripts": {
+    "prebuild": "oclif-dev manifest",
     "build": "tsc -b",
     "postpack": "rm -f oclif.manifest.json",
     "postbuild": "cpx 'src/**/*.yaml' lib",
@@ -96,9 +99,10 @@
     "ncc": "ncc build bin/run -o dist --minify",
     "test": "NOCK_BACK_MODE=lockdown nyc --reporter=html --reporter=text --extension .ts mocha --forbid-only \"test/**/*.test.ts\"",
     "mocha:all": "mocha --forbid-only --timeout 99999 \"test/**/*.test.ts\"",
+    "mocha": "mocha --forbid-only --timeout 99999",
     "version": "oclif-dev readme && git add README.md",
     "oclif": "oclif",
-    "link": "npm link nr-pipeline-ext && npm link @bcgov/pipeline-cli",
+    "link": "npm link @bcgov/nr-pipeline-ext && npm link @bcgov/pipeline-cli",
     "publish:latest": "npm --no-git-tag-version version prerelease && npm publish --tag latest",
     "publish:alpha": "npm --no-git-tag-version version prerelease && npm publish --tag alpha"
   },
@@ -106,7 +110,6 @@
   "bundleDependencies": [
     "@bcgov/pipeline-cli",
     "@oclif/plugin-help",
-    "@types/rsync",
     "isomorphic-git",
     "@bcgov/nr-pipeline-ext",
     "rsync",

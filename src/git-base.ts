@@ -5,7 +5,7 @@ import {AxiosFactory} from './api/service/axios-factory'
 import {SpawnOptions, SpawnSyncReturns} from 'child_process'
 import * as winston from 'winston'
 import * as Config from '@oclif/config'
-import {_spawn} from './uti/child-process'
+import {_spawn} from './util/child-process'
 
 export abstract class GitBaseCommand extends Command {
   jira?: AxiosJiraClient
@@ -32,7 +32,7 @@ export abstract class GitBaseCommand extends Command {
   }
 
   async _spawn(command: string, argsv?: readonly string[], options?: SpawnOptions): Promise<SpawnSyncReturns<string>> {
-    return _spawn(this.logger, command, argsv, options)
+    return _spawn(this.logger, command, argsv as readonly string[], options as SpawnOptions)
   }
 
   async createBranch(issue: any, repository: RepositoryReference, branchName: string, startPoint = 'master') {
