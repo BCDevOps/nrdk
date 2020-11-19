@@ -1,6 +1,6 @@
 import {AxiosBitBucketClient} from '../../api/service/axios-bitbucket-client'
 import {AxiosJiraClient} from '../../api/service/axios-jira-client'
-const Jira = require.main?.exports.Jira as any
+import {RfdHelper} from '../../util/rfd-helper'
 
 export class LiquibaseBuilder {
   settings: any
@@ -11,33 +11,22 @@ export class LiquibaseBuilder {
   }
 
   async build() {
-    const repoRef = AxiosBitBucketClient.parseUrl(this.settings.options.git.url)
-    const username = this.settings.phases.build.credentials.idir.user
-    const password = this.settings.phases.build.credentials.idir.pass
-    const changeBranch = this.settings.options.git.branch.merge
-    const branchName = 'PR-' + this.settings.options.pr
-    await this._createJiraAutoRFDs(this.settings.jiraUrl, repoRef.slug, changeBranch, branchName, username, password)
-  }
-
-  // eslint-disable-next-line max-params
-  async _createJiraAutoRFDs(jiraUrl: string, repoName: string, changeBranch: string, branchName: string, username: string, password: string) {
-    const rfcIssueKey = await AxiosJiraClient.parseJiraIssueKeyFromUri(changeBranch)
-    const issueElements = rfcIssueKey.split('-')
-    const projectName = issueElements[0].toUpperCase()
-
-    const jiraSettings = {
-      url: jiraUrl,
-      username: username,
-      password: password,
-      rfcIssueKey: rfcIssueKey,
-      changeBranch: changeBranch,
-      branchName: branchName,
-      repoName: repoName,
-      projectName: projectName,
-    }
-
-    const jira = new Jira(Object.assign({phase: 'jira-update', jira: jiraSettings}))
-    return jira.createRFD()
+    const helper = new RfdHelper({})
+    const sourceBranch = this.settings.options.git.branch.merge
+    const targetBranch = (this.settings?.options?.git?.change?.target || '').trim()
+    const repo = AxiosBitBucketClient.parseUrl(this.settings.options.git.url)
+    const issueKey =  await AxiosJiraClient.parseJiraIssueKeyFromUri(sourceBranch)
+    return helper.createDeployments({
+      issue: {key: issueKey},
+      pullRequest: {
+        url: AxiosBitBucketClient.createPullRequestUrl(repo, this.settings.options.pr),
+        number: this.settings.options.pr,
+        sourceBranch: sourceBranch,
+        targetBranch: targetBranch,
+        repository: repo,
+      },
+      targetEnvironment: this.settings.options.env,
+    })
   }
 }
 

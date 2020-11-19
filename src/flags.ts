@@ -18,6 +18,7 @@ export enum FlagNames {
   DEV_MODE = 'dev-mode',
   ARCHETYPE = 'archetype',
   RFC_VALIDATION = 'rfc-validation',
+  DRY_RUN = 'dry-run',
 }
 
 const defaultValues = {
@@ -78,6 +79,7 @@ export const flagEnvSpec = flags.string({name: 'env', description: 'Environment'
 export const flagDevMode = flags.string({name: FlagNames.DEV_MODE, description: 'Developer Mode (local)', options: ['true', 'false'], default: 'false'})
 export const flagArchetype = flags.string({name: 'archetype', description: 'Application Archetype/Pattern', options: ['java-web-app', 'liquibase']})
 export const flagRfcValidation = flags.boolean({name: FlagNames.RFC_VALIDATION, description: 'Validate RFC?', default: true, allowNo: true})
+export const flagDryRun = flags.boolean({name: FlagNames.DRY_RUN, description: 'Dry-run', default: false})
 
 export async function applyFlagDefaults(flags: any) {
   for (const key of Object.keys(defaultValues)) {

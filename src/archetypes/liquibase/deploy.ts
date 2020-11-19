@@ -1,8 +1,13 @@
 import * as path from 'path'
 import * as fs from 'fs'
 import Liquibase from '../../util/liquibase'
+import {AxiosBitBucketClient} from '../../api/service/axios-bitbucket-client'
+import {AxiosJiraClient} from '../../api/service/axios-jira-client'
+import {GeneralError} from '../../error'
+import {RfdHelper} from '../../util/rfd-helper'
+import {ValidationError} from '../../validation-error'
+import {FlagNames} from '../../flags'
 const OpenShiftClientX = require.main?.exports.OpenShiftClientX as any
-const Verifier = require.main?.exports.InputDeployerVerify as any
 
 export class LiquibaseDeployer {
   settings: any
@@ -17,16 +22,68 @@ export class LiquibaseDeployer {
   }
 
   async deploy() {
-    let isValid = true
+    const helper = new RfdHelper({})
+    const sourceBranch = this.settings.options.git.branch.merge
+    const targetBranch = (this.settings?.options?.git?.change?.target || '').trim()
+    const repo = AxiosBitBucketClient.parseUrl(this.settings.options.git.url)
+    const issueKey =  await AxiosJiraClient.parseJiraIssueKeyFromUri(sourceBranch)
     if (this.settings.options['rfc-validation'] === true) {
-      const verify = new Verifier(Object.assign(this.settings))
-      const verifyStatus = await verify.verifyBeforeDeployment()
-      isValid = verifyStatus.status === 'Ready'
+      await helper.deploymentStarted({
+        issue: {key: issueKey},
+        pullRequest: {
+          url: AxiosBitBucketClient.createPullRequestUrl(repo, this.settings.options.pr),
+          number: this.settings.options.pr,
+          sourceBranch: sourceBranch,
+          targetBranch: targetBranch,
+          repository: repo,
+        },
+        targetEnvironment: this.settings.options.env,
+      })
+      .then(async result => {
+        helper.print(result.issues)
+        if (result.errors && result.errors.length !== 0) {
+          for (const error of result?.errors) {
+            // eslint-disable-next-line no-console
+            console.error(error.cause)
+          }
+          throw new ValidationError('Validation Errors', result.errors)
+        }
+        return result
+      })
+    } else {
+      // eslint-disable-next-line no-console
+      console.warn('RFC Validation has been turned off!!!')
     }
-
-    if (isValid === true) {
-      await this.migrateAll(path.resolve(this.cwd(), './migrations'))
-    }
+    await this.migrateAll(path.resolve(this.cwd(), './migrations'))
+    .then(async () => {
+      return helper.deploymentSuccessful({
+        issue: {key: issueKey},
+        pullRequest: {
+          url: AxiosBitBucketClient.createPullRequestUrl(repo, this.settings.options.pr),
+          number: this.settings.options.pr,
+          sourceBranch: sourceBranch,
+          targetBranch: targetBranch,
+          repository: repo,
+        },
+        targetEnvironment: this.settings.options.env,
+      })
+    })
+    .catch(async error => {
+      // eslint-disable-next-line no-console
+      console.error(error)
+      await helper.deploymentFailed({
+        issue: {key: issueKey},
+        pullRequest: {
+          url: AxiosBitBucketClient.createPullRequestUrl(repo, this.settings.options.pr),
+          number: this.settings.options.pr,
+          sourceBranch: sourceBranch,
+          targetBranch: targetBranch,
+          repository: repo,
+        },
+        targetEnvironment: this.settings.options.env,
+      })
+      throw new GeneralError('Deployment failed', error)
+    })
   }
 
   async migrateAll(migrationsDir: string) {
@@ -48,7 +105,11 @@ export class LiquibaseDeployer {
     const liquibase = new Liquibase()
     return  this.prepare(migrationDir, schemaName)
     .then(propertiesFilePath => {
-      return liquibase.spawn([`--defaultsFile=${propertiesFilePath}`, 'changelogSyncSQL'], {cwd: this.cwd(), stdio: ['ignore', process.stdout, process.stderr]})
+      let liquibaseCommand = 'update'
+      if (this.settings[FlagNames.DRY_RUN] === true) {
+        liquibaseCommand = 'validate'
+      }
+      return liquibase.spawn([`--defaultsFile=${propertiesFilePath}`, liquibaseCommand], {cwd: this.cwd(), stdio: ['ignore', process.stdout, process.stderr]})
     })
   }
 

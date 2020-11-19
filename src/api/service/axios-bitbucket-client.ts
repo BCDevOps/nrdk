@@ -23,6 +23,10 @@ export interface CreatePullRequestOptions {
 export class AxiosBitBucketClient {
   readonly client: AxiosInstance
 
+  static createPullRequestUrl(repo: RepositoryReference, pullRequestNumber: string): string {
+    return `https://apps.nrs.gov.bc.ca/int/stash/projects/${repo.project.key}/repos/${repo.slug}/pull-requests/${pullRequestNumber}/overview`
+  }
+
   static parseUrl(url: string): RepositoryReference {
     if (url.match(/https:\/\/(apps|bwa)\.nrs\.gov\.bc\.ca\/int\/stash\/scm\//m)) {
       // eslint-disable-next-line no-useless-escape
