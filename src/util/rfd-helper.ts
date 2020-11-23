@@ -19,8 +19,8 @@ export interface CreateRfdParameters {
 export type RfdPerEnvironment = Map<string, Issue | null>
 
 function normalizePullRequestUrl(url: string) {
-  if (!url.endsWith('/overview')) return url + '/overview'
-  return url
+  if (!url.endsWith('/overview')) return (url + '/overview').toLowerCase()
+  return url.toLowerCase()
 }
 
 export class RfdHelper {
@@ -267,15 +267,14 @@ export class RfdHelper {
       jql: jql,
     })
     .then(async result => {
+      // The map needs to be pre-populated with null in order to preserve ordering
+      for (const targetEnv of targetEnvironments) {
+        issuesPerEnvironment.set(targetEnv.toUpperCase(), null)
+      }
       for (const issue of result.issues as Issue[]) {
         const targetEnv = (issue.fields?.customfield_10121?.value as string).toUpperCase()
-        if (issuesPerEnvironment.has(targetEnv)) throw new Error(`Multiple non-closed RFDs has been found for '${targetEnv}' environment linked to RFC '${rfc.key}'`)
+        if (issuesPerEnvironment.get(targetEnv)) throw new Error(`Multiple non-closed RFDs has been found for '${targetEnv}' environment linked to RFC '${rfc.key}'`)
         issuesPerEnvironment.set(targetEnv, issue)
-      }
-      for (const targetEnv of targetEnvironments) {
-        if (!issuesPerEnvironment.has(targetEnv)) {
-          issuesPerEnvironment.set(targetEnv, null)
-        }
       }
     })
     return issuesPerEnvironment
@@ -306,7 +305,12 @@ export class RfdHelper {
           }
           if (issue?.fields?.issuelinks) {
             for (const existingIssueLink of issue?.fields?.issuelinks) {
-              if (existingIssueLink.outwardIssue.key === issue.key) {
+              if (!existingIssueLink?.inwardIssue?.key) {
+                issueLinks.push({
+                  type: {name: existingIssueLink.type.name},
+                  outwardIssue: {key: existingIssueLink.outwardIssue.key},
+                })
+              } else if (existingIssueLink?.outwardIssue?.key === issue.key) {
                 issueLinks.push({
                   type: {name: existingIssueLink.type.name},
                   inwardIssue: {key: existingIssueLink.inwardIssue.key},
@@ -352,12 +356,6 @@ export class RfdHelper {
           if (rfd) {
             issues.push(rfd)
             if (dryrun) return rfd
-            // Link RFD to RFC
-            issueLinks.push({
-              type: {name: 'RFC-RFD'},
-              inwardIssue: {key: rfc.key},
-              outwardIssue: {key: rfd.key as string},
-            })
             if (previousRFD) {
               issueLinks.push({
                 type: {name: 'Blocks'},
@@ -365,12 +363,41 @@ export class RfdHelper {
                 outwardIssue: {key: rfd.key as string},
               })
             }
+            // if no links exists, something happened and the RFD needed to be re-created
+            if (issueLinks.length === 0) {
+              const pullRequestUrl = normalizePullRequestUrl(pullRequest.url)
+              const jql = `project = "${rfd.fields?.project?.key}" and issuetype = "RFD"  and status = "Closed" and "Target environment" = "${targetEnv.toUpperCase()}" and issue in linkedIssues("${rfc.key}", "RFC link to RFD") and issueFunction in linkedIssuesOfRemote("${pullRequestUrl}")`
+              await jira.search({
+                fields: 'issuelinks',
+                jql: jql,
+                maxResults: 1,
+              })
+              .then(async result => {
+                for (const previousClosedIssue of result.issues as Issue[]) {
+                  for (const previousIssueLink of previousClosedIssue.fields?.issuelinks as any[]) {
+                    if (previousIssueLink.type.name === 'Blocks' && !previousIssueLink.inwardIssue) {
+                      issueLinks.push({
+                        type: {name: 'Blocks'},
+                        inwardIssue: {key: rfd.key as string},
+                        outwardIssue: {key: previousIssueLink.outwardIssue.key},
+                      })
+                    }
+                  }
+                }
+              })
+            }
+            // Link RFD to RFC
+            issueLinks.push({
+              type: {name: 'RFC-RFD'},
+              inwardIssue: {key: rfc.key},
+              outwardIssue: {key: rfd.key as string},
+            })
             for (const issueLink of issueLinks) {
               if (issueLink.outwardIssue === null) issueLink.outwardIssue = {key: rfd.key as string}
               // eslint-disable-next-line no-await-in-loop
               await jira.createIssueLink(issueLink)
               .catch(error => {
-                throw new GeneralError(`Error creating '${issueLink.type.name}' link between ${issueLink.inwardIssue.key} and ${issueLink.outwardIssue.key}`, error)
+                throw new GeneralError(`Error creating '${issueLink.type.name}' link between ${issueLink?.inwardIssue?.key} and ${issueLink?.outwardIssue?.key}`, error)
               })
             }
             // Add Pull Request web link to RFD
@@ -474,7 +501,9 @@ export class RfdHelper {
     return output
   }
 
-  async deploymentFailed(param: StartDeploymentArgument) {
+  async deploymentFailed(_param: StartDeploymentArgument) {
+    // do nothing for now
+    /*
     const jira = await this.createJiraClient()
     const issues = await this.createDeployments(param)
     for (const issue of issues) {
@@ -483,6 +512,7 @@ export class RfdHelper {
         await jira.transitionIssue({issueIdOrKey: issue.key as string, transition: {id: RFD.ACTION_921.id}})
       }
     }
+    */
   }
 
   async deploymentSuccessful(param: StartDeploymentArgument) {

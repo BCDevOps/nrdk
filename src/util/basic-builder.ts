@@ -5,7 +5,7 @@ import {OpenShiftClientX, GitOperation} from '../'
 import {AxiosJiraClient} from '../api/service/axios-jira-client'
 import {RfdHelper} from '../util/rfd-helper'
 import {AxiosBitBucketClient} from '../api/service/axios-bitbucket-client'
-
+import {FlagNames} from '../flags'
 export class BasicBuilder {
     settings: any
 
@@ -33,23 +33,25 @@ export class BasicBuilder {
       const repo = AxiosBitBucketClient.parseUrl(settings.options.git.url)
       const issueKey =  await AxiosJiraClient.parseJiraIssueKeyFromUri(settings.options.git.branch.merge)
 
-      const helper = new RfdHelper({})
-      await helper.createDeployments({
-        issue: {key: issueKey},
-        pullRequest: {
-          url: `https://apps.nrs.gov.bc.ca/int/stash/projects/${repo.project.key}/repos/${repo.slug}/pull-requests/${settings.options.pr}/overview`,
-          number: settings.options.pr,
-          sourceBranch: sourceBranch,
-          targetBranch: targetBranch,
-          repository: repo,
-        },
-        targetEnvironment: settings.environments,
-      }).then(issues => {
-        helper.print(issues)
-      })
+      if (this.settings.options[FlagNames.RFC_VALIDATION] === true) {
+        const helper = new RfdHelper({})
+        await helper.createDeployments({
+          issue: {key: issueKey},
+          pullRequest: {
+            url: `https://apps.nrs.gov.bc.ca/int/stash/projects/${repo.project.key}/repos/${repo.slug}/pull-requests/${settings.options.pr}/overview`,
+            number: settings.options.pr,
+            sourceBranch: sourceBranch,
+            targetBranch: targetBranch,
+            repository: repo,
+          },
+          targetEnvironment: settings.environments,
+        }).then(issues => {
+          helper.print(issues)
+        })
+      }
       // await this._createJiraAutoRFDs(jiraUrl, repoName, changeBranch, branchName, username, password)
 
-      await this._gitTargetSyncVerify()
+      // await this._gitTargetSyncVerify()
       // } else if (targetBranch !== EMPTY) {
       //  // Build for target = 'other branch'
       //  await this._gitTargetSyncVerify()
@@ -66,8 +68,8 @@ export class BasicBuilder {
         phases[phase].instance
       )
       oc.applyAndBuild(processedTemplate)
-      const git = new GitOperation(this.settings.options.git)
-      return git.clear()
+      // const git = new GitOperation(this.settings.options.git)
+      // return git.clear()
     } // end build
 
     /**

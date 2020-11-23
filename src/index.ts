@@ -1,6 +1,4 @@
 import {
-  BasicBuilder,
-  BasicDeployer,
   BasicJavaApplicationBuilder,
   BasicFunctionalTester,
   InputDeployerVerify,
@@ -12,7 +10,8 @@ import {
 import {OpenShiftClient, OpenShiftClientX} from '@bcgov/pipeline-cli'
 import {BasicJavaApplicationDeployer} from './util/basic-java-application-deployer'
 import {SecretManager} from './api/service/secret-manager'
-
+import {BasicBuilder} from './util/basic-builder'
+import {BasicDeployer} from './util/basic-deployer'
 export {
   OpenShiftClient,
   OpenShiftClientX,
