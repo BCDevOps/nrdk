@@ -25,7 +25,7 @@ export class LiquibaseBuilder {
         targetBranch: targetBranch,
         repository: repo,
       },
-      targetEnvironment: this.settings.options.env,
+      targetEnvironment: this.settings.environments,
     })
   }
 }

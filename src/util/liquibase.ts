@@ -5,7 +5,7 @@ import * as fs from 'fs'
 import * as http from 'http'
 import * as https from 'https'
 import * as tar from 'tar'
-import {spawn, SpawnOptions} from 'child_process'
+import {ChildProcess, spawn, SpawnOptions} from 'child_process'
 
 type FileReference = {path: string; exists: boolean}
 type MavenGAV = {groupId: string; artifactId: string; version: string; ext?: string; classifier?: string}
@@ -111,7 +111,7 @@ export default class Liquibase {
     })
   }
 
-  async spawn(args: string[], options: SpawnOptions) {
+  async spawn(args: string[], options: SpawnOptions): Promise<ChildProcess> {
     return this.install().then(liquibaseHomeDir => {
       return this.downloadDrivers().then(drivers => {
         return new Promise(resolve => {

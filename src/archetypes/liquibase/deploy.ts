@@ -7,6 +7,7 @@ import {GeneralError} from '../../error'
 import {RfdHelper} from '../../util/rfd-helper'
 import {ValidationError} from '../../validation-error'
 import {FlagNames} from '../../flags'
+import { waitForSuccessfulExitCode } from '../../util/child-process'
 const OpenShiftClientX = require.main?.exports.OpenShiftClientX as any
 
 export class LiquibaseDeployer {
@@ -56,6 +57,7 @@ export class LiquibaseDeployer {
     }
     await this.migrateAll(path.resolve(this.cwd(), './migrations'))
     .then(async () => {
+      if (this.settings.options[FlagNames.DRY_RUN] === true) return true
       return helper.deploymentSuccessful({
         issue: {key: issueKey},
         pullRequest: {
@@ -105,11 +107,15 @@ export class LiquibaseDeployer {
     const liquibase = new Liquibase()
     return  this.prepare(migrationDir, schemaName)
     .then(propertiesFilePath => {
-      let liquibaseCommand = 'update'
-      if (this.settings[FlagNames.DRY_RUN] === true) {
-        liquibaseCommand = 'validate'
+      const args = [`--defaultsFile=${propertiesFilePath}`]
+      if (this.settings.options[FlagNames.DRY_RUN] === true) {
+        args.push('status')
+        args.push('--verbose')
+      } else {
+        args.push('update')
       }
-      return liquibase.spawn([`--defaultsFile=${propertiesFilePath}`, liquibaseCommand], {cwd: this.cwd(), stdio: ['ignore', process.stdout, process.stderr]})
+      return liquibase.spawn(args, {cwd: this.cwd(), stdio: ['ignore', process.stdout, process.stderr]})
+      .then(waitForSuccessfulExitCode)
     })
   }
 
