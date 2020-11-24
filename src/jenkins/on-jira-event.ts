@@ -54,9 +54,9 @@ export class JiraEventHandler {
     return this.executeJenkinsGroovyScript(`approveBuildInput('${bitBucketProjectName}', '${bitBucketRepositoryName}', '${pullRequestNumber}', '${inputId}')`)
   }
 
-  async processPayloadFromFile(path: string) {
-    const payload = require(path)
-    return this.process(payload)
+  async processPayloadFromFile(pathToAJsonPayloadFile: string) {
+    const payload = require(pathToAJsonPayloadFile)
+    return this.process(payload as JiraWebhookEvent)
   }
 
   async processPayloadFromText(payloadAsText: string) {

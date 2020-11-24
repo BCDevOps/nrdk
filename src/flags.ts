@@ -19,19 +19,24 @@ export enum FlagNames {
   ARCHETYPE = 'archetype',
   RFC_VALIDATION = 'rfc-validation',
   DRY_RUN = 'dry-run',
+  PAYLOAD_FILE = 'payload-file',
 }
 
 const defaultValues = {
   [FlagNames.GIT_URL]: async (flags: any) => {
+    if (!GitClient.getInstance().isGitRepositoryTopLevel()) return
     flags[FlagNames.GIT_URL] = await GitClient.getInstance().getRemoteUrl(flags[FlagNames.GIT_REMOTE_NAME])
   },
   [FlagNames.GIT_REMOTE_URL]: async (flags: any) => {
+    if (!GitClient.getInstance().isGitRepositoryTopLevel()) return
     flags[FlagNames.GIT_REMOTE_URL] = await GitClient.getInstance().getRemoteUrl(flags[FlagNames.GIT_REMOTE_NAME])
   },
   [FlagNames.GIT_BRANCH]: async (flags: any) => {
+    if (!GitClient.getInstance().isGitRepositoryTopLevel()) return
     flags[FlagNames.GIT_BRANCH] = await GitClient.getInstance().getLocalBranchName()
   },
   [FlagNames.GIT_BRANCH_REMOTE]: async (flags: any) => {
+    if (!GitClient.getInstance().isGitRepositoryTopLevel()) return
     if (!flags[FlagNames.GIT_BRANCH_REMOTE]) {
       flags[FlagNames.GIT_BRANCH_REMOTE] = `${flags[FlagNames.GIT_BRANCH]}`
       // If it is running from Jenkins, using the Bitbucket Branch Source plugin,
@@ -42,6 +47,7 @@ const defaultValues = {
     }
   },
   [FlagNames.GIT_CHANGE_TARGET]: async (flags: any) => {
+    if (!GitClient.getInstance().isGitRepositoryTopLevel()) return
     if (!flags[FlagNames.GIT_CHANGE_TARGET] && process.env.CHANGE_TARGET) {
       flags[FlagNames.GIT_CHANGE_TARGET] = process.env.CHANGE_TARGET
     } else if (!flags[FlagNames.GIT_CHANGE_TARGET]) {
@@ -80,6 +86,7 @@ export const flagDevMode = flags.string({name: FlagNames.DEV_MODE, description: 
 export const flagArchetype = flags.string({name: 'archetype', description: 'Application Archetype/Pattern', options: ['java-web-app', 'liquibase']})
 export const flagRfcValidation = flags.boolean({name: FlagNames.RFC_VALIDATION, description: 'Validate RFC?', default: true, allowNo: true})
 export const flagDryRun = flags.boolean({name: FlagNames.DRY_RUN, description: 'Dry-run', default: false})
+export const flagPayloadFile = flags.string({description: 'Event payload file'})
 
 export async function applyFlagDefaults(flags: any) {
   for (const key of Object.keys(defaultValues)) {

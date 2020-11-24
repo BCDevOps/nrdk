@@ -1,35 +1,25 @@
 import * as FlagsSpec from '../../flags'
-import {FlagNames, flagGitRemoteName, flagGitRemoteUrl, flagGitBranch, flagGitBranchRemote, applyFlagDefaults, flagConfigScript, flagBuildScript, loadConfigScript, flagEnvSpec} from '../../flags'
+import {FlagNames, applyFlagDefaults} from '../../flags'
 import {BaseCommand} from '../../base'
-
+import {JiraEventHandler} from '../../jenkins/on-jira-event'
 export default class OnJiraIssue extends BaseCommand {
-  static description = 'describe the command here'
+  static description = 'Process JIRA event payloads. It will signal Jenkins pipeline/build to proceed/resume when ready.'
 
   static hidden = true
 
   static flags = {
-    [FlagNames.CONFIG_SCRIPT]: flagConfigScript,
-    [FlagNames.BUILD_SCRIPT]: flagBuildScript,
-    [FlagNames.GIT_REMOTE_NAME]: flagGitRemoteName,
-    [FlagNames.GIT_REMOTE_URL]: flagGitRemoteUrl,
-    [FlagNames.GIT_BRANCH]: flagGitBranch,
-    [FlagNames.GIT_BRANCH_REMOTE]: flagGitBranchRemote,
-    [FlagNames.PULL_REQUEST_NUMBER]: FlagsSpec.flagPullRequestNumberSpec,
-    [FlagNames.ENV]: flagEnvSpec,
+    [FlagNames.PAYLOAD_FILE]: FlagsSpec.flagPayloadFile,
   }
 
   async run() {
     const {flags} = this.parse(OnJiraIssue)
     await applyFlagDefaults(flags)
-    const {InputDeployerVerify} = require('@bcgov/nr-pipeline-ext')
-    const settings = loadConfigScript(flags)
-    const verify = new InputDeployerVerify(Object.assign(settings))
-    const result = await verify.verifyBeforeDeployment()
-    if (result.status === 'Ready') {
-      this.exit(0)
-    } else {
+    // const settings = loadConfigScript(flags)
+    const handler = new JiraEventHandler()
+    const {errors} = await handler.processPayloadFromFile(flags[FlagNames.PAYLOAD_FILE] as string)
+    if (errors !== null && errors.length > 0) {
       this.exit(1)
     }
-    // return verify.verifyBeforeDeployment()
+    this.exit(0)
   }
 }
