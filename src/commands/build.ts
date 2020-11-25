@@ -9,7 +9,6 @@ export default class Build extends BaseCommand {
   static flags = {
     [FLAGS.FlagNames.CONFIG_SCRIPT]: FLAGS.flagConfigScript,
     [FLAGS.FlagNames.BUILD_SCRIPT]: FLAGS.flagBuildScript,
-    [FLAGS.FlagNames.ENV]: FLAGS.flagEnvSpec,
     [FLAGS.FlagNames.PULL_REQUEST_NUMBER]: FLAGS.flagPullRequestNumberSpec,
     [FLAGS.FlagNames.GIT_REMOTE_NAME]: FLAGS.flagGitRemoteName,
     [FLAGS.FlagNames.GIT_REMOTE_URL]: FLAGS.flagGitRemoteUrl,
