@@ -1,7 +1,7 @@
 {
   "name": "@bcgov/nrdk",
   "description": "NR Developer/Deployment Kit",
-  "version": "0.1.0-rc.74",
+  "version": "0.1.0-rc.75",
   "author": "Clecio Varjao",
   "bin": {
     "nrdk": "./bin/run"
@@ -102,7 +102,7 @@
     "postbuild": "cpx 'src/**/*.yaml' lib",
     "lint": "eslint . --ext .ts --config .eslintrc",
     "posttest": "eslint . --ext .ts --config .eslintrc",
-    "prepack": "rm -rf lib && tsc -b && oclif-dev manifest && oclif-dev readme && cpx 'src/**/*.yaml' lib",
+    "prepack": "rm -rf lib && tsc -b && oclif-dev manifest && oclif-dev readme && cpx 'src/**/*.{yaml,groovy}' lib",
     "ncc": "ncc build bin/run -o dist --minify",
     "test": "NOCK_BACK_MODE=lockdown nyc --reporter=html --reporter=text --extension .ts mocha --timeout 99999 --grep \"@type=system\" --invert --forbid-only \"test/**/*.test.ts\"",
     "mocha:all": "mocha --forbid-only --grep \"@type=system\" --invert --timeout 99999 \"test/**/*.test.ts\"",
