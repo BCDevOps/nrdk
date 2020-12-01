@@ -5,12 +5,13 @@ import {RfdHelper} from '../util/rfd-helper'
 import axios from 'axios'
 import {resolve} from 'path'
 import {readFileSync} from 'fs'
+import {LoggerFactory} from '../util/logger'
 
 export interface JiraWebhookEvent {
   type: string;
   payload: any;
 }
-
+const logger = LoggerFactory.createLogger('JiraEventHandler')
 export class JiraEventHandler {
   async executeJenkinsGroovyScript(script: string): Promise<string> {
     if (!process.env.__SECRET_JENKINS_URL) throw new Error('Missing `__SECRET_JENKINS_URL` environment variable')
@@ -55,6 +56,8 @@ export class JiraEventHandler {
   }
 
   async processPayloadFromFile(pathToAJsonPayloadFile: string) {
+    // eslint-disable-next-line no-console
+    console.log(`Processing payload from file: ${pathToAJsonPayloadFile}`)
     const payload = require(pathToAJsonPayloadFile)
     return this.process(payload as JiraWebhookEvent)
   }
@@ -67,6 +70,9 @@ export class JiraEventHandler {
   async process(event: JiraWebhookEvent): Promise<{errors: readonly any[]; issues: readonly any[]}> {
     const issue = event.payload as Issue
     const helper = new RfdHelper()
+    logger.info(`Processing payload event: ${event.type}`)
+    // eslint-disable-next-line no-console
+    console.log(`Processing payload for issue: ${issue.key}`)
     if (issue.fields?.issuetype?.name === IssueTypeNames.RFD) {
       const jira = await helper.createJiraClient()
       const rfc = await helper.getRfcByIssue(issue.key as string)

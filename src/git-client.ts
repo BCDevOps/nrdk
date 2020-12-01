@@ -35,7 +35,7 @@ export default class GitClient {
   }
 
   public async isGitRepositoryTopLevel(): Promise<boolean> {
-    if (this.cachedIsGitRepositoryTopLevel) return this.cachedIsGitRepositoryTopLevel
+    if (typeof this.cachedIsGitRepositoryTopLevel === 'boolean') return this.cachedIsGitRepositoryTopLevel
     return new Promise((resolve, reject) => {
       const child = spawn('git', ['rev-parse', '--show-toplevel'], {cwd: process.cwd()})
       child.on('error', err => {

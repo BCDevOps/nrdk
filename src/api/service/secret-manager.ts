@@ -121,26 +121,34 @@ export class SecretManager {
   }
 
   async promptMissingFields(spec: ServiceSpec, svc: any) {
+    const env = Object.assign({}, process.env)
     const prompts = []
     const fieldsSpec = spec.fields as any
     const creds = []
+    const answers: any = {}
     for (const fieldName of Object.keys(fieldsSpec)) {
       const fieldSpec = fieldsSpec[fieldName] as ServiceFieldSpec
       if (!svc[fieldSpec.name]) {
-        let message = fieldSpec.prompt || `'${fieldSpec.name}' for '${spec.name}'`
-        if (fieldSpec.hint) {
-          message += ` (${fieldSpec.hint})`
-        }
-        const prompt = {type: fieldSpec.type || 'input', name: fieldSpec.name, message: message}
-        if (prompt.type === 'username' || prompt.type === 'password') {
-          creds.push(prompt)
+        const envKey = `__SECRET_${spec.name.toUpperCase()}_${fieldSpec.name.toUpperCase()}`
+        const envValue = env[envKey]
+        if (envValue) {
+          SecretManager.logger.info(`Retriving ${spec.name}/${fieldSpec.name} from environment variable ${envKey}`)
+          svc[fieldSpec.name] = envValue
         } else {
-          prompts.push(prompt)
+          let message = fieldSpec.prompt || `'${fieldSpec.name}' for '${spec.name}'`
+          if (fieldSpec.hint) {
+            message += ` (${fieldSpec.hint})`
+          }
+          const prompt = {type: fieldSpec.type || 'input', name: fieldSpec.name, message: message}
+          if (prompt.type === 'username' || prompt.type === 'password') {
+            creds.push(prompt)
+          } else {
+            prompts.push(prompt)
+          }
         }
       }
     }
     if (creds.length > 0) {
-      const env = Object.assign({}, process.env)
       // delete env.GIT_ASKPASS // Fix for VSCODE as it may interfere with the user/system git credential store
       const gitCredentialHelper = spawnSync('git', ['config', 'credential.helper'], {encoding: 'utf-8'}).stdout.trim()
       if (gitCredentialHelper === 'osxkeychain' || gitCredentialHelper === 'manager') {
@@ -148,7 +156,6 @@ export class SecretManager {
         const child = spawn('git', ['credential', 'fill'], {env})
         child.stdin.end(`url=${spec.url}`, 'utf-8')
         const properties = await PropertiesFile.read(child.stdout)
-        const answers: any = {}
         for (const prompt of creds) {
           if (prompt.type === 'username') {
             answers[prompt.name] = properties.get('username')

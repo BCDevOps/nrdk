@@ -1,6 +1,8 @@
 import {flags} from '@oclif/command'
 import GitClient from './git-client'
 import {relative, resolve} from 'path'
+import {GeneralError} from './error'
+import {LoggerFactory} from './util/logger'
 
 export enum FlagNames {
   CONFIG_SCRIPT = 'config-script',
@@ -24,19 +26,19 @@ export enum FlagNames {
 
 const defaultValues = {
   [FlagNames.GIT_URL]: async (flags: any) => {
-    if (!GitClient.getInstance().isGitRepositoryTopLevel()) return
+    if (!(await GitClient.getInstance().isGitRepositoryTopLevel())) return
     flags[FlagNames.GIT_URL] = await GitClient.getInstance().getRemoteUrl(flags[FlagNames.GIT_REMOTE_NAME])
   },
   [FlagNames.GIT_REMOTE_URL]: async (flags: any) => {
-    if (!GitClient.getInstance().isGitRepositoryTopLevel()) return
+    if (!(await GitClient.getInstance().isGitRepositoryTopLevel())) return
     flags[FlagNames.GIT_REMOTE_URL] = await GitClient.getInstance().getRemoteUrl(flags[FlagNames.GIT_REMOTE_NAME])
   },
   [FlagNames.GIT_BRANCH]: async (flags: any) => {
-    if (!GitClient.getInstance().isGitRepositoryTopLevel()) return
+    if (!(await GitClient.getInstance().isGitRepositoryTopLevel())) return
     flags[FlagNames.GIT_BRANCH] = await GitClient.getInstance().getLocalBranchName()
   },
   [FlagNames.GIT_BRANCH_REMOTE]: async (flags: any) => {
-    if (!GitClient.getInstance().isGitRepositoryTopLevel()) return
+    if (!(await GitClient.getInstance().isGitRepositoryTopLevel())) return
     if (!flags[FlagNames.GIT_BRANCH_REMOTE]) {
       flags[FlagNames.GIT_BRANCH_REMOTE] = `${flags[FlagNames.GIT_BRANCH]}`
       // If it is running from Jenkins, using the Bitbucket Branch Source plugin,
@@ -47,7 +49,7 @@ const defaultValues = {
     }
   },
   [FlagNames.GIT_CHANGE_TARGET]: async (flags: any) => {
-    if (!GitClient.getInstance().isGitRepositoryTopLevel()) return
+    if (!(await GitClient.getInstance().isGitRepositoryTopLevel())) return
     if (!flags[FlagNames.GIT_CHANGE_TARGET] && process.env.CHANGE_TARGET) {
       flags[FlagNames.GIT_CHANGE_TARGET] = process.env.CHANGE_TARGET
     } else if (!flags[FlagNames.GIT_CHANGE_TARGET]) {
@@ -88,13 +90,22 @@ export const flagRfcValidation = flags.boolean({name: FlagNames.RFC_VALIDATION, 
 export const flagDryRun = flags.boolean({name: FlagNames.DRY_RUN, description: 'Dry-run', default: false})
 export const flagPayloadFile = flags.string({description: 'Event payload file'})
 
+const logger = LoggerFactory.createLogger('OnJiraIssue')
+
 export async function applyFlagDefaults(flags: any) {
-  for (const key of Object.keys(defaultValues)) {
-    const defaultFn = (defaultValues as any)[key]
-    if (defaultFn !== null) {
-      // eslint-disable-next-line no-await-in-loop
-      await defaultFn(flags)
+  try {
+    for (const key of Object.keys(defaultValues)) {
+      logger.info(`Applying default value for ${key}`)
+      const defaultFn = (defaultValues as any)[key]
+      if (defaultFn !== null) {
+        // eslint-disable-next-line no-await-in-loop
+        await defaultFn(flags)
+      }
     }
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.dir(error)
+    throw new GeneralError('Error applying default flag values', error)
   }
   const _flags = []
   for (const entry of Object.entries(flags)) {
