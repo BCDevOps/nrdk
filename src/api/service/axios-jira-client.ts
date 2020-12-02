@@ -21,6 +21,14 @@ export class AxiosJiraClient {
 
   constructor(client: AxiosInstance) {
     this.client = client
+    this.client.interceptors.request.use(request => {
+      this.logger.info(`> ${request.method} - ${request.url}`)
+      return request
+    })
+    this.client.interceptors.response.use(response => {
+      this.logger.info(`< ${response.request.method} - ${response.request.path} - ${response.status}`)
+      return response
+    })
   }
 
   public static async parseJiraIssueKeyFromUri(uri: string) {

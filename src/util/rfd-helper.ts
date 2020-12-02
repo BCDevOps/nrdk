@@ -319,7 +319,7 @@ export class RfdHelper {
               }
             }
           }
-          this.logger.info(`RFD ${issue.key} is being closed as a new one will be created to replace it`)
+          this.logger.info(`RFD ${issue.key} ('${issue.fields?.status?.name}'/${issue.fields?.status?.id}) is being closed as a new one will be created to replace it`)
           return this.closeRFD(issue)
           .catch(error => {
             throw new GeneralError(`Error closing RFD ${issue.key}`, error)

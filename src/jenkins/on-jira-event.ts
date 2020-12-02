@@ -25,6 +25,14 @@ export class JiraEventHandler {
         Authorization: `Basic ${Buffer.from(process.env.__SECRET_JENKINS_USERNAME + ':' + process.env.__SECRET_JENKINS_PASSWORD, 'utf8').toString('base64')}`,
       },
     })
+    client.interceptors.request.use(request => {
+      logger.info(`> ${request.method} - ${request.url}`)
+      return request
+    })
+    client.interceptors.response.use(response => {
+      logger.info(`< ${response.request.method} - ${response.request.path} - ${response.status}`)
+      return response
+    })
     return client.post('/scriptText', null, {params: {script: libAsString + '\n' + script}})
     .then(response => {
       return (response.data as string).trim()
@@ -107,6 +115,7 @@ export class JiraEventHandler {
           // eslint-disable-next-line no-console
           console.error(error.cause)
         }
+        return {errors: result.errors, issues: []}
       }
       await this.approveInput(bitBucketRepository.project.key, bitBucketRepository.slug, pullRequestNumber, waitingInputId)
     }
