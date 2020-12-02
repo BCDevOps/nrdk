@@ -244,6 +244,7 @@ export class RfdHelper {
   }
 
   async print(issues: Issue[]) {
+    if (!issues) return
     for (const issue of issues) {
       this.logger.info(`${issue.fields?.issuetype?.name} - ${issue.key} - ${issue.fields?.status?.name}`)
     }

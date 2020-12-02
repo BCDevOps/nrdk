@@ -109,6 +109,7 @@ export class JiraEventHandler {
         targetEnvironment: issue.fields?.customfield_10121?.value as string,
         dryrun: true,
       })
+      helper.print(result.issues)
       if (result.errors && result.errors.length > 0) {
         // eslint-disable-next-line no-console
         for (const error of result.errors as any[]) {
