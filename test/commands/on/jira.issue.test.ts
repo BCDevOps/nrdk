@@ -11,7 +11,7 @@ import {RfcWorkflow, RfdWorkflow} from '@bcgov/nr-pipeline-ext'
 const _merge = require('lodash.merge')
 const recordJiraRequests = false
 
-describe('on/jira.issue', () => {
+describe.skip('on/jira.issue', () => {
   const RFC2127 = require('../../__mocks/ZERO-2127.json')
   const RFD2131 = require('../../__mocks/ZERO-2131.json')
 

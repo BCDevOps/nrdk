@@ -30,7 +30,7 @@ export class JiraEventHandler {
       return request
     })
     client.interceptors.response.use(response => {
-      logger.info(`< ${response.request.method} - ${response.request.path} - ${response.status}`)
+      logger.info(`< ${response.request.method} - ${response.config.url} - ${response.status}`)
       return response
     })
     return client.post('/scriptText', null, {params: {script: libAsString + '\n' + script}})
@@ -60,6 +60,7 @@ export class JiraEventHandler {
   }
 
   async approveInput(bitBucketProjectName: string, bitBucketRepositoryName: string, pullRequestNumber: number, inputId: string): Promise<string> {
+    logger.info(`Approving pipeline input: project: ${bitBucketProjectName}', repository: '${bitBucketRepositoryName}', input:'${inputId}'`)
     return this.executeJenkinsGroovyScript(`approveBuildInput('${bitBucketProjectName}', '${bitBucketRepositoryName}', '${pullRequestNumber}', '${inputId}')`)
   }
 

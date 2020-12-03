@@ -83,6 +83,30 @@ export class RfdHelper {
     })
   }
 
+  async _transitionRfdSubtasks(rfd: Issue, status: IssueStatus): Promise<Issue> {
+    const jira = await this.createJiraClient()
+    const jql = `issuetype = "RFD-subtask"  AND status != "Closed" AND parent = "${rfd.key}"`
+    // eslint-disable-next-line no-await-in-loop
+    return jira.search({
+      fields: 'fixVersions,issuetype,project,status,labels',
+      jql: jql,
+    })
+    .then(async result => {
+      for (const issue of result.issues) {
+        // eslint-disable-next-line no-await-in-loop
+        await this.transitionRFDSubtaskForward(issue, status)
+      }
+      await jira.getIssue(rfd.key as string, {fields: 'status'})
+      .then(updatedIssue => {
+        merge(rfd.fields, updatedIssue.fields)
+      })
+      return rfd
+    })
+    .catch(error => {
+      throw new GeneralError('Error fetching RFD-subtasks', error)
+    })
+  }
+
   async _transitionForward(issue: Issue, status: IssueStatus, transitions: any[]): Promise<Issue> {
     if (!issue.fields?.status?.name) throw new Error('Issue field.status.name cannot be null/undefined')
     if (issue.fields?.status?.name === status.name) return issue
@@ -94,8 +118,21 @@ export class RfdHelper {
     // When in found mode, do transition for each remaining transition in the ordered list
     while (_fifo.length > 0) {
       const transition = _fifo.shift()
+      // If it is in the final/desired status, bail
+      if (issue?.fields?.status?.name === status.name) {
+        break
+      }
       if (found === true) {
-        const message = `transitioning issue ${issue.fields.issuetype?.name}/${issue.key} from state '${issue.fields?.status?.name}' to '${transition?.to?.name}' using '${transition.name}' transition trying to get to ${status.name}`
+        // if this is an RFD, and it is trying to resolve it, we actually need to resolve each individial subtask
+        if (issue?.fields?.issuetype?.name === 'RFD' && transition.id === RFD.ACTION_781.id) {
+          // eslint-disable-next-line no-await-in-loop
+          const _issue = (await this._transitionRfdSubtasks(issue, RFD.STATUS_RESOLVED))
+          issue = _issue
+          if (transition.to.id === issue.fields?.status?.id) {
+            continue
+          }
+        }
+        const message = `transitioning issue ${issue.fields?.issuetype?.name}/${issue.key} from state '${issue.fields?.status?.name}' to '${transition?.to?.name}' using '${transition.name}' transition trying to get to ${status.name}`
         this.logger.debug(message)
 
         // eslint-disable-next-line no-await-in-loop
@@ -116,13 +153,13 @@ export class RfdHelper {
         //   _fifo.shift()
         // }
         // skip current state (since we are already in it)
-        if (_fifo.length > 0 && _fifo[0].to.name === issue.fields.status?.name) {
+        if (_fifo.length > 0 && _fifo[0].to.name === issue.fields?.status?.name) {
           _fifo.shift()
         }
         if (issue?.fields?.status?.name === status.name) {
           break
         }
-        if (_fifo.length > 0 && issue.fields.issuetype?.name === 'RFD' && transition.id === RFD.ACTION_881.id) {
+        if (_fifo.length > 0 && issue.fields?.issuetype?.name === 'RFD' && transition.id === RFD.ACTION_881.id) {
           // if this is an RFD that got to 'START REVIEW', and there is more actions left, we need to advance RFD-subtaks before continuing
           const jql = `issuetype = "RFD-subtask"  AND status != "Closed" AND parent = "${issue.key}"`
           // eslint-disable-next-line no-await-in-loop
@@ -189,7 +226,7 @@ export class RfdHelper {
     return this.transitionRFDForward(issue, status)
   }
 
-  async _createRFDSubtask(params: {rfd: Issue; pullRequest: PullRequestReference; targetEnv: string}) {
+  async _createRFDSubtask(params: {rfd: Issue; pullRequest: PullRequestReference; targetEnv: string; dryrun: boolean}) {
     const jira = await this.createJiraClient()
     const component = await this.getComponent({project: params.rfd.fields?.project as ProjectReference, pullRequest: params.pullRequest, create: true})
 
@@ -198,19 +235,17 @@ export class RfdHelper {
       jql: `issuetype = "RFD-subtask"  AND status  != "Closed" AND "Target environment" = "${params.targetEnv}" AND parent = "${params.rfd.key}" AND component = "${component.name}"`,
     })
     .then(async result => {
-      let openRFD: Issue | null = null
       for (const issue of result.issues as Issue[]) {
-        if (issue.fields?.status?.id === RFD.STATUS_OPEN.id || issue.fields?.status?.id === RFD.STATUS_APPROVED.id || issue.fields?.status?.id === RFD.STATUS_SCHEDULED.id || issue.fields?.status?.id === RFD.STATUS_IN_PROGRESS.id) {
-          openRFD = issue
-        } else {
-        // eslint-disable-next-line no-await-in-loop
-          await this.closeRFD(issue)
+        if (params.dryrun === true || (issue.fields?.status?.id === RFD.STATUS_OPEN.id || issue.fields?.status?.id === RFD.STATUS_APPROVED.id || issue.fields?.status?.id === RFD.STATUS_SCHEDULED.id || issue.fields?.status?.id === RFD.STATUS_IN_PROGRESS.id)) {
+          return issue
         }
+        // eslint-disable-next-line no-await-in-loop
+        await this.closeRFD(issue)
       }
-      return openRFD
+      return null
     })
     .then(async result => {
-      if (!result) {
+      if (!result && !(params.dryrun === true)) {
         const issueSpec = merge({}, {
           fields: {
             parent: {key: params.rfd.key},
@@ -296,6 +331,7 @@ export class RfdHelper {
         const targetEnv = entry[0]
         const _issue = entry[1]
         const issueLinks: any[] = []
+        let isNewRFD = false
         // eslint-disable-next-line no-await-in-loop
         await Promise.resolve(_issue)
         .then((issue: Issue | null) => {
@@ -309,6 +345,7 @@ export class RfdHelper {
               if (!existingIssueLink?.inwardIssue?.key) {
                 issueLinks.push({
                   type: {name: existingIssueLink.type.name},
+                  inwardIssue: null,
                   outwardIssue: {key: existingIssueLink.outwardIssue.key},
                 })
               } else if (existingIssueLink?.outwardIssue?.key === issue.key) {
@@ -344,7 +381,7 @@ export class RfdHelper {
             merge(defaultIssue, issue)
             return jira.createIssue(defaultIssue).then(response => {
               const issue = merge(response, defaultIssue, {fields: {status: RFD.STATUS_OPEN}}) as Issue
-              // this.logger.info(`Issue ${issue.key} (${issue?.fields?.issuetype?.name}) has been created`)
+              isNewRFD = true
               return issue
             })
             .catch(error => {
@@ -356,7 +393,21 @@ export class RfdHelper {
         .then(async rfd => {
           if (rfd) {
             issues.push(rfd)
+          }
+          return rfd
+        })
+        .then(async rfd => {
+          if (rfd) {
+            // Create RFD Subtask
+            const subtask = await this._createRFDSubtask({rfd, pullRequest, targetEnv, dryrun})
+            if (subtask) issues.push(subtask)
+          }
+          return rfd
+        })
+        .then(async rfd => {
+          if (rfd) {
             if (dryrun) return rfd
+            if (!isNewRFD) return rfd
             if (previousRFD) {
               issueLinks.push({
                 type: {name: 'Blocks'},
@@ -395,6 +446,7 @@ export class RfdHelper {
             })
             for (const issueLink of issueLinks) {
               if (issueLink.outwardIssue === null) issueLink.outwardIssue = {key: rfd.key as string}
+              if (issueLink.inwardIssue === null) issueLink.inwardIssue = {key: rfd.key as string}
               // eslint-disable-next-line no-await-in-loop
               await jira.createIssueLink(issueLink)
               .catch(error => {
@@ -406,12 +458,13 @@ export class RfdHelper {
             .catch(error => {
               throw new GeneralError('Error creating Pull Request remote link', error)
             })
-
-            // Create RFD Subtask
-            const subtask = await this._createRFDSubtask({rfd, pullRequest, targetEnv})
-            issues.push(subtask)
-            previousRFD = rfd
           }
+          return rfd
+        })
+        .then(async rfd => {
+          // when processing a set of environmnets, the RFDs are linked to one another in the sequence provided
+          previousRFD = rfd
+          return rfd
         })
       }
     })

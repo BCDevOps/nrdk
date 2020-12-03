@@ -7,7 +7,7 @@ import {GeneralError} from '../../error'
 import {RfdHelper} from '../../util/rfd-helper'
 import {ValidationError} from '../../validation-error'
 import {FlagNames} from '../../flags'
-import { waitForSuccessfulExitCode } from '../../util/child-process'
+import {waitForSuccessfulExitCode} from '../../util/child-process'
 const OpenShiftClientX = require.main?.exports.OpenShiftClientX as any
 
 export class LiquibaseDeployer {

@@ -1,5 +1,4 @@
-import { ChildProcess } from 'child_process'
-import {spawn, SpawnOptions, SpawnSyncReturns} from 'child_process'
+import {spawn, SpawnOptions, SpawnSyncReturns, ChildProcess} from 'child_process'
 import winston from 'winston'
 
 export async function _spawn(logger: winston.Logger, command: string, argsv: readonly string[], options: SpawnOptions): Promise<SpawnSyncReturns<string>> {

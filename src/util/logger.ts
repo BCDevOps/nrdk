@@ -3,6 +3,13 @@ import winston from 'winston'
 export class LoggerFactory {
   public static readonly ROOT = LoggerFactory.createRootLogger();
 
+  static setRootLevel(level: string) {
+    LoggerFactory.ROOT.level = level
+    for (const transport of LoggerFactory.ROOT.transports) {
+      transport.level = level
+    }
+  }
+
   static createRootLogger() {
     return winston.createLogger({
       levels: winston.config.cli.levels,
