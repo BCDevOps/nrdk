@@ -66,6 +66,7 @@ export class AxiosJiraClient {
   }
 
   public async search(params: {fields: string; jql: string; maxResults?: number}): Promise<any> {
+    this.logger.info(`jql=${params.jql}`)
     return this.client.get('rest/api/2/search', {params})
     .then(response => {
       return response.data

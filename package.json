@@ -1,7 +1,7 @@
 {
   "name": "@bcgov/nrdk",
   "description": "NR Developer/Deployment Kit",
-  "version": "0.1.0-rc.88",
+  "version": "0.1.0-rc.90",
   "author": "Clecio Varjao",
   "bin": {
     "nrdk": "./bin/run"
@@ -106,7 +106,7 @@
     "ncc": "ncc build bin/run -o dist --minify",
     "test": "NOCK_BACK_MODE=lockdown nyc --reporter=html --reporter=text --extension .ts mocha --timeout 99999 --grep \"@type=system\" --invert --forbid-only \"test/**/*.test.ts\"",
     "mocha:all": "mocha --forbid-only --grep \"@type=system\" --invert --timeout 99999 \"test/**/*.test.ts\"",
-    "mocha": "mocha --timeout 99999",
+    "mocha": "mocha --timeout 9999999",
     "version": "oclif-dev readme && git add README.md",
     "oclif": "oclif",
     "link": "npm link @bcgov/nr-pipeline-ext && npm link @bcgov/pipeline-cli",

@@ -89,7 +89,7 @@ describe('jira:workflow @type=system', () => {
   const  helper = new RfdHelper({})
 
   before(async function () {
-    // LoggerFactory.ROOT.level = 'debug'
+    LoggerFactory.ROOT.level = 'info'
     // LoggerFactory.setRootLevel('debug')
     // LoggerFactory.ROOT.debug('hello - debug')
     if (process.env.NOCK_BACK_MODE === 'lockdown') return Promise.resolve(true)
@@ -101,7 +101,7 @@ describe('jira:workflow @type=system', () => {
     // LoggerFactory.ROOT.level = 'INFO'
     if (process.env.NOCK_BACK_MODE === 'lockdown') return Promise.resolve(true)
     MochaNockBack.afterEach.call(this)
-    await cleanUpTestCase(await helper.createJiraClient(), TEST_SUITE_ID, TEST_CASE_JIRA_PROJECT)
+    // await cleanUpTestCase(await helper.createJiraClient(), TEST_SUITE_ID, TEST_CASE_JIRA_PROJECT)
   })
 
   describe('RFC', () => {
@@ -239,166 +239,7 @@ describe('jira:workflow @type=system', () => {
         })
       })
     }
-    it('prepare deployments to multiple environments: dlvr, test, prod', async () => {
-      const TEST_CASE_ID = 'run-df61bff5'
-      const stubCreateRFD = sandbox.stub(helper, '_createRFD').callsFake((params: CreateRfdParameters) => {
-        merge(params.issue, {fields: {labels: [TEST_SUITE_ID, TEST_CASE_ID], fixVersions: [version]}})
-        return stubCreateRFD.wrappedMethod.bind(helper)(params)
-      })
-      const jira = await helper.createJiraClient()
-      const rfc = await createRFC(jira, {
-        fields: {
-          project: {key: TEST_CASE_JIRA_PROJECT},
-          summary: `TEST RFC - ${TEST_SUITE_ID}/${TEST_CASE_ID}`,
-          labels: [TEST_SUITE_ID, TEST_CASE_ID],
-          customfield_10119: {name: RFC_CHANGE_SPONSOR}, // Change Sponsor
-          customfield_10637: {name: RFC_CHANGE_COORDINATOR}, // Change Coordinator
-          fixVersions: [version],
-        },
-      })
-      await helper.createDeployments({
-        issue: {key: rfc.key},
-        pullRequest: {
-          url: 'https://apps.nrs.gov.bc.ca/int/stash/projects/FAKE/repos/fake/pull-requests/15/overview',
-          number: '15',
-          sourceBranch: `release/${rfc.key}`,
-          targetBranch: 'master',
-          repository: AxiosBitBucketClient.parseUrl(`https://bwa.nrs.gov.bc.ca/int/stash/scm/FAKE/${TEST_SUITE_ID}-A.git`),
-        },
-        targetEnvironment: ['dlvr', 'test', 'prod'],
-      })
-      await helper.createDeployments({
-        issue: {key: rfc.key},
-        pullRequest: {
-          url: 'https://apps.nrs.gov.bc.ca/int/stash/projects/FAKE/repos/fake/pull-requests/15/overview',
-          number: '15',
-          sourceBranch: `release/${rfc.key}`,
-          targetBranch: 'master',
-          repository: AxiosBitBucketClient.parseUrl(`https://bwa.nrs.gov.bc.ca/int/stash/scm/FAKE/${TEST_SUITE_ID}-B.git`),
-        },
-        targetEnvironment: ['dlvr', 'test', 'prod'],
-      })
-    })
-    it('re-start deployments to multiple environments: dlvr, test, prod', async () => {
-      const TEST_CASE_ID = 'run-d0b4e6cf'
-      const stubCreateRFD = sandbox.stub(helper, '_createRFD').callsFake((params: CreateRfdParameters) => {
-        merge(params.issue, {fields: {labels: [TEST_SUITE_ID, TEST_CASE_ID], fixVersions: [version]}})
-        return stubCreateRFD.wrappedMethod.bind(helper)(params)
-      })
-      const jira = await helper.createJiraClient()
-      const targetEnvironments = ['dlvr', 'test', 'prod']
-      const rfc = await createRFC(jira, {
-        fields: {
-          project: {key: TEST_CASE_JIRA_PROJECT},
-          summary: `TEST RFC - ${TEST_SUITE_ID}/${TEST_CASE_ID}`,
-          labels: [TEST_SUITE_ID, TEST_CASE_ID],
-          customfield_10119: {name: RFC_CHANGE_SPONSOR}, // Change Sponsor
-          customfield_10637: {name: RFC_CHANGE_COORDINATOR}, // Change Coordinator
-          fixVersions: [version],
-        },
-      })
-      if (!rfc.fields) rfc.fields = {}
-      rfc.fields.status = RFCwkf.STATUS_OPEN
-      await helper.transitionRFCForward(rfc, RFCwkf.STATUS_APPROVED)
-      const keys1: any[] = []
-      await helper.createDeployments({
-        issue: {key: rfc.key},
-        pullRequest: {
-          url: 'https://apps.nrs.gov.bc.ca/int/stash/projects/FAKE/repos/fake/pull-requests/15/overview',
-          number: '15',
-          sourceBranch: `release/${rfc.key}`,
-          targetBranch: 'master',
-          repository: AxiosBitBucketClient.parseUrl(`https://bwa.nrs.gov.bc.ca/int/stash/scm/FAKE/${TEST_SUITE_ID}-A.git`),
-        },
-        targetEnvironment: targetEnvironments,
-      }).then(async issues => {
-        // all but the last one is in resolved state
-        // eslint-disable-next-line max-nested-callbacks
-        const rfds = issues.filter(item => item?.fields?.issuetype?.name === IssueTypeNames.RFD)
-        for (const issue of rfds) {
-          let rfdStatus = RFDwkf.STATUS_RESOLVED
-          if (issue.key === rfds[rfds.length - 1].key) {
-            rfdStatus = RFDwkf.STATUS_APPROVED
-          }
-          // eslint-disable-next-line no-await-in-loop
-          await helper.transitionRFDForward(issue, rfdStatus)
-        }
-        return issues
-      }).then(async issues => {
-        for (const issue of issues) {
-          if (issue?.fields?.issuetype?.name === IssueTypeNames.RFD) {
-            keys1.push(issue.key)
-          }
-        }
-        const state: any = {}
-        // first we need to initialize the map to guarantee ordering
-        for (const targetEnv of targetEnvironments) {
-          state[targetEnv.toUpperCase()] = null
-        }
-        // eslint-disable-next-line max-nested-callbacks
-        await jira.search({jql: `labels = "${TEST_SUITE_ID}" AND key in (${keys1.map(value => `"${value}"`).join(',')})`, fields: 'status,customfield_10121'})
-        // eslint-disable-next-line max-nested-callbacks
-        .then(result => {
-          const issues: Issue[] = result.issues
-          for (const issue of issues) {
-            state[issue?.fields?.customfield_10121?.value?.toUpperCase() as string] = {status: {id: issue?.fields?.status?.id as string}}
-          }
-          expect(state).to.be.eql({DLVR: {status: {id: RFDwkf.STATUS_RESOLVED.id}}, TEST: {status: {id: RFDwkf.STATUS_RESOLVED.id}}, PROD: {status: {id: RFDwkf.STATUS_APPROVED.id}}})
-        })
-      })
 
-      await helper.createDeployments({
-        issue: {key: rfc.key},
-        pullRequest: {
-          url: 'https://apps.nrs.gov.bc.ca/int/stash/projects/FAKE/repos/fake/pull-requests/15/overview',
-          number: '15',
-          sourceBranch: `release/${rfc.key}`,
-          targetBranch: 'master',
-          repository: AxiosBitBucketClient.parseUrl(`https://bwa.nrs.gov.bc.ca/int/stash/scm/FAKE/${TEST_SUITE_ID}-B.git`),
-        },
-        targetEnvironment: targetEnvironments,
-      })
-      .then(async issues => {
-        const keys2 = []
-        // eslint-disable-next-line max-nested-callbacks
-        const rfds = issues.filter(item => item?.fields?.issuetype?.name === IssueTypeNames.RFD)
-        expect(rfds).to.have.lengthOf(3)
-        // eslint-disable-next-line max-nested-callbacks
-        const subtasks = issues.filter(item => item?.fields?.issuetype?.name === IssueTypeNames.RFDSubtask)
-        expect(subtasks).to.have.lengthOf(3)
-        for (const issue of rfds) {
-          keys2.push(issue.key)
-        }
-        expect([...keys2.slice(0, -1), keys1[keys1.length - 1]]).to.be.deep.equal(keys2)
-        const state: any = {}
-        // first we need to initialize the map to guarantee ordering
-        for (const targetEnv of targetEnvironments) {
-          state[targetEnv.toUpperCase()] = null
-        }
-        // Check the status of the initial RFDs
-        // eslint-disable-next-line max-nested-callbacks
-        await jira.search({jql: `labels = "${TEST_SUITE_ID}" AND key in (${keys1.map(value => `"${value}"`).join(',')})`, fields: 'status,customfield_10121'})
-        // eslint-disable-next-line max-nested-callbacks
-        .then(result => {
-          const issues: Issue[] = result.issues
-          for (const issue of issues) {
-            state[issue?.fields?.customfield_10121?.value?.toUpperCase() as string] = {status: {id: issue?.fields?.status?.id as string}}
-          }
-          expect(state).to.be.eql({DLVR: {status: {id: RFDwkf.STATUS_CLOSED.id}}, TEST: {status: {id: RFDwkf.STATUS_CLOSED.id}}, PROD: {status: {id: RFDwkf.STATUS_APPROVED.id}}})
-        })
-        // Check the status of the new RFDs
-        // eslint-disable-next-line max-nested-callbacks
-        await jira.search({jql: `labels = "${TEST_SUITE_ID}" AND key in (${keys2.map(value => `"${value}"`).join(',')})`, fields: 'status,customfield_10121'})
-        // eslint-disable-next-line max-nested-callbacks
-        .then(result => {
-          const issues: Issue[] = result.issues
-          for (const issue of issues) {
-            state[issue?.fields?.customfield_10121?.value?.toUpperCase() as string] = {status: {id: issue?.fields?.status?.id as string}}
-          }
-          expect(state).to.be.eql({DLVR: {status: {id: RFDwkf.STATUS_OPEN.id}}, TEST: {status: {id: RFDwkf.STATUS_OPEN.id}}, PROD: {status: {id: RFDwkf.STATUS_APPROVED.id}}})
-        })
-      })
-    })
     for (const rfcState of [RFCwkf.STATUS_OPEN, RFCwkf.STATUS_APPROVED]) {
       for (const targetEnvironment of ['dlvr', 'test', 'prod']) {
         for (const rfdState of [RFDwkf.STATUS_OPEN, RFDwkf.STATUS_APPROVED]) {

@@ -515,10 +515,12 @@ export class RfdHelper {
     }
     // Check if there is any RFD being blocked by any other non-closed issue
     if (rfds.length > 0) {
-      await jira.search({jql: rfds.map(v => `issue in linkedIssues("${v}", "is blocked by")`).join(' OR '), fields: 'status'})
+      const jql = rfds.map(v => `issue in linkedIssues("${v}", "is blocked by")`).join(' OR ')
+      this.logger.info(`Checking for blocking issues (${param.targetEnvironment}): ${jql}`)
+      await jira.search({jql: jql, fields: 'status'})
       .then(result => {
         for (const issue of result.issues) {
-          if (!(issue.fields?.status?.id !== RFD.STATUS_CLOSED.id)) {
+          if ((issue.fields?.status?.id !== RFD.STATUS_CLOSED.id)) {
             errors.push({cause: `Issue '${issue.key}' is currently blocking (not "closed") one or more of the following RFDs: ${rfds.join(',')}'`})
           }
         }
