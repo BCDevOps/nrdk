@@ -77,7 +77,10 @@ export class JiraEventHandler {
   }
 
   async process(event: JiraWebhookEvent): Promise<{errors: readonly any[]; issues: readonly any[]}> {
-    const issue = event.payload as Issue
+    return this._process(event, event.payload as Issue)
+  }
+
+  async _process(event: JiraWebhookEvent, issue: Issue): Promise<{errors: readonly any[]; issues: readonly any[]}> {
     const helper = new RfdHelper()
     logger.info(`Processing payload event: ${event.type}`)
     // eslint-disable-next-line no-console
@@ -96,7 +99,26 @@ export class JiraEventHandler {
       // eslint-disable-next-line no-console
       console.log(`waitingInputId:${waitingInputId}`)
       if (waitingInputId !== expectedInputId) {
-        throw new Error(`Pipeline is waiting on input '${waitingInputId}', but received Jira-${expectedInputId}`)
+        // fallback to look for RFD for the specific waiting input
+        // It may have reveived events out of order, e.g.: Close RFD to DLVR after approving RFD to TEST
+        const waitingEnvironment = waitingInputId.substr('Jira-'.length)
+        // eslint-disable-next-line no-console
+        console.log(`Fallback event as environment ${waitingEnvironment}`)
+        const issue2 = await helper.search({
+          fields: 'issuetype,customfield_10121,',
+          jql: `issue in linkedIssues("${rfc.key}", "RFC link to RFD") and statusCategory != Done and "Target environment" = "${waitingEnvironment}"`,
+          maxResults: 1,
+        })
+        .then(async result => {
+          if (result.issues.length > 0) return result.issues[0] as Issue
+          return null
+        })
+        if (issue2) {
+          // eslint-disable-next-line no-console
+          console.log(`Fowarding event to RFD ${issue2.key}`)
+          return this._process(event, issue2 as Issue)
+        }
+        throw new Error(`Pipeline is waiting on input '${waitingInputId}', but received ${expectedInputId}`)
       }
       const result = await helper.deploymentStarted({
         issue: {key: rfc.key},

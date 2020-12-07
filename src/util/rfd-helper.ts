@@ -46,6 +46,11 @@ export class RfdHelper {
     })
   }
 
+  public async search(params: {fields: string; jql: string; maxResults?: number}): Promise<any> {
+    const jira = await this.createJiraClient()
+    return jira.search(params)
+  }
+
   async closeRFD(issue: Issue) {
     const jira = await this.createJiraClient()
     if (issue?.fields?.status?.id === RFD.STATUS_RESOLVED.id) {
