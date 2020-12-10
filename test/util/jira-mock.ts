@@ -1,6 +1,6 @@
 const nock = require('nock')
 
-import RfdWorkflow  from '../../src/util/jira-rfd-workflow-v1.2.2'
+import RfdWorkflow from '../../src/util/jira-rfd-workflow-v1.2.2'
 import RfcWorkflow from '../../src/util/jira-rfc-workflow-v2.0.0'
 
 export const RFCWORKFLOW = RfcWorkflow
