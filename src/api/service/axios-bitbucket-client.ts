@@ -44,7 +44,8 @@ export class AxiosBitBucketClient {
   }
 
   public createBranch(projectKey: string, repositorySlug: string, name: string, startPoint: string) {
-    return this.client.post(`rest/api/1.0/projects/${projectKey}/repos/${repositorySlug}/branches`, {name, startPoint, message: 'Create release branch'}).then(response => {
+    return this.client.post(`rest/api/1.0/projects/${projectKey}/repos/${repositorySlug}/branches`, {name, startPoint, message: 'Create release branch'})
+    .then(response => {
       return response.data
     })
   }
@@ -55,24 +56,28 @@ export class AxiosBitBucketClient {
       method: 'DELETE',
       url: `rest/branch-utils/1.0/projects/${projectKey}/repos/${repositorySlug}/branches`,
       data: {name},
-    }).then(response => {
+    })
+    .then(response => {
       return response.data
     })
   }
 
   public createPullRequest(options: CreatePullRequestOptions) {
     // console.dir(options, {depth: 4})
-    return this.client.post(`rest/api/1.0/projects/${options.toRef.repository.project.key}/repos/${options.toRef.repository.slug}/pull-requests`, options).then(response => {
+    return this.client.post(`rest/api/1.0/projects/${options.toRef.repository.project.key}/repos/${options.toRef.repository.slug}/pull-requests`, options)
+    .then(response => {
       return response.data
     })
   }
 
   public async mergePullRequest(project: string, repository: string, pullRequestNumber: number) {
-    return this.client.get(`rest/api/1.0/projects/${project}/repos/${repository}/pull-requests/${pullRequestNumber}`, {}).then(response => {
+    return this.client.get(`rest/api/1.0/projects/${project}/repos/${repository}/pull-requests/${pullRequestNumber}`, {})
+    .then(response => {
       return response.data
     })
     .then(pullRequest => {
-      return this.client.post(`rest/api/1.0/projects/${project}/repos/${repository}/pull-requests/${pullRequestNumber}/merge?version=${pullRequest.version}`, {}).then(response => {
+      return this.client.post(`rest/api/1.0/projects/${project}/repos/${repository}/pull-requests/${pullRequestNumber}/merge?version=${pullRequest.version}`, {})
+      .then(response => {
         // console.dir(response, {depth: 5})
         return response.data
       })

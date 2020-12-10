@@ -38,7 +38,8 @@ export class RfdHelper {
 
   async createVersion(param: { project: any; name: any}) {
     const jira = await this.createJiraClient()
-    return jira.client.post('/rest/api/2/version', param).then(response => {
+    return jira.client.post('/rest/api/2/version', param)
+    .then(response => {
       return response.data
     })
     .catch(error => {
@@ -366,7 +367,8 @@ export class RfdHelper {
           return this.closeRFD(issue)
           .catch(error => {
             throw new GeneralError(`Error closing RFD ${issue.key}`, error)
-          }).then(() => {
+          })
+          .then(() => {
             return null
           })
         })
@@ -384,7 +386,8 @@ export class RfdHelper {
               },
             }
             merge(defaultIssue, issue)
-            return jira.createIssue(defaultIssue).then(response => {
+            return jira.createIssue(defaultIssue)
+            .then(response => {
               const issue = merge(response, defaultIssue, {fields: {status: RFD.STATUS_OPEN}}) as Issue
               isNewRFD = true
               return issue

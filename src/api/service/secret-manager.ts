@@ -165,7 +165,8 @@ export class SecretManager {
         }
         // Missing credential validation. How can we verify as early as possible?
         // after verified, it should call 'git credential approve' or 'git credential reject'
-        return prompt(prompts).then(result => {
+        return prompt(prompts)
+        .then(result => {
           return Object.assign(result, answers)
         })
       }

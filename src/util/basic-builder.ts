@@ -45,7 +45,8 @@ export class BasicBuilder {
             repository: repo,
           },
           targetEnvironment: settings.environments,
-        }).then(issues => {
+        })
+        .then(issues => {
           helper.print(issues)
         })
       }

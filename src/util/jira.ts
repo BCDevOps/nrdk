@@ -332,7 +332,8 @@ export class Jira {
   search(opts: any) {
     try {
       const results = this.getJiraClient().search.search(opts)
-      return results.catch((error: any) => {
+      return results
+      .catch((error: any) => {
         if (typeof error === 'string') {
           const obj = JSON.parse(error)
           // eslint-disable-next-line prettier/prettier
@@ -410,7 +411,8 @@ export class Jira {
      * @return {Promise<Array>} array of rfdIssueKeys if exists. If it has item, usually it only contains 1 issue in each env.
      */
   getRfdTaskIds(rfcIssueKey: string, jiraTargetEnv: string) {
-    return this.retrieveRfcIssueInfo(rfcIssueKey).then(async rfcIssue => {
+    return this.retrieveRfcIssueInfo(rfcIssueKey)
+    .then(async rfcIssue => {
       const rfdIssueKeys = []
       for (const issuelink of rfcIssue.fields.issuelinks) {
         if (issuelink.type.id === '10300') {
@@ -437,7 +439,8 @@ export class Jira {
      * @return {Promise} subtasks array object infomation.
      */
   getIssueSubtasksInfo(issueId: string) {
-    return this.getIssue(issueId).then((issueInfo: any) => issueInfo.fields.subtasks)
+    return this.getIssue(issueId)
+    .then((issueInfo: any) => issueInfo.fields.subtasks)
   }
 
   /**
