@@ -56,7 +56,7 @@ describe('jira:workflow @type=system', () => {
     beforeEach(() => {
       sandbox.restore()
     })
-    it.only('re-start deployments to multiple environments: dlvr, test, prod', async () => {
+    it('re-start deployments to multiple environments: dlvr, test, prod', async () => {
       const TEST_CASE_ID = 'run-d0b4e6cf'
       pullRequestNumber++
       const _version = await helper.createVersion({project: TEST_CASE_JIRA_PROJECT, name: `${TEST_SUITE_ID}-${TEST_CASE_ID}`})
