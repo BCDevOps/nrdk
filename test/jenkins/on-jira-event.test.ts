@@ -7,7 +7,9 @@ import {SecretManager} from '../../src/api/service/secret-manager'
 import {LoggerFactory} from '../../src/util/logger'
 
 describe('On Jira Event @type=system', function () {
-  SecretManager.loadEntries(require('../.local/secrets.json'))
+  before(() => {
+    SecretManager.loadEntries(require('../.local/secrets.json'))
+  })
   it('hello 1', async function (this: Context) {
     const config = require('../.local/jenkins-config.json')
     const client = axios.create({
