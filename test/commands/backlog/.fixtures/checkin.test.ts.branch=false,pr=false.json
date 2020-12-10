@@ -1,0 +1,41 @@
+[
+    {
+        "scope": "https://bwa.nrs.gov.bc.ca:443",
+        "method": "GET",
+        "path": "/int/jira/rest/api/2/issue/IRS-216?fields=issuetype,components,project",
+        "body": "",
+        "status": 200,
+        "response": {
+            "expand": "renderedFields,names,schema,operations,editmeta,changelog,versionedRepresentations",
+            "id": "135218",
+            "key": "IRS-216",
+            "fields": {
+                "issuetype": {
+                    "id": "3",
+                    "description": "A task that needs to be done.",
+                    "name": "Task",
+                    "subtask": false,
+                    "avatarId": 10318
+                },
+                "project": {
+                    "id": "10724",
+                    "key": "IRS",
+                    "name": "IRS - Infrastructure Reporting System",
+                    "projectTypeKey": "software",
+                    "projectCategory": {
+                        "id": "10600",
+                        "name": "Standard Application"
+                    }
+                },
+                "components": [
+                    {
+                        "id": "15614",
+                        "name": "irs-war",
+                        "description": "https://apps.nrs.gov.bc.ca/int/stash/projects/IRS/repos/irs-war/browse"
+                    }
+                ]
+            }
+        },
+        "responseIsBinary": false
+    }
+]

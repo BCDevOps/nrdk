@@ -1,0 +1,137 @@
+{
+  "name": "@bcgov/nrdk",
+  "description": "NR Developer/Deployment Kit",
+  "version": "0.1.0-rc.91",
+  "author": "Clecio Varjao",
+  "bin": {
+    "nrdk": "./bin/run"
+  },
+  "bugs": "https://github.com/bcdevops/nrdk/issues",
+  "mocha": {
+    "require": [
+      "ts-node/register"
+    ]
+  },
+  "dependencies": {
+    "@bcgov/nr-pipeline-ext": "0.1.0-rc.13",
+    "@bcgov/pipeline-cli": "^1.0.1-2",
+    "@oclif/command": "^1.8.0",
+    "@oclif/plugin-help": "^3.2.0",
+    "axios": "^0.20.0",
+    "chalk": "^4.1.0",
+    "cli-ux": "^5.5.0",
+    "form-data": "^3.0.0",
+    "inquirer": "^7.3.3",
+    "isomorphic-git": "^1.7.8",
+    "jira-connector": "^3.1.0",
+    "jira.js": "^1.7.3",
+    "lodash.merge": "^4.6.2",
+    "rsync": "^0.6.1",
+    "safe-buffer": "^5.2.1",
+    "shelljs": "^0.8.4",
+    "tar": "^6.0.5",
+    "winston": "^3.3.3"
+  },
+  "devDependencies": {
+    "@oclif/dev-cli": "^1",
+    "@oclif/test": "^1",
+    "@types/chai": "^4.2.12",
+    "@types/inquirer": "^7.3.1",
+    "@types/lodash.merge": "^4.6.6",
+    "@types/mocha": "^8.0.3",
+    "@types/node": "^12.19.1",
+    "@types/request": "^2.48.5",
+    "@types/rsync": "^0.4.30",
+    "@types/tar": "^4.0.3",
+    "@zeit/ncc": "^0.22.3",
+    "chai": "^4",
+    "cpx": "^1.5.0",
+    "eslint": "^5.13",
+    "eslint-config-oclif": "^3.1",
+    "eslint-config-oclif-typescript": "^0.1",
+    "expect": "^26.4.2",
+    "globby": "^10",
+    "jest-snapshot": "^26.4.2",
+    "mocha": "^8.1.3",
+    "nock": "^13.0.4",
+    "nyc": "^14",
+    "oclif": "^1.16.1",
+    "pkg": "^4.4.9",
+    "sanitize-filename": "^1.6.3",
+    "sinon": "^9.2.0",
+    "ts-loader": "^7.0.5",
+    "ts-node": "^8",
+    "typescript": "^3.9.7"
+  },
+  "engines": {
+    "node": ">=12.0.0"
+  },
+  "files": [
+    "/bin",
+    "/lib/**/*",
+    "/npm-shrinkwrap.json",
+    "/oclif.manifest.json"
+  ],
+  "homepage": "https://github.com/bcdevops/nrdk",
+  "keywords": [
+    "oclif"
+  ],
+  "license": "Apache-2.0",
+  "main": "lib/index.js",
+  "oclif": {
+    "commands": "./lib/commands",
+    "bin": "nrdk",
+    "plugins": [
+      "@oclif/plugin-help"
+    ],
+    "repositoryPrefix": "./<%- commandPath %>",
+    "topics": {
+      "backlog": {
+        "description": "Manage backlog items and the work related to those items."
+      }
+    },
+    "hooks": {
+      "init": "./lib/hooks/show-version"
+    }
+  },
+  "repository": "https://github.com/bcdevops/nrdk",
+  "scripts": {
+    "prebuild": "oclif-dev manifest",
+    "build": "tsc -b",
+    "postpack": "rm -f oclif.manifest.json",
+    "postbuild": "cpx 'src/**/*.yaml' lib",
+    "lint": "eslint . --ext .ts --config .eslintrc",
+    "posttest": "eslint . --ext .ts --config .eslintrc",
+    "prepack": "rm -rf lib && tsc -b && oclif-dev manifest && oclif-dev readme && cpx 'src/**/*.{yaml,groovy}' lib",
+    "ncc": "ncc build bin/run -o dist --minify",
+    "test": "NOCK_BACK_MODE=lockdown nyc --reporter=html --reporter=text --extension .ts mocha --timeout 99999 --grep \"@type=system\" --invert --forbid-only \"test/**/*.test.ts\"",
+    "mocha:all": "mocha --forbid-only --grep \"@type=system\" --invert --timeout 99999 \"test/**/*.test.ts\"",
+    "mocha": "mocha --timeout 9999999",
+    "version": "oclif-dev readme && git add README.md",
+    "oclif": "oclif",
+    "link": "npm link @bcgov/nr-pipeline-ext && npm link @bcgov/pipeline-cli",
+    "publish:latest": "npm --no-git-tag-version version prerelease && npm publish --tag latest",
+    "publish:alpha": "npm --no-git-tag-version version prerelease && npm publish --tag alpha"
+  },
+  "types": "lib/index.d.ts",
+  "bundleDependencies": [
+    "@bcgov/pipeline-cli",
+    "@oclif/plugin-help",
+    "isomorphic-git",
+    "@bcgov/nr-pipeline-ext",
+    "rsync",
+    "tar",
+    "winston",
+    "@oclif/command",
+    "shelljs",
+    "lodash.merge",
+    "safe-buffer",
+    "inquirer",
+    "axios",
+    "cli-ux",
+    "jira-connector",
+    "chalk",
+    "jira.js",
+    "form-data"
+  ]
+}

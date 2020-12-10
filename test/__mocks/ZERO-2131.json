@@ -1,0 +1,110 @@
+{
+  "scope": "https://bwa.nrs.gov.bc.ca:443",
+  "method": "GET",
+  "path": "/int/jira/rest/api/2/issue/ZERO-2131",
+  "body": {},
+  "status": 200,
+  "response": {
+    "expand": "renderedFields,names,schema,operations,editmeta,changelog,versionedRepresentations",
+    "id": "125091",
+    "key": "ZERO-2131",
+    "fields": {
+      "resolution": {
+        "id": "10000",
+        "description": "Work has been completed on this issue.",
+        "name": "Done"
+      },
+      "lastViewed": "2020-07-29T13:38:38.415-0700",
+      "labels": [],
+      "issuelinks": [
+        {
+          "id": "110218",
+          "type": {
+            "id": "10300",
+            "name": "RFC-RFD",
+            "inward": "RFD link to RFC",
+            "outward": "RFC link to RFD"
+          },
+          "inwardIssue": {
+            "id": "124521",
+            "key": "ZERO-2127",
+            "fields": {
+              "summary": "Fix title color - dummy",
+              "status": {
+                "description": "",
+                "name": "Approved",
+                "id": "10312",
+                "statusCategory": {
+                  "id": 4,
+                  "key": "indeterminate",
+                  "colorName": "yellow",
+                  "name": "In Progress"
+                }
+              },
+              "priority": {
+                "name": "Medium",
+                "id": "3"
+              },
+              "issuetype": {
+                "id": "10400",
+                "description": "Request for Change",
+                "name": "RFC",
+                "subtask": false,
+                "avatarId": 11610
+              }
+            }
+          }
+        }
+      ],
+      "components": [],
+      "issuetype": {
+        "id": "10401",
+        "description": "Request for Deployment",
+        "name": "RFD",
+        "subtask": false,
+        "avatarId": 11611
+      },
+      "project": {
+        "id": "12613",
+        "key": "ZERO",
+        "name": "Team Zero",
+        "projectTypeKey": "software"
+      },
+      "resolutiondate": "2020-07-29T12:29:46.000-0700",
+      "updated": "2020-07-29T12:29:46.000-0700",
+      "summary": "RFD For DLVR",
+      "customfield_10121": {
+        "value": "DLVR",
+        "id": "10904"
+      },
+      "fixVersions": [
+        {
+          "id": "13727",
+          "description": "First release to SPI vendor developers",
+          "name": "V0.1",
+          "archived": false,
+          "released": false,
+          "releaseDate": "2019-07-31"
+        }
+      ],
+      "priority": {
+        "name": "Medium",
+        "id": "3"
+      },
+      "status": {
+        "description": "A resolution has been taken, and it is awaiting verification by reporter. From here issues are either reopened, or are closed.",
+        "name": "Resolved",
+        "id": "5",
+        "statusCategory": {
+          "id": 3,
+          "key": "done",
+          "colorName": "green",
+          "name": "Done"
+        }
+      },
+      "created": "2020-07-29T12:14:26.000-0700",
+      "attachment": []
+    }
+  },
+  "responseIsBinary": false
+}
