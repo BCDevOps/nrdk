@@ -30,9 +30,10 @@ let pullRequestNumber = 1
  * This is a System testing case which requires access to an JIRA installation
  */
 describe('jira:workflow @type=system', () => {
-  SecretManager.loadEntries(require('../.local/secrets.json'))
   const  helper = new RfdHelper({})
-
+  before(() => {
+    SecretManager.loadEntries(require('../.local/secrets.json'))
+  })
   before(async function () {
     LoggerFactory.ROOT.level = 'info'
     // LoggerFactory.setRootLevel('debug')
