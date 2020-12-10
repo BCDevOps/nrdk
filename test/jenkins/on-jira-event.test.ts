@@ -8,9 +8,11 @@ import {LoggerFactory} from '../../src/util/logger'
 
 describe('On Jira Event @type=system', function () {
   before(() => {
+    // eslint-disable-next-line node/no-missing-require
     SecretManager.loadEntries(require('../.local/secrets.json'))
   })
   it('hello 1', async function (this: Context) {
+    // eslint-disable-next-line node/no-missing-require
     const config = require('../.local/jenkins-config.json')
     const client = axios.create({
       baseURL: config.baseURL,
@@ -25,6 +27,7 @@ describe('On Jira Event @type=system', function () {
     })
   })
   it.skip('hello 2', async function (this: Context) {
+    // eslint-disable-next-line node/no-missing-require
     const config = require('../.local/jenkins-config.json')
     const client = axios.create({
       baseURL: config.baseURL,

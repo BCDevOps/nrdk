@@ -32,6 +32,7 @@ let pullRequestNumber = 1
 describe('jira:workflow @type=system', () => {
   const  helper = new RfdHelper({})
   before(() => {
+    // eslint-disable-next-line node/no-missing-require
     SecretManager.loadEntries(require('../.local/secrets.json'))
   })
   before(async function () {
