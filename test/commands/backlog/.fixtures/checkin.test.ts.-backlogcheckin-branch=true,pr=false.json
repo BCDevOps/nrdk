@@ -1,0 +1,154 @@
+[
+    {
+        "scope": "https://bwa.nrs.gov.bc.ca:443",
+        "method": "GET",
+        "path": "/int/jira/rest/api/2/issue/IRS-216?fields=issuetype,components,project",
+        "body": "",
+        "status": 200,
+        "response": {
+            "expand": "renderedFields,names,schema,operations,editmeta,changelog,versionedRepresentations",
+            "id": "135218",
+            "key": "IRS-216",
+            "fields": {
+                "issuetype": {
+                    "id": "3",
+                    "description": "A task that needs to be done.",
+                    "name": "Task",
+                    "subtask": false,
+                    "avatarId": 10318
+                },
+                "project": {
+                    "id": "10724",
+                    "key": "IRS",
+                    "name": "IRS - Infrastructure Reporting System",
+                    "projectTypeKey": "software",
+                    "projectCategory": {
+                        "id": "10600",
+                        "name": "Standard Application"
+                    }
+                },
+                "components": [
+                    {
+                        "id": "15614",
+                        "name": "irs-war",
+                        "description": "https://apps.nrs.gov.bc.ca/int/stash/projects/IRS/repos/irs-war/browse"
+                    }
+                ]
+            }
+        },
+        "responseIsBinary": false
+    },
+    {
+        "scope": "https://bwa.nrs.gov.bc.ca:443",
+        "method": "GET",
+        "path": "/int/jira/rest/api/2/issue/IRS-216?fields=fixVersions,issuetype,project,status",
+        "body": "",
+        "status": 200,
+        "response": {
+            "expand": "renderedFields,names,schema,operations,editmeta,changelog,versionedRepresentations",
+            "id": "135218",
+            "key": "IRS-216",
+            "fields": {
+                "issuetype": {
+                    "id": "3",
+                    "description": "A task that needs to be done.",
+                    "name": "Task",
+                    "subtask": false,
+                    "avatarId": 10318
+                },
+                "project": {
+                    "id": "10724",
+                    "key": "IRS",
+                    "name": "IRS - Infrastructure Reporting System",
+                    "projectTypeKey": "software",
+                    "projectCategory": {
+                        "id": "10600",
+                        "name": "Standard Application"
+                    }
+                },
+                "fixVersions": [
+                    {
+                        "id": "15604",
+                        "description": "Replatform to OpenShift",
+                        "name": "4.0.0",
+                        "archived": false,
+                        "released": false
+                    }
+                ],
+                "status": {
+                    "description": "The issue is considered finished, the resolution is correct. Issues which are closed can be reopened.",
+                    "name": "Closed",
+                    "id": "6",
+                    "statusCategory": {
+                        "id": 3,
+                        "key": "done",
+                        "colorName": "green",
+                        "name": "Done"
+                    }
+                }
+            }
+        },
+        "responseIsBinary": false
+    },
+    {
+        "scope": "https://bwa.nrs.gov.bc.ca:443",
+        "method": "GET",
+        "path": "/int/jira/rest/api/2/search?fields=fixVersions,issuetype,project,status&jql=fixVersion++%3D+15604+AND+issuetype+%3D+RFC+AND+statusCategory+!%3D+Done",
+        "body": "",
+        "status": 200,
+        "response": {
+            "expand": "names,schema",
+            "startAt": 0,
+            "maxResults": 50,
+            "total": 1,
+            "issues": [
+                {
+                    "expand": "operations,versionedRepresentations,editmeta,changelog,renderedFields",
+                    "id": "135773",
+                    "self": "https://apps.nrs.gov.bc.ca/int/jira/rest/api/2/issue/135773",
+                    "key": "IRS-215",
+                    "fields": {
+                        "issuetype": {
+                            "id": "10400",
+                            "description": "Request for Change",
+                            "name": "RFC",
+                            "subtask": false,
+                            "avatarId": 11610
+                        },
+                        "project": {
+                            "id": "10724",
+                            "key": "IRS",
+                            "name": "IRS - Infrastructure Reporting System",
+                            "projectTypeKey": "software",
+                            "projectCategory": {
+                                "id": "10600",
+                                "name": "Standard Application"
+                            }
+                        },
+                        "fixVersions": [
+                            {
+                                "id": "15604",
+                                "description": "Replatform to OpenShift",
+                                "name": "4.0.0",
+                                "archived": false,
+                                "released": false
+                            }
+                        ],
+                        "status": {
+                            "description": "",
+                            "name": "Approved",
+                            "id": "10312",
+                            "statusCategory": {
+                                "id": 4,
+                                "key": "indeterminate",
+                                "colorName": "yellow",
+                                "name": "In Progress"
+                            }
+                        }
+                    }
+                }
+            ]
+        },
+        "responseIsBinary": false
+    }
+]

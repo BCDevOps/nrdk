@@ -82,3 +82,7 @@ typings/
 yarn-debug.log*
 yarn-error.log*
 oclif.manifest.json
+**/.DS_Store
+test/.local/**
+**/.local.*
+**/*.local.*

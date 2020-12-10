@@ -1,0 +1,1965 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`RFC Verification: env: dlvr, status: Approved (10312), no RFDs: 388a19ef-a1d7-47ab-9ca4-4eff419aab96-dlvr-10312 1`] = `
+Object {
+  "rfcRfdContext": Object {
+    "rfcIssueKey": "FAKE-1000",
+    "rfcStatus": "Approved",
+    "rfdsByEnv": Object {
+      "dlvr": Object {
+        "previousEnvRfds": Array [],
+        "rfds": Array [],
+      },
+    },
+  },
+  "status": "Ready",
+}
+`;
+
+exports[`RFC Verification: env: dlvr, status: Approved (10312): 388a19ef-a1d7-47ab-9ca4-4eff419aab96-dlvr-10312 1`] = `
+Object {
+  "rfcRfdContext": Object {
+    "rfcIssueKey": "FAKE-1000",
+    "rfcStatus": "Approved",
+    "rfdsByEnv": Object {
+      "dlvr": Object {
+        "previousEnvRfds": Array [],
+        "rfds": Array [],
+      },
+    },
+  },
+  "status": "Ready",
+}
+`;
+
+exports[`RFC Verification: env: dlvr, status: Authorized for Int (10300): 388a19ef-a1d7-47ab-9ca4-4eff419aab96-dlvr-10300 1`] = `
+Object {
+  "rfcRfdContext": Object {
+    "rfcIssueKey": "FAKE-1000",
+    "rfcStatus": "Authorized for Int",
+    "rfdsByEnv": Object {
+      "dlvr": Object {
+        "previousEnvRfds": Array [],
+        "rfds": Array [],
+      },
+    },
+  },
+  "status": "Ready",
+}
+`;
+
+exports[`RFC Verification: env: dlvr, status: Authorized for Prod (10301): 388a19ef-a1d7-47ab-9ca4-4eff419aab96-dlvr-10301 1`] = `
+Object {
+  "reason": Object {
+    "RFC_NOT_AUTHORIZED": Object {
+      "description": "RFC is not authorized to target environment",
+      "issueItems": Array [
+        Object {
+          "env": "dlvr",
+          "issueKey": "FAKE-1000",
+          "status": "Authorized for Prod",
+        },
+      ],
+    },
+  },
+  "rfcRfdContext": Object {
+    "rfcIssueKey": "FAKE-1000",
+    "rfcStatus": "Authorized for Prod",
+    "rfdsByEnv": Object {
+      "dlvr": Object {
+        "previousEnvRfds": Array [],
+        "rfds": Array [],
+      },
+    },
+  },
+  "status": "Not Ready",
+}
+`;
+
+exports[`RFC Verification: env: dlvr, status: Authorized for Test (10302): 388a19ef-a1d7-47ab-9ca4-4eff419aab96-dlvr-10302 1`] = `
+Object {
+  "reason": Object {
+    "RFC_NOT_AUTHORIZED": Object {
+      "description": "RFC is not authorized to target environment",
+      "issueItems": Array [
+        Object {
+          "env": "dlvr",
+          "issueKey": "FAKE-1000",
+          "status": "Authorized for Test",
+        },
+      ],
+    },
+  },
+  "rfcRfdContext": Object {
+    "rfcIssueKey": "FAKE-1000",
+    "rfcStatus": "Authorized for Test",
+    "rfdsByEnv": Object {
+      "dlvr": Object {
+        "previousEnvRfds": Array [],
+        "rfds": Array [],
+      },
+    },
+  },
+  "status": "Not Ready",
+}
+`;
+
+exports[`RFC Verification: env: dlvr, status: Closed (6), no RFDs: 388a19ef-a1d7-47ab-9ca4-4eff419aab96-dlvr-6 1`] = `
+Object {
+  "reason": Object {
+    "RFC_NOT_AUTHORIZED": Object {
+      "description": "RFC is not authorized to target environment",
+      "issueItems": Array [
+        Object {
+          "env": "dlvr",
+          "issueKey": "FAKE-1000",
+          "status": "Closed",
+        },
+      ],
+    },
+  },
+  "rfcRfdContext": Object {
+    "rfcIssueKey": "FAKE-1000",
+    "rfcStatus": "Closed",
+    "rfdsByEnv": Object {
+      "dlvr": Object {
+        "previousEnvRfds": Array [],
+        "rfds": Array [],
+      },
+    },
+  },
+  "status": "Not Ready",
+}
+`;
+
+exports[`RFC Verification: env: dlvr, status: Closed (6): 388a19ef-a1d7-47ab-9ca4-4eff419aab96-dlvr-6 1`] = `
+Object {
+  "reason": Object {
+    "RFC_NOT_AUTHORIZED": Object {
+      "description": "RFC is not authorized to target environment",
+      "issueItems": Array [
+        Object {
+          "env": "dlvr",
+          "issueKey": "FAKE-1000",
+          "status": "Closed",
+        },
+      ],
+    },
+  },
+  "rfcRfdContext": Object {
+    "rfcIssueKey": "FAKE-1000",
+    "rfcStatus": "Closed",
+    "rfdsByEnv": Object {
+      "dlvr": Object {
+        "previousEnvRfds": Array [],
+        "rfds": Array [],
+      },
+    },
+  },
+  "status": "Not Ready",
+}
+`;
+
+exports[`RFC Verification: env: dlvr, status: In Eval for Int (10303): 388a19ef-a1d7-47ab-9ca4-4eff419aab96-dlvr-6 1`] = `
+Object {
+  "reason": Object {
+    "RFC_NOT_AUTHORIZED": Object {
+      "description": "RFC is not authorized to target environment",
+      "issueItems": Array [
+        Object {
+          "env": "dlvr",
+          "issueKey": "FAKE-1000",
+          "status": "Closed",
+        },
+      ],
+    },
+  },
+  "rfcRfdContext": Object {
+    "rfcIssueKey": "FAKE-1000",
+    "rfcStatus": "Closed",
+    "rfdsByEnv": Object {
+      "dlvr": Object {
+        "previousEnvRfds": Array [],
+        "rfds": Array [],
+      },
+    },
+  },
+  "status": "Not Ready",
+}
+`;
+
+exports[`RFC Verification: env: dlvr, status: In Eval for Prod (10304): 388a19ef-a1d7-47ab-9ca4-4eff419aab96-dlvr-10304 1`] = `
+Object {
+  "reason": Object {
+    "RFC_NOT_AUTHORIZED": Object {
+      "description": "RFC is not authorized to target environment",
+      "issueItems": Array [
+        Object {
+          "env": "dlvr",
+          "issueKey": "FAKE-1000",
+          "status": "In Eval for Prod",
+        },
+      ],
+    },
+  },
+  "rfcRfdContext": Object {
+    "rfcIssueKey": "FAKE-1000",
+    "rfcStatus": "In Eval for Prod",
+    "rfdsByEnv": Object {
+      "dlvr": Object {
+        "previousEnvRfds": Array [],
+        "rfds": Array [],
+      },
+    },
+  },
+  "status": "Not Ready",
+}
+`;
+
+exports[`RFC Verification: env: dlvr, status: In Eval for Test (10305): 388a19ef-a1d7-47ab-9ca4-4eff419aab96-dlvr-10305 1`] = `
+Object {
+  "reason": Object {
+    "RFC_NOT_AUTHORIZED": Object {
+      "description": "RFC is not authorized to target environment",
+      "issueItems": Array [
+        Object {
+          "env": "dlvr",
+          "issueKey": "FAKE-1000",
+          "status": "In Eval for Test",
+        },
+      ],
+    },
+  },
+  "rfcRfdContext": Object {
+    "rfcIssueKey": "FAKE-1000",
+    "rfcStatus": "In Eval for Test",
+    "rfdsByEnv": Object {
+      "dlvr": Object {
+        "previousEnvRfds": Array [],
+        "rfds": Array [],
+      },
+    },
+  },
+  "status": "Not Ready",
+}
+`;
+
+exports[`RFC Verification: env: dlvr, status: In Review for Int (10306): 388a19ef-a1d7-47ab-9ca4-4eff419aab96-dlvr-10306 1`] = `
+Object {
+  "reason": Object {
+    "RFC_NOT_AUTHORIZED": Object {
+      "description": "RFC is not authorized to target environment",
+      "issueItems": Array [
+        Object {
+          "env": "dlvr",
+          "issueKey": "FAKE-1000",
+          "status": "In Review for Int",
+        },
+      ],
+    },
+  },
+  "rfcRfdContext": Object {
+    "rfcIssueKey": "FAKE-1000",
+    "rfcStatus": "In Review for Int",
+    "rfdsByEnv": Object {
+      "dlvr": Object {
+        "previousEnvRfds": Array [],
+        "rfds": Array [],
+      },
+    },
+  },
+  "status": "Not Ready",
+}
+`;
+
+exports[`RFC Verification: env: dlvr, status: In Review for Prod (10307): 388a19ef-a1d7-47ab-9ca4-4eff419aab96-dlvr-10307 1`] = `
+Object {
+  "reason": Object {
+    "RFC_NOT_AUTHORIZED": Object {
+      "description": "RFC is not authorized to target environment",
+      "issueItems": Array [
+        Object {
+          "env": "dlvr",
+          "issueKey": "FAKE-1000",
+          "status": "In Review for Prod",
+        },
+      ],
+    },
+  },
+  "rfcRfdContext": Object {
+    "rfcIssueKey": "FAKE-1000",
+    "rfcStatus": "In Review for Prod",
+    "rfdsByEnv": Object {
+      "dlvr": Object {
+        "previousEnvRfds": Array [],
+        "rfds": Array [],
+      },
+    },
+  },
+  "status": "Not Ready",
+}
+`;
+
+exports[`RFC Verification: env: dlvr, status: In Review for Test (10308): 388a19ef-a1d7-47ab-9ca4-4eff419aab96-dlvr-10308 1`] = `
+Object {
+  "reason": Object {
+    "RFC_NOT_AUTHORIZED": Object {
+      "description": "RFC is not authorized to target environment",
+      "issueItems": Array [
+        Object {
+          "env": "dlvr",
+          "issueKey": "FAKE-1000",
+          "status": "In Review for Test",
+        },
+      ],
+    },
+  },
+  "rfcRfdContext": Object {
+    "rfcIssueKey": "FAKE-1000",
+    "rfcStatus": "In Review for Test",
+    "rfdsByEnv": Object {
+      "dlvr": Object {
+        "previousEnvRfds": Array [],
+        "rfds": Array [],
+      },
+    },
+  },
+  "status": "Not Ready",
+}
+`;
+
+exports[`RFC Verification: env: dlvr, status: Open (1), no RFDs: 388a19ef-a1d7-47ab-9ca4-4eff419aab96-dlvr-1 1`] = `
+Object {
+  "reason": Object {
+    "RFC_NOT_AUTHORIZED": Object {
+      "description": "RFC is not authorized to target environment",
+      "issueItems": Array [
+        Object {
+          "env": "dlvr",
+          "issueKey": "FAKE-1000",
+          "status": "Open",
+        },
+      ],
+    },
+  },
+  "rfcRfdContext": Object {
+    "rfcIssueKey": "FAKE-1000",
+    "rfcStatus": "Open",
+    "rfdsByEnv": Object {
+      "dlvr": Object {
+        "previousEnvRfds": Array [],
+        "rfds": Array [],
+      },
+    },
+  },
+  "status": "Not Ready",
+}
+`;
+
+exports[`RFC Verification: env: dlvr, status: Open (1): 388a19ef-a1d7-47ab-9ca4-4eff419aab96-dlvr-1 1`] = `
+Object {
+  "reason": Object {
+    "RFC_NOT_AUTHORIZED": Object {
+      "description": "RFC is not authorized to target environment",
+      "issueItems": Array [
+        Object {
+          "env": "dlvr",
+          "issueKey": "FAKE-1000",
+          "status": "Open",
+        },
+      ],
+    },
+  },
+  "rfcRfdContext": Object {
+    "rfcIssueKey": "FAKE-1000",
+    "rfcStatus": "Open",
+    "rfdsByEnv": Object {
+      "dlvr": Object {
+        "previousEnvRfds": Array [],
+        "rfds": Array [],
+      },
+    },
+  },
+  "status": "Not Ready",
+}
+`;
+
+exports[`RFC Verification: env: dlvr, status: Open for Int (10309): 388a19ef-a1d7-47ab-9ca4-4eff419aab96-dlvr-10309 1`] = `
+Object {
+  "reason": Object {
+    "RFC_NOT_AUTHORIZED": Object {
+      "description": "RFC is not authorized to target environment",
+      "issueItems": Array [
+        Object {
+          "env": "dlvr",
+          "issueKey": "FAKE-1000",
+          "status": "Open for Int",
+        },
+      ],
+    },
+  },
+  "rfcRfdContext": Object {
+    "rfcIssueKey": "FAKE-1000",
+    "rfcStatus": "Open for Int",
+    "rfdsByEnv": Object {
+      "dlvr": Object {
+        "previousEnvRfds": Array [],
+        "rfds": Array [],
+      },
+    },
+  },
+  "status": "Not Ready",
+}
+`;
+
+exports[`RFC Verification: env: dlvr, status: Open for Prod (10310): 388a19ef-a1d7-47ab-9ca4-4eff419aab96-dlvr-10310 1`] = `
+Object {
+  "reason": Object {
+    "RFC_NOT_AUTHORIZED": Object {
+      "description": "RFC is not authorized to target environment",
+      "issueItems": Array [
+        Object {
+          "env": "dlvr",
+          "issueKey": "FAKE-1000",
+          "status": "Open for Prod",
+        },
+      ],
+    },
+  },
+  "rfcRfdContext": Object {
+    "rfcIssueKey": "FAKE-1000",
+    "rfcStatus": "Open for Prod",
+    "rfdsByEnv": Object {
+      "dlvr": Object {
+        "previousEnvRfds": Array [],
+        "rfds": Array [],
+      },
+    },
+  },
+  "status": "Not Ready",
+}
+`;
+
+exports[`RFC Verification: env: dlvr, status: Open for Test (10311): 388a19ef-a1d7-47ab-9ca4-4eff419aab96-dlvr-10311 1`] = `
+Object {
+  "reason": Object {
+    "RFC_NOT_AUTHORIZED": Object {
+      "description": "RFC is not authorized to target environment",
+      "issueItems": Array [
+        Object {
+          "env": "dlvr",
+          "issueKey": "FAKE-1000",
+          "status": "Open for Test",
+        },
+      ],
+    },
+  },
+  "rfcRfdContext": Object {
+    "rfcIssueKey": "FAKE-1000",
+    "rfcStatus": "Open for Test",
+    "rfdsByEnv": Object {
+      "dlvr": Object {
+        "previousEnvRfds": Array [],
+        "rfds": Array [],
+      },
+    },
+  },
+  "status": "Not Ready",
+}
+`;
+
+exports[`RFC Verification: env: dlvr, status: Resolved (5), no RFDs: 388a19ef-a1d7-47ab-9ca4-4eff419aab96-dlvr-5 1`] = `
+Object {
+  "reason": Object {
+    "RFC_NOT_AUTHORIZED": Object {
+      "description": "RFC is not authorized to target environment",
+      "issueItems": Array [
+        Object {
+          "env": "dlvr",
+          "issueKey": "FAKE-1000",
+          "status": "Resolved",
+        },
+      ],
+    },
+  },
+  "rfcRfdContext": Object {
+    "rfcIssueKey": "FAKE-1000",
+    "rfcStatus": "Resolved",
+    "rfdsByEnv": Object {
+      "dlvr": Object {
+        "previousEnvRfds": Array [],
+        "rfds": Array [],
+      },
+    },
+  },
+  "status": "Not Ready",
+}
+`;
+
+exports[`RFC Verification: env: dlvr, status: Resolved (5): 388a19ef-a1d7-47ab-9ca4-4eff419aab96-dlvr-5 1`] = `
+Object {
+  "reason": Object {
+    "RFC_NOT_AUTHORIZED": Object {
+      "description": "RFC is not authorized to target environment",
+      "issueItems": Array [
+        Object {
+          "env": "dlvr",
+          "issueKey": "FAKE-1000",
+          "status": "Resolved",
+        },
+      ],
+    },
+  },
+  "rfcRfdContext": Object {
+    "rfcIssueKey": "FAKE-1000",
+    "rfcStatus": "Resolved",
+    "rfdsByEnv": Object {
+      "dlvr": Object {
+        "previousEnvRfds": Array [],
+        "rfds": Array [],
+      },
+    },
+  },
+  "status": "Not Ready",
+}
+`;
+
+exports[`RFC Verification: env: dlvr, status: Submit (10500), no RFDs: 388a19ef-a1d7-47ab-9ca4-4eff419aab96-dlvr-1 1`] = `
+Object {
+  "reason": Object {
+    "RFC_NOT_AUTHORIZED": Object {
+      "description": "RFC is not authorized to target environment",
+      "issueItems": Array [
+        Object {
+          "env": "dlvr",
+          "issueKey": "FAKE-1000",
+          "status": "Open",
+        },
+      ],
+    },
+  },
+  "rfcRfdContext": Object {
+    "rfcIssueKey": "FAKE-1000",
+    "rfcStatus": "Open",
+    "rfdsByEnv": Object {
+      "dlvr": Object {
+        "previousEnvRfds": Array [],
+        "rfds": Array [],
+      },
+    },
+  },
+  "status": "Not Ready",
+}
+`;
+
+exports[`RFC Verification: env: dlvr, status: Submit (10500), no RFDs: 388a19ef-a1d7-47ab-9ca4-4eff419aab96-dlvr-10500 1`] = `
+Object {
+  "reason": Object {
+    "RFC_NOT_AUTHORIZED": Object {
+      "description": "RFC is not authorized to target environment",
+      "issueItems": Array [
+        Object {
+          "env": "dlvr",
+          "issueKey": "FAKE-1000",
+          "status": "Submit",
+        },
+      ],
+    },
+  },
+  "rfcRfdContext": Object {
+    "rfcIssueKey": "FAKE-1000",
+    "rfcStatus": "Submit",
+    "rfdsByEnv": Object {
+      "dlvr": Object {
+        "previousEnvRfds": Array [],
+        "rfds": Array [],
+      },
+    },
+  },
+  "status": "Not Ready",
+}
+`;
+
+exports[`RFC Verification: env: dlvr, status: Submit (10500): 388a19ef-a1d7-47ab-9ca4-4eff419aab96-dlvr-10500 1`] = `
+Object {
+  "reason": Object {
+    "RFC_NOT_AUTHORIZED": Object {
+      "description": "RFC is not authorized to target environment",
+      "issueItems": Array [
+        Object {
+          "env": "dlvr",
+          "issueKey": "FAKE-1000",
+          "status": "Submit",
+        },
+      ],
+    },
+  },
+  "rfcRfdContext": Object {
+    "rfcIssueKey": "FAKE-1000",
+    "rfcStatus": "Submit",
+    "rfdsByEnv": Object {
+      "dlvr": Object {
+        "previousEnvRfds": Array [],
+        "rfds": Array [],
+      },
+    },
+  },
+  "status": "Not Ready",
+}
+`;
+
+exports[`RFC Verification: env: dlvr, status: UNDER REVIEW (10312), no RFDs: 388a19ef-a1d7-47ab-9ca4-4eff419aab96-dlvr-10312 1`] = `
+Object {
+  "reason": Object {
+    "RFC_NOT_AUTHORIZED": Object {
+      "description": "RFC is not authorized to target environment",
+      "issueItems": Array [
+        Object {
+          "env": "dlvr",
+          "issueKey": "FAKE-1000",
+          "status": "UNDER REVIEW",
+        },
+      ],
+    },
+  },
+  "rfcRfdContext": Object {
+    "rfcIssueKey": "FAKE-1000",
+    "rfcStatus": "UNDER REVIEW",
+    "rfdsByEnv": Object {
+      "dlvr": Object {
+        "previousEnvRfds": Array [],
+        "rfds": Array [],
+      },
+    },
+  },
+  "status": "Not Ready",
+}
+`;
+
+exports[`RFC Verification: env: prod, status: Approved (10312), no RFDs: 388a19ef-a1d7-47ab-9ca4-4eff419aab96-prod-10312 1`] = `
+Object {
+  "rfcRfdContext": Object {
+    "rfcIssueKey": "FAKE-1000",
+    "rfcStatus": "Approved",
+    "rfdsByEnv": Object {
+      "prod": Object {
+        "previousEnvRfds": Array [],
+        "rfds": Array [],
+      },
+    },
+  },
+  "status": "Ready",
+}
+`;
+
+exports[`RFC Verification: env: prod, status: Approved (10312): 388a19ef-a1d7-47ab-9ca4-4eff419aab96-prod-10312 1`] = `
+Object {
+  "rfcRfdContext": Object {
+    "rfcIssueKey": "FAKE-1000",
+    "rfcStatus": "Approved",
+    "rfdsByEnv": Object {
+      "prod": Object {
+        "previousEnvRfds": Array [],
+        "rfds": Array [],
+      },
+    },
+  },
+  "status": "Ready",
+}
+`;
+
+exports[`RFC Verification: env: prod, status: Authorized for Int (10300): 388a19ef-a1d7-47ab-9ca4-4eff419aab96-prod-10300 1`] = `
+Object {
+  "reason": Object {
+    "RFC_NOT_AUTHORIZED": Object {
+      "description": "RFC is not authorized to target environment",
+      "issueItems": Array [
+        Object {
+          "env": "prod",
+          "issueKey": "FAKE-1000",
+          "status": "Authorized for Int",
+        },
+      ],
+    },
+  },
+  "rfcRfdContext": Object {
+    "rfcIssueKey": "FAKE-1000",
+    "rfcStatus": "Authorized for Int",
+    "rfdsByEnv": Object {
+      "prod": Object {
+        "previousEnvRfds": Array [],
+        "rfds": Array [],
+      },
+    },
+  },
+  "status": "Not Ready",
+}
+`;
+
+exports[`RFC Verification: env: prod, status: Authorized for Prod (10301): 388a19ef-a1d7-47ab-9ca4-4eff419aab96-prod-10301 1`] = `
+Object {
+  "rfcRfdContext": Object {
+    "rfcIssueKey": "FAKE-1000",
+    "rfcStatus": "Authorized for Prod",
+    "rfdsByEnv": Object {
+      "prod": Object {
+        "previousEnvRfds": Array [],
+        "rfds": Array [],
+      },
+    },
+  },
+  "status": "Ready",
+}
+`;
+
+exports[`RFC Verification: env: prod, status: Authorized for Test (10302): 388a19ef-a1d7-47ab-9ca4-4eff419aab96-prod-10302 1`] = `
+Object {
+  "reason": Object {
+    "RFC_NOT_AUTHORIZED": Object {
+      "description": "RFC is not authorized to target environment",
+      "issueItems": Array [
+        Object {
+          "env": "prod",
+          "issueKey": "FAKE-1000",
+          "status": "Authorized for Test",
+        },
+      ],
+    },
+  },
+  "rfcRfdContext": Object {
+    "rfcIssueKey": "FAKE-1000",
+    "rfcStatus": "Authorized for Test",
+    "rfdsByEnv": Object {
+      "prod": Object {
+        "previousEnvRfds": Array [],
+        "rfds": Array [],
+      },
+    },
+  },
+  "status": "Not Ready",
+}
+`;
+
+exports[`RFC Verification: env: prod, status: Closed (6), no RFDs: 388a19ef-a1d7-47ab-9ca4-4eff419aab96-prod-6 1`] = `
+Object {
+  "reason": Object {
+    "RFC_NOT_AUTHORIZED": Object {
+      "description": "RFC is not authorized to target environment",
+      "issueItems": Array [
+        Object {
+          "env": "prod",
+          "issueKey": "FAKE-1000",
+          "status": "Closed",
+        },
+      ],
+    },
+  },
+  "rfcRfdContext": Object {
+    "rfcIssueKey": "FAKE-1000",
+    "rfcStatus": "Closed",
+    "rfdsByEnv": Object {
+      "prod": Object {
+        "previousEnvRfds": Array [],
+        "rfds": Array [],
+      },
+    },
+  },
+  "status": "Not Ready",
+}
+`;
+
+exports[`RFC Verification: env: prod, status: Closed (6): 388a19ef-a1d7-47ab-9ca4-4eff419aab96-prod-6 1`] = `
+Object {
+  "reason": Object {
+    "RFC_NOT_AUTHORIZED": Object {
+      "description": "RFC is not authorized to target environment",
+      "issueItems": Array [
+        Object {
+          "env": "prod",
+          "issueKey": "FAKE-1000",
+          "status": "Closed",
+        },
+      ],
+    },
+  },
+  "rfcRfdContext": Object {
+    "rfcIssueKey": "FAKE-1000",
+    "rfcStatus": "Closed",
+    "rfdsByEnv": Object {
+      "prod": Object {
+        "previousEnvRfds": Array [],
+        "rfds": Array [],
+      },
+    },
+  },
+  "status": "Not Ready",
+}
+`;
+
+exports[`RFC Verification: env: prod, status: In Eval for Int (10303): 388a19ef-a1d7-47ab-9ca4-4eff419aab96-prod-6 1`] = `
+Object {
+  "reason": Object {
+    "RFC_NOT_AUTHORIZED": Object {
+      "description": "RFC is not authorized to target environment",
+      "issueItems": Array [
+        Object {
+          "env": "prod",
+          "issueKey": "FAKE-1000",
+          "status": "Closed",
+        },
+      ],
+    },
+  },
+  "rfcRfdContext": Object {
+    "rfcIssueKey": "FAKE-1000",
+    "rfcStatus": "Closed",
+    "rfdsByEnv": Object {
+      "prod": Object {
+        "previousEnvRfds": Array [],
+        "rfds": Array [],
+      },
+    },
+  },
+  "status": "Not Ready",
+}
+`;
+
+exports[`RFC Verification: env: prod, status: In Eval for Prod (10304): 388a19ef-a1d7-47ab-9ca4-4eff419aab96-prod-10304 1`] = `
+Object {
+  "reason": Object {
+    "RFC_NOT_AUTHORIZED": Object {
+      "description": "RFC is not authorized to target environment",
+      "issueItems": Array [
+        Object {
+          "env": "prod",
+          "issueKey": "FAKE-1000",
+          "status": "In Eval for Prod",
+        },
+      ],
+    },
+  },
+  "rfcRfdContext": Object {
+    "rfcIssueKey": "FAKE-1000",
+    "rfcStatus": "In Eval for Prod",
+    "rfdsByEnv": Object {
+      "prod": Object {
+        "previousEnvRfds": Array [],
+        "rfds": Array [],
+      },
+    },
+  },
+  "status": "Not Ready",
+}
+`;
+
+exports[`RFC Verification: env: prod, status: In Eval for Test (10305): 388a19ef-a1d7-47ab-9ca4-4eff419aab96-prod-10305 1`] = `
+Object {
+  "reason": Object {
+    "RFC_NOT_AUTHORIZED": Object {
+      "description": "RFC is not authorized to target environment",
+      "issueItems": Array [
+        Object {
+          "env": "prod",
+          "issueKey": "FAKE-1000",
+          "status": "In Eval for Test",
+        },
+      ],
+    },
+  },
+  "rfcRfdContext": Object {
+    "rfcIssueKey": "FAKE-1000",
+    "rfcStatus": "In Eval for Test",
+    "rfdsByEnv": Object {
+      "prod": Object {
+        "previousEnvRfds": Array [],
+        "rfds": Array [],
+      },
+    },
+  },
+  "status": "Not Ready",
+}
+`;
+
+exports[`RFC Verification: env: prod, status: In Review for Int (10306): 388a19ef-a1d7-47ab-9ca4-4eff419aab96-prod-10306 1`] = `
+Object {
+  "reason": Object {
+    "RFC_NOT_AUTHORIZED": Object {
+      "description": "RFC is not authorized to target environment",
+      "issueItems": Array [
+        Object {
+          "env": "prod",
+          "issueKey": "FAKE-1000",
+          "status": "In Review for Int",
+        },
+      ],
+    },
+  },
+  "rfcRfdContext": Object {
+    "rfcIssueKey": "FAKE-1000",
+    "rfcStatus": "In Review for Int",
+    "rfdsByEnv": Object {
+      "prod": Object {
+        "previousEnvRfds": Array [],
+        "rfds": Array [],
+      },
+    },
+  },
+  "status": "Not Ready",
+}
+`;
+
+exports[`RFC Verification: env: prod, status: In Review for Prod (10307): 388a19ef-a1d7-47ab-9ca4-4eff419aab96-prod-10307 1`] = `
+Object {
+  "reason": Object {
+    "RFC_NOT_AUTHORIZED": Object {
+      "description": "RFC is not authorized to target environment",
+      "issueItems": Array [
+        Object {
+          "env": "prod",
+          "issueKey": "FAKE-1000",
+          "status": "In Review for Prod",
+        },
+      ],
+    },
+  },
+  "rfcRfdContext": Object {
+    "rfcIssueKey": "FAKE-1000",
+    "rfcStatus": "In Review for Prod",
+    "rfdsByEnv": Object {
+      "prod": Object {
+        "previousEnvRfds": Array [],
+        "rfds": Array [],
+      },
+    },
+  },
+  "status": "Not Ready",
+}
+`;
+
+exports[`RFC Verification: env: prod, status: In Review for Test (10308): 388a19ef-a1d7-47ab-9ca4-4eff419aab96-prod-10308 1`] = `
+Object {
+  "reason": Object {
+    "RFC_NOT_AUTHORIZED": Object {
+      "description": "RFC is not authorized to target environment",
+      "issueItems": Array [
+        Object {
+          "env": "prod",
+          "issueKey": "FAKE-1000",
+          "status": "In Review for Test",
+        },
+      ],
+    },
+  },
+  "rfcRfdContext": Object {
+    "rfcIssueKey": "FAKE-1000",
+    "rfcStatus": "In Review for Test",
+    "rfdsByEnv": Object {
+      "prod": Object {
+        "previousEnvRfds": Array [],
+        "rfds": Array [],
+      },
+    },
+  },
+  "status": "Not Ready",
+}
+`;
+
+exports[`RFC Verification: env: prod, status: Open (1), no RFDs: 388a19ef-a1d7-47ab-9ca4-4eff419aab96-prod-1 1`] = `
+Object {
+  "reason": Object {
+    "RFC_NOT_AUTHORIZED": Object {
+      "description": "RFC is not authorized to target environment",
+      "issueItems": Array [
+        Object {
+          "env": "prod",
+          "issueKey": "FAKE-1000",
+          "status": "Open",
+        },
+      ],
+    },
+  },
+  "rfcRfdContext": Object {
+    "rfcIssueKey": "FAKE-1000",
+    "rfcStatus": "Open",
+    "rfdsByEnv": Object {
+      "prod": Object {
+        "previousEnvRfds": Array [],
+        "rfds": Array [],
+      },
+    },
+  },
+  "status": "Not Ready",
+}
+`;
+
+exports[`RFC Verification: env: prod, status: Open (1), no RFDs: 388a19ef-a1d7-47ab-9ca4-4eff419aab96-prod-6 1`] = `
+Object {
+  "reason": Object {
+    "RFC_NOT_AUTHORIZED": Object {
+      "description": "RFC is not authorized to target environment",
+      "issueItems": Array [
+        Object {
+          "env": "prod",
+          "issueKey": "FAKE-1000",
+          "status": "Closed",
+        },
+      ],
+    },
+  },
+  "rfcRfdContext": Object {
+    "rfcIssueKey": "FAKE-1000",
+    "rfcStatus": "Closed",
+    "rfdsByEnv": Object {
+      "prod": Object {
+        "previousEnvRfds": Array [],
+        "rfds": Array [],
+      },
+    },
+  },
+  "status": "Not Ready",
+}
+`;
+
+exports[`RFC Verification: env: prod, status: Open (1): 388a19ef-a1d7-47ab-9ca4-4eff419aab96-prod-1 1`] = `
+Object {
+  "reason": Object {
+    "RFC_NOT_AUTHORIZED": Object {
+      "description": "RFC is not authorized to target environment",
+      "issueItems": Array [
+        Object {
+          "env": "prod",
+          "issueKey": "FAKE-1000",
+          "status": "Open",
+        },
+      ],
+    },
+  },
+  "rfcRfdContext": Object {
+    "rfcIssueKey": "FAKE-1000",
+    "rfcStatus": "Open",
+    "rfdsByEnv": Object {
+      "prod": Object {
+        "previousEnvRfds": Array [],
+        "rfds": Array [],
+      },
+    },
+  },
+  "status": "Not Ready",
+}
+`;
+
+exports[`RFC Verification: env: prod, status: Open for Int (10309): 388a19ef-a1d7-47ab-9ca4-4eff419aab96-prod-10309 1`] = `
+Object {
+  "reason": Object {
+    "RFC_NOT_AUTHORIZED": Object {
+      "description": "RFC is not authorized to target environment",
+      "issueItems": Array [
+        Object {
+          "env": "prod",
+          "issueKey": "FAKE-1000",
+          "status": "Open for Int",
+        },
+      ],
+    },
+  },
+  "rfcRfdContext": Object {
+    "rfcIssueKey": "FAKE-1000",
+    "rfcStatus": "Open for Int",
+    "rfdsByEnv": Object {
+      "prod": Object {
+        "previousEnvRfds": Array [],
+        "rfds": Array [],
+      },
+    },
+  },
+  "status": "Not Ready",
+}
+`;
+
+exports[`RFC Verification: env: prod, status: Open for Prod (10310): 388a19ef-a1d7-47ab-9ca4-4eff419aab96-prod-10310 1`] = `
+Object {
+  "reason": Object {
+    "RFC_NOT_AUTHORIZED": Object {
+      "description": "RFC is not authorized to target environment",
+      "issueItems": Array [
+        Object {
+          "env": "prod",
+          "issueKey": "FAKE-1000",
+          "status": "Open for Prod",
+        },
+      ],
+    },
+  },
+  "rfcRfdContext": Object {
+    "rfcIssueKey": "FAKE-1000",
+    "rfcStatus": "Open for Prod",
+    "rfdsByEnv": Object {
+      "prod": Object {
+        "previousEnvRfds": Array [],
+        "rfds": Array [],
+      },
+    },
+  },
+  "status": "Not Ready",
+}
+`;
+
+exports[`RFC Verification: env: prod, status: Open for Test (10311): 388a19ef-a1d7-47ab-9ca4-4eff419aab96-prod-10311 1`] = `
+Object {
+  "reason": Object {
+    "RFC_NOT_AUTHORIZED": Object {
+      "description": "RFC is not authorized to target environment",
+      "issueItems": Array [
+        Object {
+          "env": "prod",
+          "issueKey": "FAKE-1000",
+          "status": "Open for Test",
+        },
+      ],
+    },
+  },
+  "rfcRfdContext": Object {
+    "rfcIssueKey": "FAKE-1000",
+    "rfcStatus": "Open for Test",
+    "rfdsByEnv": Object {
+      "prod": Object {
+        "previousEnvRfds": Array [],
+        "rfds": Array [],
+      },
+    },
+  },
+  "status": "Not Ready",
+}
+`;
+
+exports[`RFC Verification: env: prod, status: Resolved (5), no RFDs: 388a19ef-a1d7-47ab-9ca4-4eff419aab96-prod-5 1`] = `
+Object {
+  "reason": Object {
+    "RFC_NOT_AUTHORIZED": Object {
+      "description": "RFC is not authorized to target environment",
+      "issueItems": Array [
+        Object {
+          "env": "prod",
+          "issueKey": "FAKE-1000",
+          "status": "Resolved",
+        },
+      ],
+    },
+  },
+  "rfcRfdContext": Object {
+    "rfcIssueKey": "FAKE-1000",
+    "rfcStatus": "Resolved",
+    "rfdsByEnv": Object {
+      "prod": Object {
+        "previousEnvRfds": Array [],
+        "rfds": Array [],
+      },
+    },
+  },
+  "status": "Not Ready",
+}
+`;
+
+exports[`RFC Verification: env: prod, status: Resolved (5): 388a19ef-a1d7-47ab-9ca4-4eff419aab96-prod-5 1`] = `
+Object {
+  "reason": Object {
+    "RFC_NOT_AUTHORIZED": Object {
+      "description": "RFC is not authorized to target environment",
+      "issueItems": Array [
+        Object {
+          "env": "prod",
+          "issueKey": "FAKE-1000",
+          "status": "Resolved",
+        },
+      ],
+    },
+  },
+  "rfcRfdContext": Object {
+    "rfcIssueKey": "FAKE-1000",
+    "rfcStatus": "Resolved",
+    "rfdsByEnv": Object {
+      "prod": Object {
+        "previousEnvRfds": Array [],
+        "rfds": Array [],
+      },
+    },
+  },
+  "status": "Not Ready",
+}
+`;
+
+exports[`RFC Verification: env: prod, status: Submit (10500), no RFDs: 388a19ef-a1d7-47ab-9ca4-4eff419aab96-prod-1 1`] = `
+Object {
+  "reason": Object {
+    "RFC_NOT_AUTHORIZED": Object {
+      "description": "RFC is not authorized to target environment",
+      "issueItems": Array [
+        Object {
+          "env": "prod",
+          "issueKey": "FAKE-1000",
+          "status": "Open",
+        },
+      ],
+    },
+  },
+  "rfcRfdContext": Object {
+    "rfcIssueKey": "FAKE-1000",
+    "rfcStatus": "Open",
+    "rfdsByEnv": Object {
+      "prod": Object {
+        "previousEnvRfds": Array [],
+        "rfds": Array [],
+      },
+    },
+  },
+  "status": "Not Ready",
+}
+`;
+
+exports[`RFC Verification: env: prod, status: Submit (10500), no RFDs: 388a19ef-a1d7-47ab-9ca4-4eff419aab96-prod-10500 1`] = `
+Object {
+  "reason": Object {
+    "RFC_NOT_AUTHORIZED": Object {
+      "description": "RFC is not authorized to target environment",
+      "issueItems": Array [
+        Object {
+          "env": "prod",
+          "issueKey": "FAKE-1000",
+          "status": "Submit",
+        },
+      ],
+    },
+  },
+  "rfcRfdContext": Object {
+    "rfcIssueKey": "FAKE-1000",
+    "rfcStatus": "Submit",
+    "rfdsByEnv": Object {
+      "prod": Object {
+        "previousEnvRfds": Array [],
+        "rfds": Array [],
+      },
+    },
+  },
+  "status": "Not Ready",
+}
+`;
+
+exports[`RFC Verification: env: prod, status: Submit (10500): 388a19ef-a1d7-47ab-9ca4-4eff419aab96-prod-10500 1`] = `
+Object {
+  "reason": Object {
+    "RFC_NOT_AUTHORIZED": Object {
+      "description": "RFC is not authorized to target environment",
+      "issueItems": Array [
+        Object {
+          "env": "prod",
+          "issueKey": "FAKE-1000",
+          "status": "Submit",
+        },
+      ],
+    },
+  },
+  "rfcRfdContext": Object {
+    "rfcIssueKey": "FAKE-1000",
+    "rfcStatus": "Submit",
+    "rfdsByEnv": Object {
+      "prod": Object {
+        "previousEnvRfds": Array [],
+        "rfds": Array [],
+      },
+    },
+  },
+  "status": "Not Ready",
+}
+`;
+
+exports[`RFC Verification: env: prod, status: UNDER REVIEW (10312), no RFDs: 388a19ef-a1d7-47ab-9ca4-4eff419aab96-prod-10312 1`] = `
+Object {
+  "reason": Object {
+    "RFC_NOT_AUTHORIZED": Object {
+      "description": "RFC is not authorized to target environment",
+      "issueItems": Array [
+        Object {
+          "env": "prod",
+          "issueKey": "FAKE-1000",
+          "status": "UNDER REVIEW",
+        },
+      ],
+    },
+  },
+  "rfcRfdContext": Object {
+    "rfcIssueKey": "FAKE-1000",
+    "rfcStatus": "UNDER REVIEW",
+    "rfdsByEnv": Object {
+      "prod": Object {
+        "previousEnvRfds": Array [],
+        "rfds": Array [],
+      },
+    },
+  },
+  "status": "Not Ready",
+}
+`;
+
+exports[`RFC Verification: env: test, status: Approved (10312), no RFDs: 388a19ef-a1d7-47ab-9ca4-4eff419aab96-test-10312 1`] = `
+Object {
+  "rfcRfdContext": Object {
+    "rfcIssueKey": "FAKE-1000",
+    "rfcStatus": "Approved",
+    "rfdsByEnv": Object {
+      "test": Object {
+        "previousEnvRfds": Array [],
+        "rfds": Array [],
+      },
+    },
+  },
+  "status": "Ready",
+}
+`;
+
+exports[`RFC Verification: env: test, status: Approved (10312): 388a19ef-a1d7-47ab-9ca4-4eff419aab96-test-10312 1`] = `
+Object {
+  "rfcRfdContext": Object {
+    "rfcIssueKey": "FAKE-1000",
+    "rfcStatus": "Approved",
+    "rfdsByEnv": Object {
+      "test": Object {
+        "previousEnvRfds": Array [],
+        "rfds": Array [],
+      },
+    },
+  },
+  "status": "Ready",
+}
+`;
+
+exports[`RFC Verification: env: test, status: Authorized for Int (10300): 388a19ef-a1d7-47ab-9ca4-4eff419aab96-test-10300 1`] = `
+Object {
+  "reason": Object {
+    "RFC_NOT_AUTHORIZED": Object {
+      "description": "RFC is not authorized to target environment",
+      "issueItems": Array [
+        Object {
+          "env": "test",
+          "issueKey": "FAKE-1000",
+          "status": "Authorized for Int",
+        },
+      ],
+    },
+  },
+  "rfcRfdContext": Object {
+    "rfcIssueKey": "FAKE-1000",
+    "rfcStatus": "Authorized for Int",
+    "rfdsByEnv": Object {
+      "test": Object {
+        "previousEnvRfds": Array [],
+        "rfds": Array [],
+      },
+    },
+  },
+  "status": "Not Ready",
+}
+`;
+
+exports[`RFC Verification: env: test, status: Authorized for Prod (10301): 388a19ef-a1d7-47ab-9ca4-4eff419aab96-test-10301 1`] = `
+Object {
+  "reason": Object {
+    "RFC_NOT_AUTHORIZED": Object {
+      "description": "RFC is not authorized to target environment",
+      "issueItems": Array [
+        Object {
+          "env": "test",
+          "issueKey": "FAKE-1000",
+          "status": "Authorized for Prod",
+        },
+      ],
+    },
+  },
+  "rfcRfdContext": Object {
+    "rfcIssueKey": "FAKE-1000",
+    "rfcStatus": "Authorized for Prod",
+    "rfdsByEnv": Object {
+      "test": Object {
+        "previousEnvRfds": Array [],
+        "rfds": Array [],
+      },
+    },
+  },
+  "status": "Not Ready",
+}
+`;
+
+exports[`RFC Verification: env: test, status: Authorized for Test (10302): 388a19ef-a1d7-47ab-9ca4-4eff419aab96-test-10302 1`] = `
+Object {
+  "rfcRfdContext": Object {
+    "rfcIssueKey": "FAKE-1000",
+    "rfcStatus": "Authorized for Test",
+    "rfdsByEnv": Object {
+      "test": Object {
+        "previousEnvRfds": Array [],
+        "rfds": Array [],
+      },
+    },
+  },
+  "status": "Ready",
+}
+`;
+
+exports[`RFC Verification: env: test, status: Closed (6), no RFDs: 388a19ef-a1d7-47ab-9ca4-4eff419aab96-test-6 1`] = `
+Object {
+  "reason": Object {
+    "RFC_NOT_AUTHORIZED": Object {
+      "description": "RFC is not authorized to target environment",
+      "issueItems": Array [
+        Object {
+          "env": "test",
+          "issueKey": "FAKE-1000",
+          "status": "Closed",
+        },
+      ],
+    },
+  },
+  "rfcRfdContext": Object {
+    "rfcIssueKey": "FAKE-1000",
+    "rfcStatus": "Closed",
+    "rfdsByEnv": Object {
+      "test": Object {
+        "previousEnvRfds": Array [],
+        "rfds": Array [],
+      },
+    },
+  },
+  "status": "Not Ready",
+}
+`;
+
+exports[`RFC Verification: env: test, status: Closed (6): 388a19ef-a1d7-47ab-9ca4-4eff419aab96-test-6 1`] = `
+Object {
+  "reason": Object {
+    "RFC_NOT_AUTHORIZED": Object {
+      "description": "RFC is not authorized to target environment",
+      "issueItems": Array [
+        Object {
+          "env": "test",
+          "issueKey": "FAKE-1000",
+          "status": "Closed",
+        },
+      ],
+    },
+  },
+  "rfcRfdContext": Object {
+    "rfcIssueKey": "FAKE-1000",
+    "rfcStatus": "Closed",
+    "rfdsByEnv": Object {
+      "test": Object {
+        "previousEnvRfds": Array [],
+        "rfds": Array [],
+      },
+    },
+  },
+  "status": "Not Ready",
+}
+`;
+
+exports[`RFC Verification: env: test, status: In Eval for Int (10303): 388a19ef-a1d7-47ab-9ca4-4eff419aab96-test-6 1`] = `
+Object {
+  "reason": Object {
+    "RFC_NOT_AUTHORIZED": Object {
+      "description": "RFC is not authorized to target environment",
+      "issueItems": Array [
+        Object {
+          "env": "test",
+          "issueKey": "FAKE-1000",
+          "status": "Closed",
+        },
+      ],
+    },
+  },
+  "rfcRfdContext": Object {
+    "rfcIssueKey": "FAKE-1000",
+    "rfcStatus": "Closed",
+    "rfdsByEnv": Object {
+      "test": Object {
+        "previousEnvRfds": Array [],
+        "rfds": Array [],
+      },
+    },
+  },
+  "status": "Not Ready",
+}
+`;
+
+exports[`RFC Verification: env: test, status: In Eval for Prod (10304): 388a19ef-a1d7-47ab-9ca4-4eff419aab96-test-10304 1`] = `
+Object {
+  "reason": Object {
+    "RFC_NOT_AUTHORIZED": Object {
+      "description": "RFC is not authorized to target environment",
+      "issueItems": Array [
+        Object {
+          "env": "test",
+          "issueKey": "FAKE-1000",
+          "status": "In Eval for Prod",
+        },
+      ],
+    },
+  },
+  "rfcRfdContext": Object {
+    "rfcIssueKey": "FAKE-1000",
+    "rfcStatus": "In Eval for Prod",
+    "rfdsByEnv": Object {
+      "test": Object {
+        "previousEnvRfds": Array [],
+        "rfds": Array [],
+      },
+    },
+  },
+  "status": "Not Ready",
+}
+`;
+
+exports[`RFC Verification: env: test, status: In Eval for Test (10305): 388a19ef-a1d7-47ab-9ca4-4eff419aab96-test-10305 1`] = `
+Object {
+  "reason": Object {
+    "RFC_NOT_AUTHORIZED": Object {
+      "description": "RFC is not authorized to target environment",
+      "issueItems": Array [
+        Object {
+          "env": "test",
+          "issueKey": "FAKE-1000",
+          "status": "In Eval for Test",
+        },
+      ],
+    },
+  },
+  "rfcRfdContext": Object {
+    "rfcIssueKey": "FAKE-1000",
+    "rfcStatus": "In Eval for Test",
+    "rfdsByEnv": Object {
+      "test": Object {
+        "previousEnvRfds": Array [],
+        "rfds": Array [],
+      },
+    },
+  },
+  "status": "Not Ready",
+}
+`;
+
+exports[`RFC Verification: env: test, status: In Review for Int (10306): 388a19ef-a1d7-47ab-9ca4-4eff419aab96-test-10306 1`] = `
+Object {
+  "reason": Object {
+    "RFC_NOT_AUTHORIZED": Object {
+      "description": "RFC is not authorized to target environment",
+      "issueItems": Array [
+        Object {
+          "env": "test",
+          "issueKey": "FAKE-1000",
+          "status": "In Review for Int",
+        },
+      ],
+    },
+  },
+  "rfcRfdContext": Object {
+    "rfcIssueKey": "FAKE-1000",
+    "rfcStatus": "In Review for Int",
+    "rfdsByEnv": Object {
+      "test": Object {
+        "previousEnvRfds": Array [],
+        "rfds": Array [],
+      },
+    },
+  },
+  "status": "Not Ready",
+}
+`;
+
+exports[`RFC Verification: env: test, status: In Review for Prod (10307): 388a19ef-a1d7-47ab-9ca4-4eff419aab96-test-10307 1`] = `
+Object {
+  "reason": Object {
+    "RFC_NOT_AUTHORIZED": Object {
+      "description": "RFC is not authorized to target environment",
+      "issueItems": Array [
+        Object {
+          "env": "test",
+          "issueKey": "FAKE-1000",
+          "status": "In Review for Prod",
+        },
+      ],
+    },
+  },
+  "rfcRfdContext": Object {
+    "rfcIssueKey": "FAKE-1000",
+    "rfcStatus": "In Review for Prod",
+    "rfdsByEnv": Object {
+      "test": Object {
+        "previousEnvRfds": Array [],
+        "rfds": Array [],
+      },
+    },
+  },
+  "status": "Not Ready",
+}
+`;
+
+exports[`RFC Verification: env: test, status: In Review for Test (10308): 388a19ef-a1d7-47ab-9ca4-4eff419aab96-test-10308 1`] = `
+Object {
+  "reason": Object {
+    "RFC_NOT_AUTHORIZED": Object {
+      "description": "RFC is not authorized to target environment",
+      "issueItems": Array [
+        Object {
+          "env": "test",
+          "issueKey": "FAKE-1000",
+          "status": "In Review for Test",
+        },
+      ],
+    },
+  },
+  "rfcRfdContext": Object {
+    "rfcIssueKey": "FAKE-1000",
+    "rfcStatus": "In Review for Test",
+    "rfdsByEnv": Object {
+      "test": Object {
+        "previousEnvRfds": Array [],
+        "rfds": Array [],
+      },
+    },
+  },
+  "status": "Not Ready",
+}
+`;
+
+exports[`RFC Verification: env: test, status: Open (1), no RFDs: 388a19ef-a1d7-47ab-9ca4-4eff419aab96-test-1 1`] = `
+Object {
+  "reason": Object {
+    "RFC_NOT_AUTHORIZED": Object {
+      "description": "RFC is not authorized to target environment",
+      "issueItems": Array [
+        Object {
+          "env": "test",
+          "issueKey": "FAKE-1000",
+          "status": "Open",
+        },
+      ],
+    },
+  },
+  "rfcRfdContext": Object {
+    "rfcIssueKey": "FAKE-1000",
+    "rfcStatus": "Open",
+    "rfdsByEnv": Object {
+      "test": Object {
+        "previousEnvRfds": Array [],
+        "rfds": Array [],
+      },
+    },
+  },
+  "status": "Not Ready",
+}
+`;
+
+exports[`RFC Verification: env: test, status: Open (1), no RFDs: 388a19ef-a1d7-47ab-9ca4-4eff419aab96-test-6 1`] = `
+Object {
+  "reason": Object {
+    "RFC_NOT_AUTHORIZED": Object {
+      "description": "RFC is not authorized to target environment",
+      "issueItems": Array [
+        Object {
+          "env": "test",
+          "issueKey": "FAKE-1000",
+          "status": "Closed",
+        },
+      ],
+    },
+  },
+  "rfcRfdContext": Object {
+    "rfcIssueKey": "FAKE-1000",
+    "rfcStatus": "Closed",
+    "rfdsByEnv": Object {
+      "test": Object {
+        "previousEnvRfds": Array [],
+        "rfds": Array [],
+      },
+    },
+  },
+  "status": "Not Ready",
+}
+`;
+
+exports[`RFC Verification: env: test, status: Open (1): 388a19ef-a1d7-47ab-9ca4-4eff419aab96-test-1 1`] = `
+Object {
+  "reason": Object {
+    "RFC_NOT_AUTHORIZED": Object {
+      "description": "RFC is not authorized to target environment",
+      "issueItems": Array [
+        Object {
+          "env": "test",
+          "issueKey": "FAKE-1000",
+          "status": "Open",
+        },
+      ],
+    },
+  },
+  "rfcRfdContext": Object {
+    "rfcIssueKey": "FAKE-1000",
+    "rfcStatus": "Open",
+    "rfdsByEnv": Object {
+      "test": Object {
+        "previousEnvRfds": Array [],
+        "rfds": Array [],
+      },
+    },
+  },
+  "status": "Not Ready",
+}
+`;
+
+exports[`RFC Verification: env: test, status: Open for Int (10309): 388a19ef-a1d7-47ab-9ca4-4eff419aab96-test-10309 1`] = `
+Object {
+  "reason": Object {
+    "RFC_NOT_AUTHORIZED": Object {
+      "description": "RFC is not authorized to target environment",
+      "issueItems": Array [
+        Object {
+          "env": "test",
+          "issueKey": "FAKE-1000",
+          "status": "Open for Int",
+        },
+      ],
+    },
+  },
+  "rfcRfdContext": Object {
+    "rfcIssueKey": "FAKE-1000",
+    "rfcStatus": "Open for Int",
+    "rfdsByEnv": Object {
+      "test": Object {
+        "previousEnvRfds": Array [],
+        "rfds": Array [],
+      },
+    },
+  },
+  "status": "Not Ready",
+}
+`;
+
+exports[`RFC Verification: env: test, status: Open for Prod (10310): 388a19ef-a1d7-47ab-9ca4-4eff419aab96-test-10310 1`] = `
+Object {
+  "reason": Object {
+    "RFC_NOT_AUTHORIZED": Object {
+      "description": "RFC is not authorized to target environment",
+      "issueItems": Array [
+        Object {
+          "env": "test",
+          "issueKey": "FAKE-1000",
+          "status": "Open for Prod",
+        },
+      ],
+    },
+  },
+  "rfcRfdContext": Object {
+    "rfcIssueKey": "FAKE-1000",
+    "rfcStatus": "Open for Prod",
+    "rfdsByEnv": Object {
+      "test": Object {
+        "previousEnvRfds": Array [],
+        "rfds": Array [],
+      },
+    },
+  },
+  "status": "Not Ready",
+}
+`;
+
+exports[`RFC Verification: env: test, status: Open for Test (10311): 388a19ef-a1d7-47ab-9ca4-4eff419aab96-test-10311 1`] = `
+Object {
+  "reason": Object {
+    "RFC_NOT_AUTHORIZED": Object {
+      "description": "RFC is not authorized to target environment",
+      "issueItems": Array [
+        Object {
+          "env": "test",
+          "issueKey": "FAKE-1000",
+          "status": "Open for Test",
+        },
+      ],
+    },
+  },
+  "rfcRfdContext": Object {
+    "rfcIssueKey": "FAKE-1000",
+    "rfcStatus": "Open for Test",
+    "rfdsByEnv": Object {
+      "test": Object {
+        "previousEnvRfds": Array [],
+        "rfds": Array [],
+      },
+    },
+  },
+  "status": "Not Ready",
+}
+`;
+
+exports[`RFC Verification: env: test, status: Resolved (5), no RFDs: 388a19ef-a1d7-47ab-9ca4-4eff419aab96-test-5 1`] = `
+Object {
+  "reason": Object {
+    "RFC_NOT_AUTHORIZED": Object {
+      "description": "RFC is not authorized to target environment",
+      "issueItems": Array [
+        Object {
+          "env": "test",
+          "issueKey": "FAKE-1000",
+          "status": "Resolved",
+        },
+      ],
+    },
+  },
+  "rfcRfdContext": Object {
+    "rfcIssueKey": "FAKE-1000",
+    "rfcStatus": "Resolved",
+    "rfdsByEnv": Object {
+      "test": Object {
+        "previousEnvRfds": Array [],
+        "rfds": Array [],
+      },
+    },
+  },
+  "status": "Not Ready",
+}
+`;
+
+exports[`RFC Verification: env: test, status: Resolved (5): 388a19ef-a1d7-47ab-9ca4-4eff419aab96-test-5 1`] = `
+Object {
+  "reason": Object {
+    "RFC_NOT_AUTHORIZED": Object {
+      "description": "RFC is not authorized to target environment",
+      "issueItems": Array [
+        Object {
+          "env": "test",
+          "issueKey": "FAKE-1000",
+          "status": "Resolved",
+        },
+      ],
+    },
+  },
+  "rfcRfdContext": Object {
+    "rfcIssueKey": "FAKE-1000",
+    "rfcStatus": "Resolved",
+    "rfdsByEnv": Object {
+      "test": Object {
+        "previousEnvRfds": Array [],
+        "rfds": Array [],
+      },
+    },
+  },
+  "status": "Not Ready",
+}
+`;
+
+exports[`RFC Verification: env: test, status: Submit (10500), no RFDs: 388a19ef-a1d7-47ab-9ca4-4eff419aab96-test-1 1`] = `
+Object {
+  "reason": Object {
+    "RFC_NOT_AUTHORIZED": Object {
+      "description": "RFC is not authorized to target environment",
+      "issueItems": Array [
+        Object {
+          "env": "test",
+          "issueKey": "FAKE-1000",
+          "status": "Open",
+        },
+      ],
+    },
+  },
+  "rfcRfdContext": Object {
+    "rfcIssueKey": "FAKE-1000",
+    "rfcStatus": "Open",
+    "rfdsByEnv": Object {
+      "test": Object {
+        "previousEnvRfds": Array [],
+        "rfds": Array [],
+      },
+    },
+  },
+  "status": "Not Ready",
+}
+`;
+
+exports[`RFC Verification: env: test, status: Submit (10500), no RFDs: 388a19ef-a1d7-47ab-9ca4-4eff419aab96-test-10500 1`] = `
+Object {
+  "reason": Object {
+    "RFC_NOT_AUTHORIZED": Object {
+      "description": "RFC is not authorized to target environment",
+      "issueItems": Array [
+        Object {
+          "env": "test",
+          "issueKey": "FAKE-1000",
+          "status": "Submit",
+        },
+      ],
+    },
+  },
+  "rfcRfdContext": Object {
+    "rfcIssueKey": "FAKE-1000",
+    "rfcStatus": "Submit",
+    "rfdsByEnv": Object {
+      "test": Object {
+        "previousEnvRfds": Array [],
+        "rfds": Array [],
+      },
+    },
+  },
+  "status": "Not Ready",
+}
+`;
+
+exports[`RFC Verification: env: test, status: Submit (10500): 388a19ef-a1d7-47ab-9ca4-4eff419aab96-test-10500 1`] = `
+Object {
+  "reason": Object {
+    "RFC_NOT_AUTHORIZED": Object {
+      "description": "RFC is not authorized to target environment",
+      "issueItems": Array [
+        Object {
+          "env": "test",
+          "issueKey": "FAKE-1000",
+          "status": "Submit",
+        },
+      ],
+    },
+  },
+  "rfcRfdContext": Object {
+    "rfcIssueKey": "FAKE-1000",
+    "rfcStatus": "Submit",
+    "rfdsByEnv": Object {
+      "test": Object {
+        "previousEnvRfds": Array [],
+        "rfds": Array [],
+      },
+    },
+  },
+  "status": "Not Ready",
+}
+`;
+
+exports[`RFC Verification: env: test, status: UNDER REVIEW (10312), no RFDs: 388a19ef-a1d7-47ab-9ca4-4eff419aab96-test-10312 1`] = `
+Object {
+  "reason": Object {
+    "RFC_NOT_AUTHORIZED": Object {
+      "description": "RFC is not authorized to target environment",
+      "issueItems": Array [
+        Object {
+          "env": "test",
+          "issueKey": "FAKE-1000",
+          "status": "UNDER REVIEW",
+        },
+      ],
+    },
+  },
+  "rfcRfdContext": Object {
+    "rfcIssueKey": "FAKE-1000",
+    "rfcStatus": "UNDER REVIEW",
+    "rfdsByEnv": Object {
+      "test": Object {
+        "previousEnvRfds": Array [],
+        "rfds": Array [],
+      },
+    },
+  },
+  "status": "Not Ready",
+}
+`;

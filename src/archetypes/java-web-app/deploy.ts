@@ -1,4 +1,4 @@
-const BasicJavaApplicationDeployer = require.main?.exports.BasicJavaApplicationDeployer as any
+import {BasicJavaApplicationDeployer} from '../../util/basic-java-application-deployer'
 const path = require('path')
 
 const MyDeployer = class extends BasicJavaApplicationDeployer {

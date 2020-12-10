@@ -116,8 +116,8 @@ objects:
     labels:
       app: "${NAME}${SUFFIX}"
     annotations:
-      haproxy.router.openshift.io/balance: "roundrobin"
-      haproxy.router.openshift.io/disable_cookies: "true"
+      haproxy.router.openshift.io/balance: "source"
+      haproxy.router.openshift.io/disable_cookies: "false"
   spec:
     host: "${HOST}"
     port:

@@ -1,7 +1,7 @@
 {
   "name": "@bcgov/nrdk",
   "description": "NR Developer/Deployment Kit",
-  "version": "0.1.0-rc.58",
+  "version": "0.1.0-rc.91",
   "author": "Clecio Varjao",
   "bin": {
     "nrdk": "./bin/run"
@@ -13,14 +13,18 @@
     ]
   },
   "dependencies": {
-    "@bcgov/nr-pipeline-ext": "0.1.0-rc.11",
+    "@bcgov/nr-pipeline-ext": "0.1.0-rc.13",
     "@bcgov/pipeline-cli": "^1.0.1-2",
     "@oclif/command": "^1.8.0",
     "@oclif/plugin-help": "^3.2.0",
     "axios": "^0.20.0",
+    "chalk": "^4.1.0",
     "cli-ux": "^5.5.0",
+    "form-data": "^3.0.0",
     "inquirer": "^7.3.3",
     "isomorphic-git": "^1.7.8",
+    "jira-connector": "^3.1.0",
+    "jira.js": "^1.7.3",
     "lodash.merge": "^4.6.2",
     "rsync": "^0.6.1",
     "safe-buffer": "^5.2.1",
@@ -85,6 +89,9 @@
       "backlog": {
         "description": "Manage backlog items and the work related to those items."
       }
+    },
+    "hooks": {
+      "init": "./lib/hooks/show-version"
     }
   },
   "repository": "https://github.com/bcdevops/nrdk",
@@ -95,11 +102,11 @@
     "postbuild": "cpx 'src/**/*.yaml' lib",
     "lint": "eslint . --ext .ts --config .eslintrc",
     "posttest": "eslint . --ext .ts --config .eslintrc",
-    "prepack": "rm -rf lib && tsc -b && oclif-dev manifest && oclif-dev readme && cpx 'src/**/*.yaml' lib",
+    "prepack": "rm -rf lib && tsc -b && oclif-dev manifest && oclif-dev readme && cpx 'src/**/*.{yaml,groovy}' lib",
     "ncc": "ncc build bin/run -o dist --minify",
-    "test": "NOCK_BACK_MODE=lockdown nyc --reporter=html --reporter=text --extension .ts mocha --forbid-only \"test/**/*.test.ts\"",
-    "mocha:all": "mocha --forbid-only --timeout 99999 \"test/**/*.test.ts\"",
-    "mocha": "mocha --forbid-only --timeout 99999",
+    "test": "NOCK_BACK_MODE=lockdown nyc --reporter=html --reporter=text --extension .ts mocha --timeout 99999 --grep \"@type=system\" --invert --forbid-only \"test/**/*.test.ts\"",
+    "mocha:all": "mocha --forbid-only --grep \"@type=system\" --invert --timeout 99999 \"test/**/*.test.ts\"",
+    "mocha": "mocha --timeout 9999999",
     "version": "oclif-dev readme && git add README.md",
     "oclif": "oclif",
     "link": "npm link @bcgov/nr-pipeline-ext && npm link @bcgov/pipeline-cli",
@@ -121,6 +128,10 @@
     "safe-buffer",
     "inquirer",
     "axios",
-    "cli-ux"
+    "cli-ux",
+    "jira-connector",
+    "chalk",
+    "jira.js",
+    "form-data"
   ]
 }

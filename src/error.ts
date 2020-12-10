@@ -6,9 +6,10 @@ export class GeneralError extends Error {
     Error.captureStackTrace(this, GeneralError)
 
     if (parent) {
-      const current_stack =  this.stack as string
-      const parent_stack = parent.stack as string
-      this.stack = current_stack + '\n' + parent_stack
+      const current_stack =  (this.stack as string).split('\n')
+      const parent_stack = (parent.stack as string).split('\n')
+      // .slice(0, 2)
+      this.stack = current_stack.join('\n') + '\n' + parent_stack.join('\n')
     }
   }
 }

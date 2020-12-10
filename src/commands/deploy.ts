@@ -17,6 +17,7 @@ export default class Deploy extends BaseCommand {
     [FLAGS.FlagNames.GIT_BRANCH_REMOTE]: FLAGS.flagGitBranchRemote,
     [FLAGS.FlagNames.ARCHETYPE]: FLAGS.flagArchetype,
     [FLAGS.FlagNames.RFC_VALIDATION]: FLAGS.flagRfcValidation,
+    [FLAGS.FlagNames.DRY_RUN]: FLAGS.flagDryRun,
   }
 
   async run() {

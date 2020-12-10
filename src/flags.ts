@@ -1,6 +1,8 @@
 import {flags} from '@oclif/command'
 import GitClient from './git-client'
 import {relative, resolve} from 'path'
+import {GeneralError} from './error'
+import {LoggerFactory} from './util/logger'
 
 export enum FlagNames {
   CONFIG_SCRIPT = 'config-script',
@@ -18,19 +20,25 @@ export enum FlagNames {
   DEV_MODE = 'dev-mode',
   ARCHETYPE = 'archetype',
   RFC_VALIDATION = 'rfc-validation',
+  DRY_RUN = 'dry-run',
+  PAYLOAD_FILE = 'payload-file',
 }
 
 const defaultValues = {
   [FlagNames.GIT_URL]: async (flags: any) => {
+    if (!(await GitClient.getInstance().isGitRepositoryTopLevel())) return
     flags[FlagNames.GIT_URL] = await GitClient.getInstance().getRemoteUrl(flags[FlagNames.GIT_REMOTE_NAME])
   },
   [FlagNames.GIT_REMOTE_URL]: async (flags: any) => {
+    if (!(await GitClient.getInstance().isGitRepositoryTopLevel())) return
     flags[FlagNames.GIT_REMOTE_URL] = await GitClient.getInstance().getRemoteUrl(flags[FlagNames.GIT_REMOTE_NAME])
   },
   [FlagNames.GIT_BRANCH]: async (flags: any) => {
+    if (!(await GitClient.getInstance().isGitRepositoryTopLevel())) return
     flags[FlagNames.GIT_BRANCH] = await GitClient.getInstance().getLocalBranchName()
   },
   [FlagNames.GIT_BRANCH_REMOTE]: async (flags: any) => {
+    if (!(await GitClient.getInstance().isGitRepositoryTopLevel())) return
     if (!flags[FlagNames.GIT_BRANCH_REMOTE]) {
       flags[FlagNames.GIT_BRANCH_REMOTE] = `${flags[FlagNames.GIT_BRANCH]}`
       // If it is running from Jenkins, using the Bitbucket Branch Source plugin,
@@ -41,6 +49,7 @@ const defaultValues = {
     }
   },
   [FlagNames.GIT_CHANGE_TARGET]: async (flags: any) => {
+    if (!(await GitClient.getInstance().isGitRepositoryTopLevel())) return
     if (!flags[FlagNames.GIT_CHANGE_TARGET] && process.env.CHANGE_TARGET) {
       flags[FlagNames.GIT_CHANGE_TARGET] = process.env.CHANGE_TARGET
     } else if (!flags[FlagNames.GIT_CHANGE_TARGET]) {
@@ -75,17 +84,28 @@ export const flagGitBranchRemote = flags.string({description: 'GIT remote branch
 export const flagGitChangeTarget = flags.string({description: 'Target branch of the pull request (env:CHANGE_TARGET)'})
 export const flagPullRequestNumberSpec = flags.string({name: FlagNames.PULL_REQUEST_NUMBER, description: 'Pull Request number'})
 export const flagEnvSpec = flags.string({name: 'env', description: 'Environment'})
-export const flagDevMode = flags.string({name: FlagNames.DEV_MODE, description: 'Developer Mode (local)', options: ['true', 'false'], default: 'false'})
+export const flagDevMode = flags.string({name: FlagNames.DEV_MODE, description: 'Developer Mode (local). This will force builds to take the user/workstation work directory as source instead of a fresh clone', options: ['true', 'false'], default: 'false'})
 export const flagArchetype = flags.string({name: 'archetype', description: 'Application Archetype/Pattern', options: ['java-web-app', 'liquibase']})
 export const flagRfcValidation = flags.boolean({name: FlagNames.RFC_VALIDATION, description: 'Validate RFC?', default: true, allowNo: true})
+export const flagDryRun = flags.boolean({name: FlagNames.DRY_RUN, description: 'Dry-run', default: false})
+export const flagPayloadFile = flags.string({description: 'Event payload file'})
+
+const logger = LoggerFactory.createLogger('OnJiraIssue')
 
 export async function applyFlagDefaults(flags: any) {
-  for (const key of Object.keys(defaultValues)) {
-    const defaultFn = (defaultValues as any)[key]
-    if (defaultFn !== null) {
-      // eslint-disable-next-line no-await-in-loop
-      await defaultFn(flags)
+  try {
+    for (const key of Object.keys(defaultValues)) {
+      logger.info(`Applying default value for ${key}`)
+      const defaultFn = (defaultValues as any)[key]
+      if (defaultFn !== null) {
+        // eslint-disable-next-line no-await-in-loop
+        await defaultFn(flags)
+      }
     }
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.dir(error)
+    throw new GeneralError('Error applying default flag values', error)
   }
   const _flags = []
   for (const entry of Object.entries(flags)) {

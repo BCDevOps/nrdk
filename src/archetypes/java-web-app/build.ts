@@ -1,4 +1,4 @@
-const BasicBuilder = require.main?.exports.BasicBuilder as any
+import {BasicBuilder} from '../../util/basic-builder'
 const path = require('path')
 
 const MyBuilder = class extends BasicBuilder {

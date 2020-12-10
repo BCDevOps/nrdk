@@ -8,6 +8,7 @@
     "strict": true,
     "target": "es2017",
     "esModuleInterop": true,
+    "sourceMap": true,
     "typeRoots":[
       "./node_modules/@types",
       "./types"
