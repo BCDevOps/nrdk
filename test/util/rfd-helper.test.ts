@@ -85,7 +85,7 @@ function sanitize(issue: any) {
  * This is a System testing case which requires access to an JIRA installation
  */
 describe('jira:workflow @type=system', () => {
-  const  helper = new RfdHelper({})
+  const helper = new RfdHelper({})
   before(() => {
     // eslint-disable-next-line node/no-missing-require
     SecretManager.loadEntries(require('../.local/secrets.json'))

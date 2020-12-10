@@ -57,7 +57,7 @@ export default class BacklogCheckin extends GitBaseCommand {
       )
       // console.dir(newPullRequest, {depth: 5})
       this.log(`Pull Request #${newPullRequest.id} has been created`)
-    } else  {
+    } else {
       this.log(`Pull Request ${openPullRequests[0].id} has been updated`)
     }
   }

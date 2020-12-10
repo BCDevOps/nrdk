@@ -60,7 +60,7 @@ export default class Verifier {
       for (const fixVersion of rfcIssue.fields.fixVersions) {
         if (fixVersion.released === false && fixVersion.archived === false) {
           const opts = {
-            jql: `project = ${rfcIssue.fields.project.id} AND fixVersion = ${fixVersion.id} AND issuetype = RFC  AND statusCategory != Done`,
+            jql: `project = ${rfcIssue.fields.project.id} AND fixVersion = ${fixVersion.id} AND issuetype = RFC AND statusCategory != Done`,
             fields: ['key'],
           }
           const results = await jiraClient.search(opts)
@@ -132,7 +132,7 @@ export default class Verifier {
      */
   async isReadyForDeployment(env: string, rfcIssueKey: string) {
     console.log(
-      `\n#----------  Verifying Deployment Conditions for targetEnv=${env} with RFC issue=${rfcIssueKey}  ----------#\n`
+      `\n#---------- Verifying Deployment Conditions for targetEnv=${env} with RFC issue=${rfcIssueKey} ----------#\n`
     )
 
     const rfcRfdContext = await this.obtainCurrentRfcRfdContext(env, rfcIssueKey)
@@ -259,7 +259,7 @@ export default class Verifier {
     }
 
     console.log(
-      '\n#---------------------------###  STATUS OF READINESS CHECK FOR DEPLOYMENT  ###--------------------------#\n'
+      '\n#---------------------------### STATUS OF READINESS CHECK FOR DEPLOYMENT ###--------------------------#\n'
     )
 
     const boldRedStyle = chalk.bold.red

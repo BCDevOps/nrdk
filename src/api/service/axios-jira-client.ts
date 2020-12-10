@@ -87,7 +87,7 @@ export class AxiosJiraClient {
       throw new Error(`Expected to find at least '1' value for fix version, but found '${issue.fields.fixVersions.length}' for issue ${issueKey}`)
     }
     const fixVersion = issue.fields.fixVersions[0]
-    const jql = `fixVersion  = ${fixVersion.id} AND issuetype = RFC AND statusCategory != Done`
+    const jql = `fixVersion = ${fixVersion.id} AND issuetype = RFC AND statusCategory != Done`
     const rfcSearchResults = await this.client.get('rest/api/2/search', {params: {fields: fields, jql: jql}})
     .then(response => {
       return response.data

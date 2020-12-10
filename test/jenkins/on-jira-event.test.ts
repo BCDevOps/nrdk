@@ -1,7 +1,7 @@
 import {Context} from 'mocha'
 import axios from 'axios'
 import {expect} from 'chai'
-import FormData  from 'form-data'
+import FormData from 'form-data'
 import {JiraEventHandler, JiraWebhookEvent} from '../../src/jenkins/on-jira-event'
 import {SecretManager} from '../../src/api/service/secret-manager'
 import {LoggerFactory} from '../../src/util/logger'

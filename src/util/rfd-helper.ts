@@ -91,7 +91,7 @@ export class RfdHelper {
 
   async _transitionRfdSubtasks(rfd: Issue, status: IssueStatus): Promise<Issue> {
     const jira = await this.createJiraClient()
-    const jql = `issuetype = "RFD-subtask"  AND status != "Closed" AND parent = "${rfd.key}"`
+    const jql = `issuetype = "RFD-subtask" AND status != "Closed" AND parent = "${rfd.key}"`
     // eslint-disable-next-line no-await-in-loop
     return jira.search({
       fields: 'fixVersions,issuetype,project,status,labels',
@@ -145,7 +145,7 @@ export class RfdHelper {
         await jira.transitionIssue({issueIdOrKey: issue.key as string, transition: transition})
         .then(result => {
           if (issue?.fields?.status) {
-            // update  status
+            // update status
             issue.fields.status = result.fields.status as NameAndId
           }
         })
@@ -167,7 +167,7 @@ export class RfdHelper {
         }
         if (_fifo.length > 0 && issue.fields?.issuetype?.name === 'RFD' && transition.id === RFD.ACTION_881.id) {
           // if this is an RFD that got to 'START REVIEW', and there is more actions left, we need to advance RFD-subtaks before continuing
-          const jql = `issuetype = "RFD-subtask"  AND status != "Closed" AND parent = "${issue.key}"`
+          const jql = `issuetype = "RFD-subtask" AND status != "Closed" AND parent = "${issue.key}"`
           // eslint-disable-next-line no-await-in-loop
           await jira.search({
             fields: 'fixVersions,issuetype,project,status,labels',
@@ -238,7 +238,7 @@ export class RfdHelper {
 
     return jira.search({
       fields: 'fixVersions,issuetype,project,status,labels',
-      jql: `issuetype = "RFD-subtask"  AND status  != "Closed" AND "Target environment" = "${params.targetEnv}" AND parent = "${params.rfd.key}" AND component = "${component.name}"`,
+      jql: `issuetype = "RFD-subtask" AND status != "Closed" AND "Target environment" = "${params.targetEnv}" AND parent = "${params.rfd.key}" AND component = "${component.name}"`,
     })
     .then(async result => {
       for (const issue of result.issues as Issue[]) {
@@ -302,7 +302,7 @@ export class RfdHelper {
     const jira = await this.createJiraClient()
     const issuesPerEnvironment = new Map<string, Issue | null>()
     const pullRequestUrl = normalizePullRequestUrl(pullRequest.url)
-    const jql = `issuetype = "RFD"  and status  != "Closed" and "Target environment" in (${targetEnvironments.map(v => '"' + v.toUpperCase() + '"').join(',')}) and issue in linkedIssues("${rfc.key}", "RFC link to RFD") and issueFunction in linkedIssuesOfRemote("${pullRequestUrl}")`
+    const jql = `issuetype = "RFD" and status != "Closed" and "Target environment" in (${targetEnvironments.map(v => '"' + v.toUpperCase() + '"').join(',')}) and issue in linkedIssues("${rfc.key}", "RFC link to RFD") and issueFunction in linkedIssuesOfRemote("${pullRequestUrl}")`
     this.logger.debug(`Searching for existing RFDs using jql: ${jql}`)
     await jira.search({
       fields: 'fixVersions,issuetype,project,status,labels,issuelinks,customfield_10121',
@@ -426,7 +426,7 @@ export class RfdHelper {
             // if no links exists, something happened and the RFD needed to be re-created
             if (issueLinks.length === 0) {
               const pullRequestUrl = normalizePullRequestUrl(pullRequest.url)
-              const jql = `project = "${rfd.fields?.project?.key}" and issuetype = "RFD"  and status = "Closed" and "Target environment" = "${targetEnv.toUpperCase()}" and issue in linkedIssues("${rfc.key}", "RFC link to RFD") and issueFunction in linkedIssuesOfRemote("${pullRequestUrl}")`
+              const jql = `project = "${rfd.fields?.project?.key}" and issuetype = "RFD" and status = "Closed" and "Target environment" = "${targetEnv.toUpperCase()}" and issue in linkedIssues("${rfc.key}", "RFC link to RFD") and issueFunction in linkedIssuesOfRemote("${pullRequestUrl}")`
               await jira.search({
                 fields: 'issuelinks',
                 jql: jql,
