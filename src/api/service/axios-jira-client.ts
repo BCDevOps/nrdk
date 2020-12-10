@@ -45,9 +45,11 @@ export class AxiosJiraClient {
   }
 
   public async getBranches(issueId: string, params?: any): Promise<any> {
-    return this.client.get('rest/dev-status/1.0/issue/detail', {params: {...params, issueId: issueId, applicationType: 'stash', dataType: 'pullrequest'}}).then(response => {
+    return this.client.get('rest/dev-status/1.0/issue/detail', {params: {...params, issueId: issueId, applicationType: 'stash', dataType: 'pullrequest'}})
+    .then(response => {
       return response.data.detail[0]
-    }).catch(error => {
+    })
+    .catch(error => {
       if (error?.response?.status === 403) {
         throw new GeneralError(`Access denied retrieving development feature for issue ${issueId}. Verify you have "developer" role in the project`, error)
       }
