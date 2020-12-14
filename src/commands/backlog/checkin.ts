@@ -1,7 +1,9 @@
 import {GitBaseCommand} from '../../git-base'
 import {flags} from '@oclif/command'
-import {AxiosJiraClient} from '../../api/service/axios-jira-client'
+import {AxiosJiraClient, Issue} from '../../api/service/axios-jira-client'
 import {AxiosBitBucketClient} from '../../api/service/axios-bitbucket-client'
+
+type DetailedIssue = Issue & { branch: any, pullRequest: any }
 
 export default class BacklogCheckin extends GitBaseCommand {
   static description = 'Push local changes (commits) to the remote repository'
@@ -10,13 +12,13 @@ export default class BacklogCheckin extends GitBaseCommand {
     pr: flags.boolean({description: 'Create Pull-Request', default: true}),
   }
 
-  async run() {
+  async getJiraIssue(): Promise<DetailedIssue> {
+    this.log(`Fetching Jira issue associated with current Git branch`)
     const jira = this.jira as AxiosJiraClient
-    const bitBucket = this.bitBucket as AxiosBitBucketClient
     const gitCurrentTrackingBranchName = await this._spawn('git', ['rev-parse', '--abbrev-ref', '--symbolic-full-name', '@{u}'])
     const expectedCurrentTrackingBranchName = gitCurrentTrackingBranchName.stdout.trim()
-    const baseBranchName = expectedCurrentTrackingBranchName.split('/').slice(1).join('/')
     this.log('expectedCurrentTrackingBranchName', expectedCurrentTrackingBranchName)
+    
     const issueKey = await AxiosJiraClient.parseJiraIssueKeyFromUri(expectedCurrentTrackingBranchName)
     const issue = await jira.getIssue(issueKey, {fields: 'issuetype,components,project'})
 
@@ -24,41 +26,62 @@ export default class BacklogCheckin extends GitBaseCommand {
     if (gitPush.status !== 0) {
       return this.error('Error pushing changes to remote repository. Try running\n>git push origin')
     }
+
+    const baseBranchName = expectedCurrentTrackingBranchName.split('/').slice(1).join('/')
     const devDetails = (await jira.getBranches(issue.id))
     // console.dir(devDetails.branches)
-    const branches = devDetails.branches.filter((item: { name: string }) => item.name === baseBranchName)
-    if (branches.length !== 1) {
+    const branch = devDetails.branches.find((item: { name: string }) => item.name === baseBranchName)
+    if (!branch) {
       return this.error(`Missing remote branch ${baseBranchName}`)
     }
-    // console.dir(branches)
-    const fromBranch = branches[0]
+    // console.dir(branch)
+
     // console.dir(devDetails.pullRequests)
-    const openPullRequests = devDetails.pullRequests.filter((item: { source: { branch: string }; status: string }) => item.source.branch === baseBranchName && item.status === 'OPEN')
-    // console.dir(openPullRequests)
-    // status: DECLINED
-    if (openPullRequests.length === 0) {
-      this.log(`Creating pull request for branch ${fromBranch.name} ....`)
-      let rfcIssue = issue
-      if (issue.fields.issuetype.name !== 'RFC') {
-        rfcIssue = await jira.getRfcByIssue(issue.key)
-      }
-      const rfcDevDetails = (await jira.getBranches(rfcIssue.id))
-      if (rfcDevDetails.branches.length === 0) {
-        return this.error(`Missing release branch 'release/${rfcIssue.key}'`)
-      }
-      const releaseBranch = rfcDevDetails.branches[0]
-      const repository = AxiosBitBucketClient.parseUrl(releaseBranch.url)
-      const newPullRequest = await bitBucket.createPullRequest(
-        {
-          title: issue.key,
-          fromRef: {id: `refs/heads/${fromBranch.name}`, repository},
-          toRef: {id: `refs/heads/${releaseBranch.name}`, repository},
-        }
-      )
-      // console.dir(newPullRequest, {depth: 5})
-      this.log(`Pull Request #${newPullRequest.id} has been created`)
+    const pullRequest = devDetails.pullRequests.find((item: { source: { branch: string }; status: string }) => item.source.branch === baseBranchName && item.status === 'OPEN')
+    // console.dir(pullRequest)
+
+    var detailedIssue: DetailedIssue = Object.assign(issue, {branch: branch, pullRequest: pullRequest}) 
+    return detailedIssue
+  }
+
+  async createPullRequest(jiraIssue: DetailedIssue) {
+    const jira = this.jira as AxiosJiraClient
+    const bitBucket = this.bitBucket as AxiosBitBucketClient
+
+    this.log(`Creating pull request for branch ${jiraIssue.branch.name} ....`)
+
+    var rfcIssue : DetailedIssue
+    if (jiraIssue.fields.issuetype.name === 'RFC') {
+      rfcIssue = jiraIssue
     } else {
-      this.log(`Pull Request ${openPullRequests[0].id} has been updated`)
+      rfcIssue = await jira.getRfcByIssue(jiraIssue.key) as DetailedIssue
+    }
+
+    const rfcDevDetails = (await jira.getBranches(rfcIssue.id))
+    if (rfcDevDetails.branches.length === 0) {
+      return this.error(`Missing release branch 'release/${rfcIssue.key}'`)
+    }
+    const releaseBranch = rfcDevDetails.branches[0]
+    const repository = AxiosBitBucketClient.parseUrl(releaseBranch.url)
+    jiraIssue.pullRequest = await bitBucket.createPullRequest(
+      {
+        title: jiraIssue.key,
+        fromRef: {id: `refs/heads/${jiraIssue.branch.name}`, repository},
+        toRef: {id: `refs/heads/${releaseBranch.name}`, repository},
+      }
+    )
+    return jiraIssue
+  }
+
+  async run() {
+    var jiraIssue = await(this.getJiraIssue())
+
+    if (!jiraIssue.pullRequest) {
+      jiraIssue = await(this.createPullRequest(jiraIssue))
+      // console.dir(newPullRequest, {depth: 5})
+      this.log(`Pull Request #${jiraIssue.pullRequest.id} has been created`)
+    } else {
+      this.log(`Pull Request #${jiraIssue.pullRequest.id} has been updated`)
     }
   }
 }
