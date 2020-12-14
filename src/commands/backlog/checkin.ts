@@ -15,7 +15,11 @@ export default class BacklogCheckin extends GitBaseCommand {
   async getJiraIssue(): Promise<DetailedIssue> {
     this.log(`Fetching Jira issue associated with current Git branch`)
     const jira = this.jira as AxiosJiraClient
-    const gitCurrentTrackingBranchName = await this._spawn('git', ['rev-parse', '--abbrev-ref', '--symbolic-full-name', '@{u}'])
+    
+    var gitCurrentTrackingBranchName = await this._spawn('git', ['rev-parse', '--abbrev-ref', '--symbolic-full-name', '@{u}'])
+    if (gitCurrentTrackingBranchName.stdout.trim() == '@u') {   // catch and counteract bash curly brace evaluation
+      gitCurrentTrackingBranchName = await this._spawn('git', ['rev-parse', '--abbrev-ref', '--symbolic-full-name', '@\\{u\\}'])
+    }
     const expectedCurrentTrackingBranchName = gitCurrentTrackingBranchName.stdout.trim()
     this.log('expectedCurrentTrackingBranchName', expectedCurrentTrackingBranchName)
     
@@ -78,10 +82,10 @@ export default class BacklogCheckin extends GitBaseCommand {
 
     if (!jiraIssue.pullRequest) {
       jiraIssue = await(this.createPullRequest(jiraIssue))
-      // console.dir(newPullRequest, {depth: 5})
+      // console.dir(jiraIssue.pullRequest, {depth: 5})
       this.log(`Pull Request #${jiraIssue.pullRequest.id} has been created`)
     } else {
-      this.log(`Pull Request #${jiraIssue.pullRequest.id} has been updated`)
+      this.log(`Pull Request ${jiraIssue.pullRequest.id} has been updated`)
     }
   }
 }
