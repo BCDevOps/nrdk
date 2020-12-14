@@ -6,15 +6,29 @@ import {AxiosBitBucketClient} from '../../api/service/axios-bitbucket-client'
 type DetailedIssue = Issue & {branch: any; pullRequest: any}
 
 export default class BacklogCheckin extends GitBaseCommand {
-  static description = 'Push local changes (commits) to the remote repository'
+  static description = 'After backlog:checkout and committing changes, push local changes to the remote repository and create/update a pull request.'
+
+  static examples = [
+    `# nrdk backlog:checkout <Jira issue ID>
+     # git add .
+     # git commit -m "[Jira Issue] Adding new feature"
+     # nrdk backlog:checkin
+     Creates a new pull request merging branch Feature/[Jira Issue] into Release/<Jira Issue's Release's RFC's ID>`,
+    `# git branch // already on Feature/[Jira Issue]
+     # git add .
+     # git commit -m "[Jira Issue] Expanding on feature"
+     # nrdk backlog:checkin
+     Updates the existing pull request with the new commit(s).`,
+  ]
 
   static flags = {
-    pr: flags.boolean({description: 'Create Pull-Request', default: true}),
+    pr: flags.boolean({hidden: true, description: 'Create Pull-Request', default: true}),
   }
 
   async getJiraIssue(): Promise<DetailedIssue> {
     this.log('Fetching Jira issue associated with current Git branch')
     const jira = this.jira as AxiosJiraClient
+    const bitBucket = this.bitBucket as AxiosBitBucketClient
 
     let gitCurrentTrackingBranchName = await this._spawn('git', ['rev-parse', '--abbrev-ref', '--symbolic-full-name', '@{u}'])
     if (gitCurrentTrackingBranchName.stdout.trim() === '@u') {   // catch and counteract bash curly brace evaluation

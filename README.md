@@ -43,29 +43,19 @@ USAGE
 
 # Commands
 <!-- commands -->
-* [`nrdk backlog:checkin`](#nrdk-backlogcheckin)
 * [`nrdk backlog:checkout [ISSUE]`](#nrdk-backlogcheckout-issue)
+* [`nrdk backlog:checkin`](#nrdk-backlogcheckin)
 * [`nrdk help [COMMAND]`](#nrdk-help-command)
-
-## `nrdk backlog:checkin`
-
-Push local changes (commits) to the remote repository
-
-```
-USAGE
-  $ nrdk backlog:checkin
-
-OPTIONS
-  --pr  Create Pull-Request
-```
-
-_See code: [src/commands/backlog/checkin.ts](./src/commands/backlog/checkin.ts)_
 
 ## `nrdk backlog:checkout [ISSUE]`
 
-Create (if required), and checkout the git branch supporting a Jira issue (bug, new feature, improvement, etc...)
+Given a Jira Issue (Feature Issue), checks out a Git branch named Feature/[Feature Issue] to resolve that Issue.
 
 ```
+REQUIREMENTS
+  - The Feature Issue must have a Fix Version
+  - The Fix Version must have an RFC (Release Issue)
+
 USAGE
   $ nrdk backlog:checkout [ISSUE]
 
@@ -74,6 +64,21 @@ ARGUMENTS
 ```
 
 _See code: [src/commands/backlog/checkout.ts](./src/commands/backlog/checkout.ts)_
+
+## `nrdk backlog:checkin`
+
+On a Feature Branch, pushes local changes to the remote repository, and creates or updates a pull request merging it into the Release branch.
+```
+REQUIREMENTS
+  - The Feature Issue must have a Fix Version
+  - The Fix Version must have an RFC (Release Issue)
+  - The Release Issue must have a Release Branch, Release/[Release Issue]
+
+USAGE
+  $ nrdk backlog:checkin
+```
+
+_See code: [src/commands/backlog/checkin.ts](./src/commands/backlog/checkin.ts)_
 
 ## `nrdk help [COMMAND]`
 
