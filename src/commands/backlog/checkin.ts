@@ -3,7 +3,7 @@ import {flags} from '@oclif/command'
 import {AxiosJiraClient, Issue} from '../../api/service/axios-jira-client'
 import {AxiosBitBucketClient} from '../../api/service/axios-bitbucket-client'
 
-type DetailedIssue = Issue & { branch: any, pullRequest: any }
+type DetailedIssue = Issue & {branch: any; pullRequest: any}
 
 export default class BacklogCheckin extends GitBaseCommand {
   static description = 'Push local changes (commits) to the remote repository'
@@ -13,16 +13,16 @@ export default class BacklogCheckin extends GitBaseCommand {
   }
 
   async getJiraIssue(): Promise<DetailedIssue> {
-    this.log(`Fetching Jira issue associated with current Git branch`)
+    this.log('Fetching Jira issue associated with current Git branch')
     const jira = this.jira as AxiosJiraClient
-    
-    var gitCurrentTrackingBranchName = await this._spawn('git', ['rev-parse', '--abbrev-ref', '--symbolic-full-name', '@{u}'])
-    if (gitCurrentTrackingBranchName.stdout.trim() == '@u') {   // catch and counteract bash curly brace evaluation
+
+    let gitCurrentTrackingBranchName = await this._spawn('git', ['rev-parse', '--abbrev-ref', '--symbolic-full-name', '@{u}'])
+    if (gitCurrentTrackingBranchName.stdout.trim() === '@u') {   // catch and counteract bash curly brace evaluation
       gitCurrentTrackingBranchName = await this._spawn('git', ['rev-parse', '--abbrev-ref', '--symbolic-full-name', '@\\{u\\}'])
     }
     const expectedCurrentTrackingBranchName = gitCurrentTrackingBranchName.stdout.trim()
     this.log('expectedCurrentTrackingBranchName', expectedCurrentTrackingBranchName)
-    
+
     const issueKey = await AxiosJiraClient.parseJiraIssueKeyFromUri(expectedCurrentTrackingBranchName)
     const issue = await jira.getIssue(issueKey, {fields: 'issuetype,components,project'})
 
@@ -44,7 +44,7 @@ export default class BacklogCheckin extends GitBaseCommand {
     const pullRequest = devDetails.pullRequests.find((item: { source: { branch: string }; status: string }) => item.source.branch === baseBranchName && item.status === 'OPEN')
     // console.dir(pullRequest)
 
-    var detailedIssue: DetailedIssue = Object.assign(issue, {branch: branch, pullRequest: pullRequest}) 
+    const detailedIssue: DetailedIssue = Object.assign(issue, {branch: branch, pullRequest: pullRequest})
     return detailedIssue
   }
 
@@ -54,7 +54,7 @@ export default class BacklogCheckin extends GitBaseCommand {
 
     this.log(`Creating pull request for branch ${jiraIssue.branch.name} ....`)
 
-    var rfcIssue : DetailedIssue
+    let rfcIssue: DetailedIssue
     if (jiraIssue.fields.issuetype.name === 'RFC') {
       rfcIssue = jiraIssue
     } else {
@@ -78,14 +78,14 @@ export default class BacklogCheckin extends GitBaseCommand {
   }
 
   async run() {
-    var jiraIssue = await(this.getJiraIssue())
+    let jiraIssue = await this.getJiraIssue()
 
-    if (!jiraIssue.pullRequest) {
-      jiraIssue = await(this.createPullRequest(jiraIssue))
+    if (jiraIssue.pullRequest) {
+      this.log(`Pull Request ${jiraIssue.pullRequest.id} has been updated`)
+    } else {
+      jiraIssue = await this.createPullRequest(jiraIssue)
       // console.dir(jiraIssue.pullRequest, {depth: 5})
       this.log(`Pull Request #${jiraIssue.pullRequest.id} has been created`)
-    } else {
-      this.log(`Pull Request ${jiraIssue.pullRequest.id} has been updated`)
     }
   }
 }
