@@ -112,7 +112,7 @@
     "oclif": "oclif",
     "link": "npm link @bcgov/nr-pipeline-ext && npm link @bcgov/pipeline-cli",
     "publish:latest": "npm --no-git-tag-version version prerelease && npm publish --tag latest",
-    "publish:alpha": "npm --no-git-tag-version version prerelease && npm publish --tag alpha",
+    "publish:alpha": "npm --no-git-tag-version version prerelease && npm publish --tag alpha"
   },
   "types": "lib/index.d.ts",
   "bundleDependencies": [
