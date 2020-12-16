@@ -93,7 +93,7 @@
     {
         "scope": "https://bwa.nrs.gov.bc.ca:443",
         "method": "GET",
-        "path": "/int/jira/rest/api/2/search?fields=fixVersions,issuetype,project,status&jql=fixVersion+%3D+15604+AND+issuetype+%3D+RFC+AND+statusCategory+!%3D+Done",
+        "path": "/int/jira/rest/api/2/search?fields=fixVersions,issuetype,project,status&jql=fixVersion++%3D+15604+AND+issuetype+%3D+RFC+AND+statusCategory+!%3D+Done",
         "body": "",
         "status": 200,
         "response": {
