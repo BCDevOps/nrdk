@@ -71,11 +71,12 @@ export default class GitCheckout extends GitBaseCommand {
   }
 
   async gitCheckoutBranch(branchInfo: BranchReference) {
-    if (!branchInfo.repository.cwd) return this.error('Repository work directory ha snot been initialized')
-    const gitCurrentTrackingBranchName = await this._spawn('git', ['rev-parse', '--abbrev-ref', '--symbolic-full-name', '@{u}'], {cwd: branchInfo.repository.cwd})
-    const expectedCurrentTrackingBranchName = gitCurrentTrackingBranchName.stdout.trim()
-    if (expectedCurrentTrackingBranchName !== `origin/${branchInfo.name}`) {
-      this.log(`Currently on branch '${expectedCurrentTrackingBranchName}'. Checking out branch '${branchInfo.name}'`)
+    if (!branchInfo.repository.cwd) return this.error('Repository work directory has not been initialized')
+
+    const currentBranchName = await this.getCurrentBranchName({cwd: branchInfo.repository.cwd})
+
+    if (currentBranchName !== `origin/${branchInfo.name}`) {
+      this.log(`Currently on branch '${currentBranchName}'. Checking out branch '${branchInfo.name}'`)
       const gitCheckout = await this._spawn('git', ['checkout', branchInfo.name], {cwd: branchInfo.repository.cwd})
       if (gitCheckout.status !== 0) {
         return this.error(`Error checkout branch ${branchInfo.name}. Try running\n>git checkout ${branchInfo.name}`)

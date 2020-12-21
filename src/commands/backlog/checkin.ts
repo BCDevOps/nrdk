@@ -16,14 +16,9 @@ export default class BacklogCheckin extends GitBaseCommand {
     this.log('Fetching Jira issue associated with current Git branch')
     const jira = this.jira as AxiosJiraClient
 
-    let gitCurrentTrackingBranchName = await this._spawn('git', ['rev-parse', '--abbrev-ref', '--symbolic-full-name', '@{u}'])
-    if (gitCurrentTrackingBranchName.stdout.trim() === '@u') {   // catch and counteract bash curly brace evaluation
-      gitCurrentTrackingBranchName = await this._spawn('git', ['rev-parse', '--abbrev-ref', '--symbolic-full-name', '@\\{u\\}'])
-    }
-    const expectedCurrentTrackingBranchName = gitCurrentTrackingBranchName.stdout.trim()
-    this.log('expectedCurrentTrackingBranchName', expectedCurrentTrackingBranchName)
+    const expectedCurrentBranchName = await this.getCurrentBranchName()
 
-    const issueKey = await AxiosJiraClient.parseJiraIssueKeyFromUri(expectedCurrentTrackingBranchName)
+    const issueKey = await AxiosJiraClient.parseJiraIssueKeyFromUri(expectedCurrentBranchName)
     const issue = await jira.getIssue(issueKey, {fields: 'issuetype,components,project'})
 
     const gitPush = await this._spawn('git', ['push', 'origin'])
@@ -31,7 +26,7 @@ export default class BacklogCheckin extends GitBaseCommand {
       return this.error('Error pushing changes to remote repository. Try running\n>git push origin')
     }
 
-    const baseBranchName = expectedCurrentTrackingBranchName.split('/').slice(1).join('/')
+    const baseBranchName = expectedCurrentBranchName.split('/').slice(1).join('/')
     const devDetails = (await jira.getBranches(issue.id))
     // console.dir(devDetails.branches)
     const branch = devDetails.branches.find((item: { name: string }) => item.name === baseBranchName)
