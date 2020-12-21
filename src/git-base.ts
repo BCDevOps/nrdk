@@ -61,9 +61,10 @@ export abstract class GitBaseCommand extends Command {
 
   async getCurrentBranchName(options?: SpawnOptions) {
     let gitCurrentBranchName = await this._spawn('git', ['rev-parse', '--abbrev-ref', '--symbolic-full-name', '@{u}'], options)
-    if (gitCurrentBranchName.stdout.trim() === '@u') {   // catch and counteract bash curly brace evaluation
-      gitCurrentBranchName = await this._spawn('git', ['rev-parse', '--abbrev-ref', '--symbolic-full-name', '@\\{u\\}'], options)
-    }
+    //if (gitCurrentBranchName.stdout.trim() === '@u') {   // catch and counteract bash curly brace evaluation
+    //  gitCurrentBranchName = await this._spawn('git', ['rev-parse', '--abbrev-ref', '--symbolic-full-name', '@\\{u\\}'], options)
+    //}
+    console.dir(gitCurrentBranchName)
     this.log('expectedCurrentBranchName', gitCurrentBranchName.stdout.trim())
     return gitCurrentBranchName.stdout.trim()
   }

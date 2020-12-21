@@ -1,4 +1,5 @@
-import {spawn, SpawnOptions, SpawnSyncReturns, ChildProcess} from 'child_process'
+import {SpawnOptions, SpawnSyncReturns, ChildProcess} from 'child_process'
+import {spawn} from 'cross-spawn'
 import winston from 'winston'
 
 export async function _spawn(logger: winston.Logger, command: string, argsv: readonly string[], options: SpawnOptions): Promise<SpawnSyncReturns<string>> {
