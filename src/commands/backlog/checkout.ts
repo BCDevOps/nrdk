@@ -29,7 +29,8 @@ export default class GitCheckout extends GitBaseCommand {
     .then(() => {
       cli.action.start(message)
       return promise
-    }).finally(() => {
+    })
+    .finally(() => {
       cli.action.stop()
     })
   }

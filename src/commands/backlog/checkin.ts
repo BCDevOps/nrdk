@@ -31,7 +31,8 @@ export default class BacklogCheckin extends GitBaseCommand {
       return this.error('Error pushing changes to remote repository. Try running\n>git push origin')
     }
 
-    const baseBranchName = expectedCurrentTrackingBranchName.split('/').slice(1).join('/')
+    const baseBranchName = expectedCurrentTrackingBranchName.split('/').slice(1)
+    .join('/')
     const devDetails = (await jira.getBranches(issue.id))
     // console.dir(devDetails.branches)
     const branch = devDetails.branches.find((item: { name: string }) => item.name === baseBranchName)

@@ -27,7 +27,8 @@ export default class GitClient {
       return new Promise(resolve => {
         const child = spawn('git', ['config', '--get', `branch.${localBranchName}.merge`], {cwd: cwd})
         child.stdout.on('data', data => {
-          const name = data.toString().substr('refs/heads/'.length).trim()
+          const name = data.toString().substr('refs/heads/'.length)
+          .trim()
           resolve(name)
           child.kill()
         })
