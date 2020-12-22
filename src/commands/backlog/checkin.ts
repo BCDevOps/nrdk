@@ -6,7 +6,7 @@ import {AxiosBitBucketClient} from '../../api/service/axios-bitbucket-client'
 type DetailedIssue = Issue & {branch: any; pullRequest: any}
 
 export default class BacklogCheckin extends GitBaseCommand {
-  static description = 'After backlog:checkout and committing changes, push local changes to the remote repository and create/update a pull request.'
+  static description = 'On a Feature Branch, pushes local changes to the remote repository, and creates or updates a pull request to merge it into the Release branch.'
 
   static examples = [
     `# nrdk backlog:checkout <Jira issue ID>
