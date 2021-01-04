@@ -38,7 +38,7 @@ async function clearVersion(jira: Jira.Client) {
     }
   })
 }
-describe('jira:wokrflow @type=system', () => {
+describe('jira:workflow @type=system', () => {
   let rfc: any = null
   const jira = new Jira.Client(loadJiraClientConfig())
   // beforeEach(MochaNockBack.beforeEach())

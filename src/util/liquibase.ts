@@ -42,7 +42,8 @@ export default class Liquibase {
     const remoteFilePath = gavToPath(gav)
     const localFileName = path.join(cacheDir, remoteFilePath)
     // console.log(localFileName)
-    const localFileStat = await fs.promises.stat(localFileName).catch(() => {
+    const localFileStat = await fs.promises.stat(localFileName)
+    .catch(() => {
       return undefined
     })
     if (localFileStat && localFileStat.size > 0) {
@@ -95,25 +96,30 @@ export default class Liquibase {
       return {path: cacheFilePath, exists: true} as FileReference
     })
     .then(async file => {
-      await fs.promises.mkdir(liquibaseHomeDir).catch(error => {
+      await fs.promises.mkdir(liquibaseHomeDir)
+      .catch(error => {
         if (error.code !== 'EEXIST') {
           throw error
         }
       })
-      return tar.x({file: file.path, C: liquibaseHomeDir}).then(() => {
+      return tar.x({file: file.path, C: liquibaseHomeDir})
+      .then(() => {
         return liquibaseHomeDir
       })
     })
     .then(homeDir => {
-      return this.downloadDrivers().then(() => {
+      return this.downloadDrivers()
+      .then(() => {
         return homeDir
       })
     })
   }
 
   async spawn(args: string[], options: SpawnOptions): Promise<ChildProcess> {
-    return this.install().then(liquibaseHomeDir => {
-      return this.downloadDrivers().then(drivers => {
+    return this.install()
+    .then(liquibaseHomeDir => {
+      return this.downloadDrivers()
+      .then(drivers => {
         return new Promise(resolve => {
           const classpath = [path.join(liquibaseHomeDir, 'liquibase.jar'), path.join(liquibaseHomeDir, 'lib'), path.join(liquibaseHomeDir, 'lib', '*')]
           classpath.push(...drivers)

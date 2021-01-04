@@ -210,7 +210,7 @@ objects:
               initialDelaySeconds: 130
               periodSeconds: 10
               successThreshold: 1
-              timeoutSeconds: 6  
+              timeoutSeconds: 6
             volumeMounts:   
               - mountPath: /usr/local/tomcat/ext/webade/classes
                 name: webade-properties

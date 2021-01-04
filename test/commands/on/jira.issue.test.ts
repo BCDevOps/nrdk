@@ -41,7 +41,9 @@ describe.skip('on/jira.issue', () => {
         test
         .nock(`${RFC2127.scope}`, api => api.get(RFC2127.path).reply(200, () => {
           return _merge({}, RFC2127.response, {fields: {status: rfcStatus}})
-        }).get(RFD2131.path).reply(200, () => {
+        })
+        .get(RFD2131.path)
+        .reply(200, () => {
           return _merge({}, RFD2131.response, {fields: {status: rfdStatus}})
         }))
         .stdout()
@@ -62,11 +64,15 @@ describe.skip('on/jira.issue', () => {
         test
         .stdout()
         .stderr()
-        .nock(`${RFC2127.scope}`, api => api.get(RFC2127.path).reply(200, () => {
-          return _merge({}, RFC2127.response, {fields: {status: RfcWorkflow.STATUS_APPROVED}})
-        }).get(RFD2131.path).reply(200, () => {
-          return _merge({}, RFD2131.response, {fields: {status: RfdWorkflow.STATUS_RESOLVED}})
-        }))
+        .nock(
+          `${RFC2127.scope}`, api => api.get(RFC2127.path).reply(200, () => {
+            return _merge({}, RFC2127.response, {fields: {status: RfcWorkflow.STATUS_APPROVED}})
+          })
+          .get(RFD2131.path)
+          .reply(200, () => {
+            return _merge({}, RFD2131.response, {fields: {status: RfdWorkflow.STATUS_RESOLVED}})
+          })
+        )
         .command([
           'on:jira.issue',
           `--${FlagNames.CONFIG_SCRIPT}=${path.resolve(__dirname, '../build.config.js')}`,

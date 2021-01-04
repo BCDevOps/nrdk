@@ -85,7 +85,7 @@ export class Jira {
 
   /**
      * Function ensures the RFD issues are created and linked to RFC issue for each environment.
-     * Also ensure RFC/RFD/RFD subtasks status  to the state intended.
+     * Also ensure RFC/RFD/RFD subtasks status to the state intended.
      */
   async createRFD() {
     const rfcIssueKey = this.jiraSettings.rfcIssueKey
@@ -277,18 +277,18 @@ export class Jira {
   /**
      * Transitioning issue @issueKey using @transitionAction to some target status.
      * The function first search possible transtion status from JIRA client before making the .
-     * If the transitionAction can be found, it will use the "id" to make the  through JIRA.
+     * If the transitionAction can be found, it will use the "id" to make the through JIRA.
      * If the transitionAction is not found for this issue, error will be thrown.
      * @param {string} issueKey
      * @param {string} transitionAction the name/code of the action to .
-     *                 Note, this is not the 'status' code/name; it is the 'action' to  to other status.
+     *                 Note, this is not the 'status' code/name; it is the 'action' to to other status.
      */
   async _transition(issueKey: string, transitionAction: string) {
     try {
       let issue = await this.getIssue(issueKey)
-      // console.log("~Before  - Issue: " + issueKey + ", status: " + issue.fields.status.name);
+      // console.log("~Before - Issue: " + issueKey + ", status: " + issue.fields.status.name);
 
-      // based on issueKey, finding possible actions to  from JIRA client
+      // based on issueKey, finding possible actions to from JIRA client
       // console.log("Transitioning " + issueKey + " with action: " + transitionAction);
       const possibleTransitionsReturn = await this.jiraClient.issue.getTransitions({issueKey: issueKey})
       const possibleActions = possibleTransitionsReturn.transitions
@@ -296,13 +296,13 @@ export class Jira {
         throw new Error(
           "Could not found possible ''. Could not transtion issue: " +
                         issueKey +
-                        ' based on current issue status. Possibly the  does not exist or cannot be performed on the issue.'
+                        ' based on current issue status. Possibly the does not exist or cannot be performed on the issue.'
         )
       }
       // console.log("Possible actions to : ");
       // console.log(possibleActions);
 
-      // checking if user's  action is valid
+      // checking if user's action is valid
       const foundTransition = possibleActions.find((t: any) => t.name.toLowerCase() === transitionAction.toLowerCase())
       if (foundTransition === undefined) {
         const possibleTreansitionActionName = possibleActions.map((t: any) => t.name)
@@ -332,7 +332,8 @@ export class Jira {
   search(opts: any) {
     try {
       const results = this.getJiraClient().search.search(opts)
-      return results.catch((error: any) => {
+      return results
+      .catch((error: any) => {
         if (typeof error === 'string') {
           const obj = JSON.parse(error)
           // eslint-disable-next-line prettier/prettier
@@ -410,7 +411,8 @@ export class Jira {
      * @return {Promise<Array>} array of rfdIssueKeys if exists. If it has item, usually it only contains 1 issue in each env.
      */
   getRfdTaskIds(rfcIssueKey: string, jiraTargetEnv: string) {
-    return this.retrieveRfcIssueInfo(rfcIssueKey).then(async rfcIssue => {
+    return this.retrieveRfcIssueInfo(rfcIssueKey)
+    .then(async rfcIssue => {
       const rfdIssueKeys = []
       for (const issuelink of rfcIssue.fields.issuelinks) {
         if (issuelink.type.id === '10300') {
@@ -437,7 +439,8 @@ export class Jira {
      * @return {Promise} subtasks array object infomation.
      */
   getIssueSubtasksInfo(issueId: string) {
-    return this.getIssue(issueId).then((issueInfo: any) => issueInfo.fields.subtasks)
+    return this.getIssue(issueId)
+    .then((issueInfo: any) => issueInfo.fields.subtasks)
   }
 
   /**

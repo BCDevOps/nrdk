@@ -82,7 +82,9 @@ export function saveJiraRequests(nockCalls: nock.Definition[]) {
   for (const nockCall of nockCalls) {
     // eslint-disable-next-line no-console
     console.info(`Saving request from ${nockCall.scope} ${nockCall.path}`)
-    const checksum = crypto.createHash('sha256').update(JSON.stringify({method: nockCall.method, path: nockCall.path, status: nockCall.status}), 'utf8').digest('hex')
+    const checksum = crypto.createHash('sha256')
+    .update(JSON.stringify({method: nockCall.method, path: nockCall.path, status: nockCall.status}), 'utf8')
+    .digest('hex')
     let mockPath = path.resolve(__dirname, `../__mocks/${checksum}.json`)
     if (nockCall.path.match(/int\/jira\/rest\/api\/2\/issue\//g)) {
       const response = ((nockCall.response as unknown) as any)

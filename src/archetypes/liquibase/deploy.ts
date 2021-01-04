@@ -105,7 +105,7 @@ export class LiquibaseDeployer {
 
   async deploySchema(migrationDir: string, schemaName: string) {
     const liquibase = new Liquibase()
-    return  this.prepare(migrationDir, schemaName)
+    return this.prepare(migrationDir, schemaName)
     .then(propertiesFilePath => {
       const args = [`--defaultsFile=${propertiesFilePath}`]
       if (this.settings.options[FlagNames.DRY_RUN] === true) {

@@ -30,7 +30,7 @@ let pullRequestNumber = 1
  * This is a System testing case which requires access to an JIRA installation
  */
 describe('jira:workflow @type=system', () => {
-  const  helper = new RfdHelper({})
+  const helper = new RfdHelper({})
   before(() => {
     // eslint-disable-next-line node/no-missing-require
     SecretManager.loadEntries(require('../.local/secrets.json'))
@@ -93,7 +93,8 @@ describe('jira:workflow @type=system', () => {
         issue: {key: rfc.key},
         pullRequest: pullRequestRef,
         targetEnvironment: targetEnvironments,
-      }).then(async issues => {
+      })
+      .then(async issues => {
         // all but the last one is in resolved state
         // eslint-disable-next-line max-nested-callbacks
         const rfds = issues.filter(item => item?.fields?.issuetype?.name === IssueTypeNames.RFD)
@@ -140,7 +141,8 @@ describe('jira:workflow @type=system', () => {
           previousRFD = issue
         }
         return issues
-      }).then(async issues => {
+      })
+      .then(async issues => {
         for (const issue of issues) {
           if (issue?.fields?.issuetype?.name === IssueTypeNames.RFD) {
             keys1.push(issue.key)

@@ -45,9 +45,11 @@ export class AxiosJiraClient {
   }
 
   public async getBranches(issueId: string, params?: any): Promise<any> {
-    return this.client.get('rest/dev-status/1.0/issue/detail', {params: {...params, issueId: issueId, applicationType: 'stash', dataType: 'pullrequest'}}).then(response => {
+    return this.client.get('rest/dev-status/1.0/issue/detail', {params: {...params, issueId: issueId, applicationType: 'stash', dataType: 'pullrequest'}})
+    .then(response => {
       return response.data.detail[0]
-    }).catch(error => {
+    })
+    .catch(error => {
       if (error?.response?.status === 403) {
         throw new GeneralError(`Access denied retrieving development feature for issue ${issueId}. Verify you have "developer" role in the project`, error)
       }
@@ -85,7 +87,7 @@ export class AxiosJiraClient {
       throw new Error(`Expected to find at least '1' value for fix version, but found '${issue.fields.fixVersions.length}' for issue ${issueKey}`)
     }
     const fixVersion = issue.fields.fixVersions[0]
-    const jql = `fixVersion  = ${fixVersion.id} AND issuetype = RFC AND statusCategory != Done`
+    const jql = `fixVersion = ${fixVersion.id} AND issuetype = RFC AND statusCategory != Done`
     const rfcSearchResults = await this.client.get('rest/api/2/search', {params: {fields: fields, jql: jql}})
     .then(response => {
       return response.data
