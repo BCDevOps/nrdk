@@ -8,9 +8,9 @@ import * as Config from '@oclif/config'
 import {_spawn} from './util/child-process'
 
 export abstract class GitBaseCommand extends Command {
-  jira?: AxiosJiraClient
+  private jira?: AxiosJiraClient
 
-  bitBucket?: AxiosBitBucketClient
+  private bitBucket?: AxiosBitBucketClient
 
   logger: winston.Logger
 

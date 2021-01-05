@@ -42,8 +42,7 @@ export default class GitCheckout extends GitBaseCommand {
   }
 
   async getIssue(issueKey: string): Promise<Issue> {
-    if (!this.jira) return this.error('Jira client has not been initialized')
-    return this.action(`Fetching Jira Issue ${issueKey}`, this.jira.getIssue(issueKey, {fields: 'issuetype,components'}))
+    return this.action(`Fetching Jira Issue ${issueKey}`, this.getJira().getIssue(issueKey, {fields: 'issuetype,components'}))
   }
 
   async gitCloneRepository(branchInfo: BranchReference) {
@@ -101,14 +100,13 @@ export default class GitCheckout extends GitBaseCommand {
    * if the issue branch doesn't exist, one will be created.
    */
   async getIssueBranch(issue: Issue, repository: RepositoryReference, username?: string) {
-    if (!this.jira) return this.error('Jira client has not been initialized')
     // RFC issues
     if (issue.fields.issuetype.name === 'RFC') {
       return this.createReleaseBranch(issue, repository)
     }
     // non-RFC issues
     this.log(`Finding RFC for issue ${issue.key}/${issue.id}`)
-    const rfc = await this.jira.getRfcByIssue(issue.key)
+    const rfc = await this.getJira().getRfcByIssue(issue.key)
     this.log(`Found RFC ${rfc.key}/${rfc.id}`)
     const releaseBranch = await this.createReleaseBranch(rfc, repository)
     let branchName = `feature/${issue.key}`
@@ -119,13 +117,12 @@ export default class GitCheckout extends GitBaseCommand {
   }
 
   async getRepository(issue: Issue, flags: any):  Promise<RepositoryReference> {
-    if (!this.jira) return this.error('Jira client has not been initialized')
     if (!flags.repository || !flags.project) {
       if (issue.fields.components.length !== 1) {
         return this.error(`Expected at least 1 component set for issue '${issue.key}', but found '${issue.fields.components.length}'`)
       }
       const component = issue.fields.components[0]
-      const repositoryReference = await this.jira.getComponentRepositoryInfo(component)
+      const repositoryReference = await this.getJira().getComponentRepositoryInfo(component)
       flags.repository = repositoryReference.slug
       flags.project = repositoryReference.project.key
     }
