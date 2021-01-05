@@ -65,6 +65,7 @@ export default class BacklogCheckin extends GitBaseCommand {
 
   async createPullRequest(jiraIssue: DetailedIssue) {
     const jira = this.jira as AxiosJiraClient
+    const bitBucket = this.bitBucket as AxiosBitBucketClient
 
     this.log(`Creating pull request for branch ${jiraIssue.branch.name} ....`)
 
@@ -81,7 +82,7 @@ export default class BacklogCheckin extends GitBaseCommand {
     }
     const releaseBranch = rfcDevDetails.branches[0]
     const repository = AxiosBitBucketClient.parseUrl(releaseBranch.url)
-    jiraIssue.pullRequest = await this.bitBucket.createPullRequest(
+    jiraIssue.pullRequest = await bitBucket.createPullRequest(
       {
         title: jiraIssue.key,
         fromRef: {id: `refs/heads/${jiraIssue.branch.name}`, repository},
