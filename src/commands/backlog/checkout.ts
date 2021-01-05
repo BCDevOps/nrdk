@@ -13,7 +13,13 @@ import {BranchReference, RepositoryReference} from '../../api/service/axios-bitb
 import cli from 'cli-ux'
 
 export default class GitCheckout extends GitBaseCommand {
-  static description = 'Create (if required), and checkout the git branch supporting a Jira issue (bug, new feature, improvement, etc...)'
+  static description = 'Given a Jira Issue, checks out a Git branch named Feature/[Jira Issue] to resolve that Issue.'
+
+  static examples = [
+    `# nrdk backlog:checkout IRS-200
+     # git status
+     On branch IRS-200`,
+  ]
 
   static flags = {
     project: flags.string({hidden: true, char: 'p', description: 'BitBucket Project/Group Name'}),
@@ -72,7 +78,8 @@ export default class GitCheckout extends GitBaseCommand {
   }
 
   async gitCheckoutBranch(branchInfo: BranchReference) {
-    if (!branchInfo.repository.cwd) return this.error('Repository work directory ha snot been initialized')
+    if (!branchInfo.repository.cwd) return this.error('Repository work directory has not been initialized')
+
     const gitCurrentTrackingBranchName = await this._spawn('git', ['rev-parse', '--abbrev-ref', '--symbolic-full-name', '@{u}'], {cwd: branchInfo.repository.cwd})
     const expectedCurrentTrackingBranchName = gitCurrentTrackingBranchName.stdout.trim()
     if (expectedCurrentTrackingBranchName !== `origin/${branchInfo.name}`) {

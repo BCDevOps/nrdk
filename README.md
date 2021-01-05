@@ -25,7 +25,7 @@ $ npm install -g @bcgov/nrdk
 $ nrdk COMMAND
 running command...
 $ nrdk (-v|--version|version)
-@bcgov/nrdk/0.1.0-rc.91 darwin-x64 node-v12.14.1
+@bcgov/nrdk/0.1.0-rc.91 win32-x64 node-v12.18.3
 $ nrdk --help [COMMAND]
 USAGE
   $ nrdk COMMAND
@@ -49,21 +49,30 @@ USAGE
 
 ## `nrdk backlog:checkin`
 
-Push local changes (commits) to the remote repository
+On a Feature Branch, pushes local changes to the remote repository, and creates or updates a pull request to merge it into the Release branch.
 
 ```
 USAGE
   $ nrdk backlog:checkin
 
-OPTIONS
-  --pr  Create Pull-Request
+EXAMPLES
+  # nrdk backlog:checkout <Jira issue ID>
+        # git add .
+        # git commit -m "[Jira Issue] Adding new feature"
+        # nrdk backlog:checkin
+        Creates a new pull request merging branch Feature/[Jira Issue] into Release/<Jira Issue's Release's RFC's ID>
+  # git branch // already on Feature/[Jira Issue]
+        # git add .
+        # git commit -m "[Jira Issue] Expanding on feature"
+        # nrdk backlog:checkin
+        Updates the existing pull request with the new commit(s).
 ```
 
-_See code: [src/commands/backlog/checkin.ts](./src/commands/backlog/checkin.ts)_
+_See code: [src\commands\backlog\checkin.ts](./src\commands\backlog\checkin.ts)_
 
 ## `nrdk backlog:checkout [ISSUE]`
 
-Create (if required), and checkout the git branch supporting a Jira issue (bug, new feature, improvement, etc...)
+Given a Jira Issue, checks out a Git branch named Feature/[Jira Issue] to resolve that Issue.
 
 ```
 USAGE
@@ -71,9 +80,14 @@ USAGE
 
 ARGUMENTS
   ISSUE  Jira issue key (e.g.: WEBADE-123)
+
+EXAMPLE
+  # nrdk backlog:checkout IRS-200
+        # git status
+        On branch IRS-200
 ```
 
-_See code: [src/commands/backlog/checkout.ts](./src/commands/backlog/checkout.ts)_
+_See code: [src\commands\backlog\checkout.ts](./src\commands\backlog\checkout.ts)_
 
 ## `nrdk help [COMMAND]`
 
@@ -90,5 +104,5 @@ OPTIONS
   --all  see all commands in CLI
 ```
 
-_See code: [@oclif/plugin-help](https://github.com/oclif/plugin-help/blob/v3.2.0/src/commands/help.ts)_
+_See code: [@oclif/plugin-help](https://github.com/oclif/plugin-help/blob/v3.2.0/src\commands\help.ts)_
 <!-- commandsstop -->
