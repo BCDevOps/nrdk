@@ -28,7 +28,6 @@ export default class BacklogCheckin extends GitBaseCommand {
   async getJiraIssue(): Promise<DetailedIssue> {
     this.log('Fetching Jira issue associated with current Git branch')
     const jira = this.jira as AxiosJiraClient
-    const bitBucket = this.bitBucket as AxiosBitBucketClient
 
     let gitCurrentTrackingBranchName = await this._spawn('git', ['rev-parse', '--abbrev-ref', '--symbolic-full-name', '@{u}'])
     if (gitCurrentTrackingBranchName.stdout.trim() === '@u') {   // catch and counteract bash curly brace evaluation
