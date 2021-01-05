@@ -1,7 +1,5 @@
-
 import * as fs from 'fs'
 import {homedir} from 'os'
-import * as util from 'util'
 import * as inquirer from 'inquirer'
 import {LoggerFactory} from '../../util/logger'
 import {spawn} from 'child_process'
@@ -50,7 +48,7 @@ class EntryAccessor {
     this.entry = entry
   }
 
-  getProperty(name: string): Secret {
+  async getProperty(name: string): Promise<Secret> {
     let _value: any = this.entry[name]
     if (_value instanceof Secret) {
       return _value
@@ -96,15 +94,15 @@ export class SecretManager {
 
   private location = '~/nrdk/.secrets.json'
 
-  static getInstance(): SecretManager {
+  static async getInstance(): Promise<SecretManager> {
     if (!SecretManager.instance) {
       SecretManager.instance = new SecretManager()
-      SecretManager.instance.load()
+      await SecretManager.instance.load()
     }
     return SecretManager.instance
   }
 
-  private load() {
+  private async load() {
     // resolve ~/ to current user home directory
     const location = this.location.replace(/^~(?=$|\/|\\)/, homedir())
     if (fs.existsSync(location)) {

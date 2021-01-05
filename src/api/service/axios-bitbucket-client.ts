@@ -12,7 +12,6 @@ export interface CreatePullRequestOptions {
 }
 
 export class AxiosBitBucketClient extends AxiosClient {
-
   constructor(idirAuthorizationHeader: any) {
     super(
       process.env.BITBUCKET_URL || 'https://bwa.nrs.gov.bc.ca/int/stash',

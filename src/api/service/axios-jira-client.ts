@@ -1,5 +1,5 @@
 /* eslint-disable valid-jsdoc */
-import {AxiosClient, RepositoryReference} from './axios-client'
+import {AxiosClient} from './axios-client'
 import {AxiosBitBucketClient} from './axios-bitbucket-client'
 import {GeneralError} from '../../error'
 import {IssueReference} from '../model/jira'

@@ -16,12 +16,12 @@ export class AxiosClient {
     readonly client: AxiosInstance
 
     constructor(clientURL: string, idirAuthorizationHeader: any) {
-        this.client = axios.create({
-            baseURL: clientURL,
-            timeout: 10000,
-            headers: {
-              Authorization: idirAuthorizationHeader,
-            },
-          })
+      this.client = axios.create({
+        baseURL: clientURL,
+        timeout: 10000,
+        headers: {
+          Authorization: idirAuthorizationHeader,
+        },
+      })
     }
 }

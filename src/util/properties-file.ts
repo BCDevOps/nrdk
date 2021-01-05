@@ -1,7 +1,7 @@
 import * as readline from 'readline'
 
 export default class PropertiesFile {
-  static read(input: NodeJS.ReadableStream):  Map<string, string> {
+  static read(input: NodeJS.ReadableStream): Map<string, string> {
     const result = new Map<string, string>()
     const readInterface = readline.createInterface(input)
     readInterface.on('line', line => {
