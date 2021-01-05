@@ -5,6 +5,7 @@ import {createRFC, cleanUpTestCase} from './jira-util'
 import Sinon from 'sinon'
 import merge from 'lodash.merge'
 import {expect} from 'chai'
+import {AxiosBitBucketClient} from '../../src/api/service/axios-bitbucket-client'
 import {AxiosJiraClient} from '../../src/api/service/axios-jira-client'
 import * as RFCwkf from '../../src/util/jira-rfc-workflow-v2.0.0'
 import * as RFDwkf from '../../src/util/jira-rfd-workflow-v1.2.2'
@@ -86,7 +87,7 @@ describe('jira:workflow @type=system', () => {
         number: `${pullRequestNumber}`,
         sourceBranch: `release/${rfc.key}`,
         targetBranch: 'master',
-        repository: AxiosJiraClient.parseUrl(`https://bwa.nrs.gov.bc.ca/int/stash/scm/FAKE/${TEST_SUITE_ID}-A.git`),
+        repository: AxiosBitBucketClient.parseUrl(`https://bwa.nrs.gov.bc.ca/int/stash/scm/FAKE/${TEST_SUITE_ID}-A.git`),
       }
 
       await helper.createDeployments({

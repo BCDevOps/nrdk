@@ -2,6 +2,7 @@
 /* eslint-disable max-params */
 /* eslint-disable unicorn/import-index */
 import {OpenShiftClientX, CONST} from '../'
+import {AxiosBitBucketClient} from '../api/service/axios-bitbucket-client'
 import {AxiosJiraClient} from '../api/service/axios-jira-client'
 import {GeneralError} from '../error'
 import {RfdHelper} from '../util/rfd-helper'
@@ -40,7 +41,7 @@ export class BasicJavaApplicationDeployer {
       const helper = new RfdHelper({})
       const sourceBranch = this.settings.options.git.branch.merge
       const targetBranch = (this.settings?.options?.git?.change?.target || '').trim()
-      const repo = AxiosJiraClient.parseUrl(this.settings.options.git.url)
+      const repo = AxiosBitBucketClient.parseUrl(this.settings.options.git.url)
       const issueKey =  await AxiosJiraClient.parseJiraIssueKeyFromUri(sourceBranch)
       await helper.deploymentStarted({
         issue: {key: issueKey},

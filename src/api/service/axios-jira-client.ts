@@ -1,5 +1,6 @@
 /* eslint-disable valid-jsdoc */
 import {AxiosClient, RepositoryReference} from './axios-client'
+import {AxiosBitBucketClient} from './axios-bitbucket-client'
 import {GeneralError} from '../../error'
 import {IssueReference} from '../model/jira'
 import merge from 'lodash.merge'
@@ -23,18 +24,6 @@ export class AxiosJiraClient extends AxiosClient {
       this.logger.debug(`< ${response.request.method} - ${response.request.path} - ${response.status}`)
       return response
     })
-  }
-
-  static parseUrl(url: string): RepositoryReference {
-    if (url.match(/https:\/\/(apps|bwa)\.nrs\.gov\.bc\.ca\/int\/stash\/scm\//m)) {
-      // eslint-disable-next-line no-useless-escape
-      const m = url.match(/https:\/\/(apps|bwa)\.nrs\.gov\.bc\.ca\/int\/stash\/scm\/(?<project>[^/]+)\/(?<repository>[^\s\.]+)(\.git)?/m)
-      if (!m) throw new Error(`Unable to parse BitBucket Url from ${url}`)
-      return {url: m[0], slug: m.groups?.repository as string, project: {key: m.groups?.project as string}}
-    }
-    const m = url.match(/https:\/\/(apps|bwa)\.nrs\.gov\.bc\.ca\/int\/stash\/projects\/(?<project>[^/]+)\/repos\/(?<repository>[^/\s]+)/m)
-    if (!m) throw new Error(`Unable to parse BitBucket Url from ${url}`)
-    return {url: m[0] as string, slug: m.groups?.repository as string, project: {key: m.groups?.project as string}}
   }
 
   public static async parseJiraIssueKeyFromUri(uri: string) {
@@ -114,7 +103,7 @@ export class AxiosJiraClient extends AxiosClient {
 
   public async getComponentRepositoryInfo(component: any) {
     try {
-      return await AxiosJiraClient.parseUrl(component.description)
+      return await AxiosBitBucketClient.parseUrl(component.description)
     } catch (error) {
       throw new GeneralError(`Unable to parse component description for ${component.name}`, error)
     }

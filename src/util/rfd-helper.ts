@@ -4,7 +4,7 @@ import * as RFD from './jira-rfd-workflow-v1.2.2'
 import * as RFC from './jira-rfc-workflow-v2.0.0'
 import merge from 'lodash.merge'
 import {DeploymentArgument, StartDeploymentArgument, Issue, ProjectReference, PullRequestReference, IssueStatus, NameAndId, StartDeploymentResult, IssueTypeNames} from '../api/model/jira'
-import {AxiosJiraClient} from '../api/service/axios-jira-client'
+import {AxiosBitBucketClient} from '../api/service/axios-bitbucket-client'
 import {GeneralError} from '../error'
 import {LoggerFactory} from './logger'
 
@@ -65,10 +65,10 @@ export class RfdHelper {
     const jira = await this.createJiraClient()
     return jira.client.get(`/rest/api/2/project/${project?.key}/components`)
     .then(response => {
-      const pullRequestRepository = AxiosJiraClient.parseUrl(pullRequest.repository.url as string)
+      const pullRequestRepository = AxiosBitBucketClient.parseUrl(pullRequest.repository.url as string)
       for (const component of response.data) {
         try {
-          const repository = AxiosJiraClient.parseUrl(component.description)
+          const repository = AxiosBitBucketClient.parseUrl(component.description)
           if (repository) {
             if (pullRequestRepository.slug.toUpperCase() === repository.slug.toUpperCase() && pullRequestRepository.project.key.toUpperCase() === repository.project.key.toUpperCase()) {
               return {name: component.name, id: component.id}

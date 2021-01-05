@@ -8,7 +8,7 @@ export class AxiosFactory {
   }
 
   static async createIdirAuthorizationHeader() {
-    const entry = await (AxiosFactory.getSecretManager()).getEntry(SVC_IDIR_SPEC)
+    const entry = AxiosFactory.getSecretManager().getEntry(SVC_IDIR_SPEC)
     const idirUsername = (await entry.getProperty(SVC_IDIR_SPEC.fields.UPN.name)).getPlainText()
     const idirPassword = (await entry.getProperty(SVC_IDIR_SPEC.fields.PASSWORD.name))
     return `Basic ${Buffer.from(idirUsername + ':' + idirPassword.getPlainText(), 'utf8').toString('base64')}`

@@ -8,7 +8,6 @@ import {spawn} from 'child_process'
 import PropertiesFile from '../../util/properties-file'
 import {spawnSync} from 'child_process'
 
-const prompt = inquirer.createPromptModule()
 declare let __SecretManager: any | undefined | null
 
 class Secret {
@@ -50,7 +49,7 @@ class EntryAccessor {
     this.entry = entry
   }
 
-  async getProperty(name: string): Promise<Secret> {
+  getProperty(name: string): Secret {
     let _value: any = this.entry[name]
     if (_value instanceof Secret) {
       return _value
@@ -119,7 +118,7 @@ export class SecretManager {
     Object.assign(gbl.__SecretManager, entries)
   }
 
-  async promptMissingFields(spec: ServiceSpec, svc: any) {
+  promptMissingFields(spec: ServiceSpec, svc: any) {
     const env = Object.assign({}, process.env)
     const prompts = []
     const fieldsSpec = spec.fields as any
@@ -154,7 +153,7 @@ export class SecretManager {
         SecretManager.logger.info(`Retrieving credentials from git credentential helper (${gitCredentialHelper}) for '${spec.url}'`)
         const child = spawn('git', ['credential', 'fill'], {env})
         child.stdin.end(`url=${spec.url}`, 'utf-8')
-        const properties = await PropertiesFile.read(child.stdout)
+        const properties = PropertiesFile.read(child.stdout)
         for (const prompt of creds) {
           if (prompt.type === 'username') {
             answers[prompt.name] = properties.get('username')
@@ -164,7 +163,7 @@ export class SecretManager {
         }
         // Missing credential validation. How can we verify as early as possible?
         // after verified, it should call 'git credential approve' or 'git credential reject'
-        return prompt(prompts)
+        return inquirer.prompt(prompts)
         .then(result => {
           return Object.assign(result, answers)
         })
@@ -174,9 +173,9 @@ export class SecretManager {
           prompt.type = 'input'
         }
       }
-      return prompt([...creds, ...prompts])
+      return inquirer.prompt([...creds, ...prompts])
     }
-    return prompt(prompts)
+    return inquirer.prompt(prompts)
   }
 
   async getEntry(service: ServiceSpec): Promise<EntryAccessor> {
