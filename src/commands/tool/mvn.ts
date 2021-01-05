@@ -17,9 +17,8 @@ export default class ToolMvn extends Command {
 
   async run() {
     const {args, flags} = this.parse(ToolMvn)
-
     const name = flags.name ?? 'world'
-    this.log(`hello ${name} from /Users/cvarjao/Documents/workspaces/nrdk/src/commands/tool/mvn.ts`)
+    this.log(`hello ${name} from ${__dirname}/${__filename}`)
     if (args.file && flags.force) {
       this.log(`you input --force and --file: ${args.file}`)
     }
