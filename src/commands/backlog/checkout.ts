@@ -9,7 +9,8 @@ import {Issue} from '../../api/service/axios-jira-client'
 import {GitBaseCommand} from '../../git-base'
 import * as inquirer from 'inquirer'
 import * as path from 'path'
-import {BranchReference, RepositoryReference} from '../../api/service/axios-bitbucket-client'
+import {BranchReference} from '../../api/service/axios-bitbucket-client'
+import {RepositoryReference} from '../../api/service/axios-client'
 import cli from 'cli-ux'
 
 export default class GitCheckout extends GitBaseCommand {

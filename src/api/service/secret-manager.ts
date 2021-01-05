@@ -96,20 +96,19 @@ export class SecretManager {
 
   private location = '~/nrdk/.secrets.json'
 
-  static async getInstance(): Promise<SecretManager> {
+  static getInstance(): SecretManager {
     if (!SecretManager.instance) {
       SecretManager.instance = new SecretManager()
-      await SecretManager.instance.load()
+      SecretManager.instance.load()
     }
     return SecretManager.instance
   }
 
-  private async load() {
+  private load() {
     // resolve ~/ to current user home directory
     const location = this.location.replace(/^~(?=$|\/|\\)/, homedir())
     if (fs.existsSync(location)) {
-      const readFile = util.promisify(fs.readFile)
-      const content = await readFile(location, {encoding: 'utf8'})
+      const content = fs.readFileSync(location, {encoding: 'utf8'})
       Object.assign(this.entries, JSON.parse(content))
     }
   }

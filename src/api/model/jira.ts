@@ -1,4 +1,4 @@
-import {RepositoryReference} from '../service/axios-bitbucket-client'
+import {RepositoryReference} from '../service/axios-client'
 
 export enum IssueTypeNames {
   RFC = 'RFC',

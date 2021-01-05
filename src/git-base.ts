@@ -1,5 +1,6 @@
 import {Command} from '@oclif/command'
-import {AxiosBitBucketClient, RepositoryReference} from './api/service/axios-bitbucket-client'
+import {RepositoryReference} from './api/service/axios-client'
+import {AxiosBitBucketClient} from './api/service/axios-bitbucket-client'
 import {AxiosJiraClient} from './api/service/axios-jira-client'
 import {AxiosFactory} from './api/service/axios-factory'
 import {SpawnOptions, SpawnSyncReturns} from 'child_process'
@@ -26,21 +27,21 @@ export abstract class GitBaseCommand extends Command {
     })
   }
 
-  async init() {
-    this.jira = await AxiosFactory.jira()
-    this.bitBucket = await AxiosFactory.bitBucket()
+  initClients() {
+    this.jira = AxiosFactory.jira()
+    this.bitBucket = AxiosFactory.bitBucket()
   }
 
   getJira(): AxiosJiraClient {
     if (this.jira === undefined) {
-      this.init()
+      this.initClients()
     }
     return this.jira as AxiosJiraClient
   }
 
   getBitBucket(): AxiosBitBucketClient {
     if (this.bitBucket === undefined) {
-      this.init()
+      this.initClients()
     }
     return this.bitBucket as AxiosBitBucketClient
   }

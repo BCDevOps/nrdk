@@ -1,7 +1,6 @@
 import {GitBaseCommand} from '../../git-base'
 import {flags} from '@oclif/command'
 import {AxiosJiraClient, Issue} from '../../api/service/axios-jira-client'
-import {AxiosBitBucketClient} from '../../api/service/axios-bitbucket-client'
 
 type DetailedIssue = Issue & {branch: any; pullRequest: any}
 
@@ -76,7 +75,7 @@ export default class BacklogCheckin extends GitBaseCommand {
       return this.error(`Missing release branch 'release/${rfcIssue.key}'`)
     }
     const releaseBranch = rfcDevDetails.branches[0]
-    const repository = AxiosBitBucketClient.parseUrl(releaseBranch.url)
+    const repository = AxiosJiraClient.parseUrl(releaseBranch.url)
     jiraIssue.pullRequest = await this.getBitBucket().createPullRequest(
       {
         title: jiraIssue.key,

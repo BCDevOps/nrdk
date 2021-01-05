@@ -4,7 +4,6 @@
 import {OpenShiftClientX, GitOperation} from '../'
 import {AxiosJiraClient} from '../api/service/axios-jira-client'
 import {RfdHelper} from '../util/rfd-helper'
-import {AxiosBitBucketClient} from '../api/service/axios-bitbucket-client'
 import {FlagNames} from '../flags'
 export class BasicBuilder {
     settings: any
@@ -30,7 +29,7 @@ export class BasicBuilder {
 
       // if (targetBranch && targetBranch.toLowerCase() === 'master') {
       // Build for target = 'master'
-      const repo = AxiosBitBucketClient.parseUrl(settings.options.git.url)
+      const repo = AxiosJiraClient.parseUrl(settings.options.git.url)
       const issueKey =  await AxiosJiraClient.parseJiraIssueKeyFromUri(settings.options.git.branch.merge)
 
       if (this.settings.options[FlagNames.RFC_VALIDATION] === true) {
