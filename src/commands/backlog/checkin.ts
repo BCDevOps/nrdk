@@ -36,7 +36,7 @@ export default class BacklogCheckin extends GitBaseCommand {
     this.log('expectedCurrentTrackingBranchName', expectedCurrentTrackingBranchName)
 
     const issueKey = await AxiosJiraClient.parseJiraIssueKeyFromUri(expectedCurrentTrackingBranchName)
-    const issue = await this.getJira().getIssue(issueKey, {fields: 'issuetype,components,project'})
+    const issue = await (await this.jira()).getIssue(issueKey, {fields: 'issuetype,components,project'})
 
     const gitPush = await this._spawn('git', ['push', 'origin'])
     if (gitPush.status !== 0) {
@@ -45,7 +45,7 @@ export default class BacklogCheckin extends GitBaseCommand {
 
     const baseBranchName = expectedCurrentTrackingBranchName.split('/').slice(1)
     .join('/')
-    const devDetails = (await this.getJira().getBranches(issue.id))
+    const devDetails = await (await this.jira()).getBranches(issue.id)
     // console.dir(devDetails.branches)
     const branch = devDetails.branches.find((item: { name: string }) => item.name === baseBranchName)
     if (!branch) {
@@ -68,16 +68,16 @@ export default class BacklogCheckin extends GitBaseCommand {
     if (jiraIssue.fields.issuetype.name === 'RFC') {
       rfcIssue = jiraIssue
     } else {
-      rfcIssue = await this.getJira().getRfcByIssue(jiraIssue.key) as DetailedIssue
+      rfcIssue = await (await this.jira()).getRfcByIssue(jiraIssue.key) as DetailedIssue
     }
 
-    const rfcDevDetails = (await this.getJira().getBranches(rfcIssue.id))
+    const rfcDevDetails = await (await this.jira()).getBranches(rfcIssue.id)
     if (rfcDevDetails.branches.length === 0) {
       return this.error(`Missing release branch 'release/${rfcIssue.key}'`)
     }
     const releaseBranch = rfcDevDetails.branches[0]
     const repository = AxiosBitBucketClient.parseUrl(releaseBranch.url)
-    jiraIssue.pullRequest = await this.getBitBucket().createPullRequest(
+    jiraIssue.pullRequest = (await this.bitBucket()).createPullRequest(
       {
         title: jiraIssue.key,
         fromRef: {id: `refs/heads/${jiraIssue.branch.name}`, repository},

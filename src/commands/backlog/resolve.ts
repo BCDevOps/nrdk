@@ -19,7 +19,7 @@ export default class BacklogResolve extends GitBaseCommand {
     const {args, flags} = this.parse(BacklogResolve)
     const issueKey = args.issue
     if (!flags.issueId ||  !flags.issueType) {
-      const issue = await this.getJira().getIssue(issueKey, {fields: 'issuetype'})
+      const issue = await (await this.jira()).getIssue(issueKey, {fields: 'issuetype'})
       flags.issueId = issue.id
       flags.issueType = issue.fields.issuetype.name
     }
@@ -30,7 +30,7 @@ export default class BacklogResolve extends GitBaseCommand {
       }
     }
     const issueId = flags.issueId as string
-    const devDetails = (await this.getJira().getBranches(issueId))
+    const devDetails = await (await this.jira()).getBranches(issueId)
     const branches = devDetails.branches.filter((item: { name: string }) => item.name === flags.branch)
     if (branches.length !== 1) {
       return this.error(`Missing remote branch ${flags.branch}`)
@@ -50,10 +50,10 @@ export default class BacklogResolve extends GitBaseCommand {
       const pullRequestNumber = parseInt((pullRequest.id as string).substr(1), 10) // remove '#' from the beginning of the id
       this.log(`Merging Pull-Request ${pullRequest.id} ...`)
       const repoInfo = AxiosBitBucketClient.parseUrl(pullRequest.url)
-      await this.getBitBucket().mergePullRequest(repoInfo.project.key, repoInfo.slug, pullRequestNumber)
+      await (await this.bitBucket()).mergePullRequest(repoInfo.project.key, repoInfo.slug, pullRequestNumber)
     }
     const sourceBranchRepoInfo = AxiosBitBucketClient.parseUrl(fromBranch.url)
     this.log(`Deleting source branch ${fromBranch.name} ...`)
-    await this.getBitBucket().deleteBranch(sourceBranchRepoInfo.project.key, sourceBranchRepoInfo.slug, fromBranch.name)
+    await (await this.bitBucket()).deleteBranch(sourceBranchRepoInfo.project.key, sourceBranchRepoInfo.slug, fromBranch.name)
   }
 }

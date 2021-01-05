@@ -8,6 +8,7 @@ import {spawn} from 'child_process'
 import PropertiesFile from '../../util/properties-file'
 import {spawnSync} from 'child_process'
 
+const inquiry = inquirer.createPromptModule()
 declare let __SecretManager: any | undefined | null
 
 class Secret {
@@ -118,7 +119,7 @@ export class SecretManager {
     Object.assign(gbl.__SecretManager, entries)
   }
 
-  promptMissingFields(spec: ServiceSpec, svc: any) {
+  async promptMissingFields(spec: ServiceSpec, svc: any) {
     const env = Object.assign({}, process.env)
     const prompts = []
     const fieldsSpec = spec.fields as any
@@ -163,7 +164,7 @@ export class SecretManager {
         }
         // Missing credential validation. How can we verify as early as possible?
         // after verified, it should call 'git credential approve' or 'git credential reject'
-        return inquirer.prompt(prompts)
+        return inquiry(prompts)
         .then(result => {
           return Object.assign(result, answers)
         })
@@ -173,9 +174,9 @@ export class SecretManager {
           prompt.type = 'input'
         }
       }
-      return inquirer.prompt([...creds, ...prompts])
+      return inquiry([...creds, ...prompts])
     }
-    return inquirer.prompt(prompts)
+    return inquiry(prompts)
   }
 
   async getEntry(service: ServiceSpec): Promise<EntryAccessor> {

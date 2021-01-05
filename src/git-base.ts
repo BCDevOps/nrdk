@@ -9,9 +9,9 @@ import * as Config from '@oclif/config'
 import {_spawn} from './util/child-process'
 
 export abstract class GitBaseCommand extends Command {
-  private jira?: AxiosJiraClient
+  private jiraClient?: AxiosJiraClient
 
-  private bitBucket?: AxiosBitBucketClient
+  private bitBucketClient?: AxiosBitBucketClient
 
   logger: winston.Logger
 
@@ -28,22 +28,22 @@ export abstract class GitBaseCommand extends Command {
   }
 
   initClients() {
-    this.jira = AxiosFactory.jira()
-    this.bitBucket = AxiosFactory.bitBucket()
+    this.jiraClient = AxiosFactory.jira()
+    this.bitBucketClient = AxiosFactory.bitBucket()
   }
 
-  getJira(): AxiosJiraClient {
-    if (this.jira === undefined) {
+  async jira(): Promise<AxiosJiraClient> {
+    if (this.jiraClient === undefined) {
       this.initClients()
     }
-    return this.jira as AxiosJiraClient
+    return this.jiraClient as AxiosJiraClient
   }
 
-  getBitBucket(): AxiosBitBucketClient {
+  async bitBucket(): Promise<AxiosBitBucketClient> {
     if (this.bitBucket === undefined) {
       this.initClients()
     }
-    return this.bitBucket as AxiosBitBucketClient
+    return this.bitBucketClient as AxiosBitBucketClient
   }
 
   async _spawn(command: string, argsv?: readonly string[], options?: SpawnOptions): Promise<SpawnSyncReturns<string>> {
@@ -51,12 +51,12 @@ export abstract class GitBaseCommand extends Command {
   }
 
   async createBranch(issue: any, repository: RepositoryReference, branchName: string, startPoint = 'master') {
-    const devDetails = (await this.getJira().getBranches(issue.id))
+    const devDetails = await (await this.jira()).getBranches(issue.id)
     const branches = devDetails.branches.filter((item: { name: string }) => item.name === branchName)
     // this.log('branches:', branches)
     if (branches.length === 0) {
       this.log(`Creating branch '${branchName}' from '${startPoint}' in repository '${repository.slug}' in project '${repository.project.key}'`)
-      await this.getBitBucket().createBranch(repository.project.key, repository.slug, branchName, startPoint)
+      await (await this.bitBucket()).createBranch(repository.project.key, repository.slug, branchName, startPoint)
     } else if (branches.length > 1) {
       return this.error(`Expected 1 release but found '${branches.length}'`)
     }

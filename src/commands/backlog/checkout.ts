@@ -43,7 +43,7 @@ export default class GitCheckout extends GitBaseCommand {
   }
 
   async getIssue(issueKey: string): Promise<Issue> {
-    return this.action(`Fetching Jira Issue ${issueKey}`, this.getJira().getIssue(issueKey, {fields: 'issuetype,components'}))
+    return this.action(`Fetching Jira Issue ${issueKey}`,  (await this.jira()).getIssue(issueKey, {fields: 'issuetype,components'}))
   }
 
   async gitCloneRepository(branchInfo: BranchReference) {
@@ -107,7 +107,7 @@ export default class GitCheckout extends GitBaseCommand {
     }
     // non-RFC issues
     this.log(`Finding RFC for issue ${issue.key}/${issue.id}`)
-    const rfc = await this.getJira().getRfcByIssue(issue.key)
+    const rfc = await (await this.jira()).getRfcByIssue(issue.key)
     this.log(`Found RFC ${rfc.key}/${rfc.id}`)
     const releaseBranch = await this.createReleaseBranch(rfc, repository)
     let branchName = `feature/${issue.key}`
@@ -123,7 +123,7 @@ export default class GitCheckout extends GitBaseCommand {
         return this.error(`Expected at least 1 component set for issue '${issue.key}', but found '${issue.fields.components.length}'`)
       }
       const component = issue.fields.components[0]
-      const repositoryReference = await this.getJira().getComponentRepositoryInfo(component)
+      const repositoryReference = await (await this.jira()).getComponentRepositoryInfo(component)
       flags.repository = repositoryReference.slug
       flags.project = repositoryReference.project.key
     }
