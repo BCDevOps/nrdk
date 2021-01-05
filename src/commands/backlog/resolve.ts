@@ -1,6 +1,5 @@
 import {GitBaseCommand} from '../../git-base'
 import {flags} from '@oclif/command'
-import {AxiosJiraClient} from '../../api/service/axios-jira-client'
 import {AxiosBitBucketClient} from '../../api/service/axios-bitbucket-client'
 
 export default class BacklogResolve extends GitBaseCommand {
@@ -18,11 +17,9 @@ export default class BacklogResolve extends GitBaseCommand {
 
   async run() {
     const {args, flags} = this.parse(BacklogResolve)
-    const jira = this.jira as AxiosJiraClient
-    const bitBucket = this.bitBucket as AxiosBitBucketClient
     const issueKey = args.issue
     if (!flags.issueId ||  !flags.issueType) {
-      const issue = await jira.getIssue(issueKey, {fields: 'issuetype'})
+      const issue = await this.getJira().getIssue(issueKey, {fields: 'issuetype'})
       flags.issueId = issue.id
       flags.issueType = issue.fields.issuetype.name
     }
@@ -33,7 +30,7 @@ export default class BacklogResolve extends GitBaseCommand {
       }
     }
     const issueId = flags.issueId as string
-    const devDetails = (await jira.getBranches(issueId))
+    const devDetails = (await this.getJira().getBranches(issueId))
     const branches = devDetails.branches.filter((item: { name: string }) => item.name === flags.branch)
     if (branches.length !== 1) {
       return this.error(`Missing remote branch ${flags.branch}`)
@@ -53,10 +50,10 @@ export default class BacklogResolve extends GitBaseCommand {
       const pullRequestNumber = parseInt((pullRequest.id as string).substr(1), 10) // remove '#' from the beginning of the id
       this.log(`Merging Pull-Request ${pullRequest.id} ...`)
       const repoInfo = AxiosBitBucketClient.parseUrl(pullRequest.url)
-      await bitBucket.mergePullRequest(repoInfo.project.key, repoInfo.slug, pullRequestNumber)
+      await this.getBitBucket().mergePullRequest(repoInfo.project.key, repoInfo.slug, pullRequestNumber)
     }
     const sourceBranchRepoInfo = AxiosBitBucketClient.parseUrl(fromBranch.url)
     this.log(`Deleting source branch ${fromBranch.name} ...`)
-    await bitBucket.deleteBranch(sourceBranchRepoInfo.project.key, sourceBranchRepoInfo.slug, fromBranch.name)
+    await this.getBitBucket().deleteBranch(sourceBranchRepoInfo.project.key, sourceBranchRepoInfo.slug, fromBranch.name)
   }
 }

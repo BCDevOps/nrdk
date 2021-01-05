@@ -31,19 +31,31 @@ export abstract class GitBaseCommand extends Command {
     this.bitBucket = await AxiosFactory.bitBucket()
   }
 
+  getJira(): AxiosJiraClient {
+    if (this.jira === undefined) {
+      this.init()
+    }
+    return this.jira as AxiosJiraClient
+  }
+
+  getBitBucket(): AxiosBitBucketClient {
+    if (this.bitBucket === undefined) {
+      this.init()
+    }
+    return this.bitBucket as AxiosBitBucketClient
+  }
+
   async _spawn(command: string, argsv?: readonly string[], options?: SpawnOptions): Promise<SpawnSyncReturns<string>> {
     return _spawn(this.logger, command, argsv as readonly string[], options as SpawnOptions)
   }
 
   async createBranch(issue: any, repository: RepositoryReference, branchName: string, startPoint = 'master') {
-    const jira = this.jira as AxiosJiraClient
-    const bitBucket = this.bitBucket as AxiosBitBucketClient
-    const devDetails = (await jira.getBranches(issue.id))
+    const devDetails = (await this.getJira().getBranches(issue.id))
     const branches = devDetails.branches.filter((item: { name: string }) => item.name === branchName)
     // this.log('branches:', branches)
     if (branches.length === 0) {
       this.log(`Creating branch '${branchName}' from '${startPoint}' in repository '${repository.slug}' in project '${repository.project.key}'`)
-      await bitBucket.createBranch(repository.project.key, repository.slug, branchName, startPoint)
+      await this.getBitBucket().createBranch(repository.project.key, repository.slug, branchName, startPoint)
     } else if (branches.length > 1) {
       return this.error(`Expected 1 release but found '${branches.length}'`)
     }
