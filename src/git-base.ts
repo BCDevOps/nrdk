@@ -27,21 +27,26 @@ export abstract class GitBaseCommand extends Command {
     })
   }
 
-  initClients() {
-    this.jiraClient = AxiosFactory.jira()
-    this.bitBucketClient = AxiosFactory.bitBucket()
+  async initClients() {
+    this.jiraClient = await AxiosFactory.asjira()
+    this.bitBucketClient = await AxiosFactory.asbitBucket()
+  }
+
+  async init() {
+    this.jiraClient = await AxiosFactory.asjira()
+    this.bitBucketClient = await AxiosFactory.asbitBucket()
   }
 
   async jira(): Promise<AxiosJiraClient> {
     if (this.jiraClient === undefined) {
-      this.initClients()
+      await this.initClients()
     }
     return this.jiraClient as AxiosJiraClient
   }
 
   async bitBucket(): Promise<AxiosBitBucketClient> {
     if (this.bitBucket === undefined) {
-      this.initClients()
+      await this.initClients()
     }
     return this.bitBucketClient as AxiosBitBucketClient
   }

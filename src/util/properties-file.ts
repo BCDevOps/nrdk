@@ -1,7 +1,7 @@
 import * as readline from 'readline'
 
 export default class PropertiesFile {
-  static read(input: NodeJS.ReadableStream): Map<string, string> {
+  static async read(input: NodeJS.ReadableStream): Promise<Map<string, string>> {
     const result = new Map<string, string>()
     const readInterface = readline.createInterface(input)
     readInterface.on('line', line => {
@@ -15,6 +15,10 @@ export default class PropertiesFile {
       }
     })
 
-    return result
+  return new Promise(resolve => {
+      readInterface.on('close', () => {
+        resolve(result)
+      })
+    })
   }
 }

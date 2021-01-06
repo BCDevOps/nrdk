@@ -152,7 +152,7 @@ export class SecretManager {
         SecretManager.logger.info(`Retrieving credentials from git credentential helper (${gitCredentialHelper}) for '${spec.url}'`)
         const child = spawn('git', ['credential', 'fill'], {env})
         child.stdin.end(`url=${spec.url}`, 'utf-8')
-        const properties = PropertiesFile.read(child.stdout)
+        const properties = await PropertiesFile.read(child.stdout)
         for (const prompt of creds) {
           if (prompt.type === 'username') {
             answers[prompt.name] = properties.get('username')
