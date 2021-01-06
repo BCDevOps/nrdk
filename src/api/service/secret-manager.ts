@@ -1,7 +1,5 @@
-
 import * as fs from 'fs'
 import {homedir} from 'os'
-import * as util from 'util'
 import * as inquirer from 'inquirer'
 import {LoggerFactory} from '../../util/logger'
 import {spawn} from 'child_process'

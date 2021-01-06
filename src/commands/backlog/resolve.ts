@@ -1,6 +1,5 @@
 import {GitBaseCommand} from '../../git-base'
 import {flags} from '@oclif/command'
-import {AxiosJiraClient} from '../../api/service/axios-jira-client'
 import {AxiosBitBucketClient} from '../../api/service/axios-bitbucket-client'
 
 export default class BacklogResolve extends GitBaseCommand {

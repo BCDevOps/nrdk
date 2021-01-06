@@ -62,7 +62,6 @@ export default class BacklogCheckin extends GitBaseCommand {
   }
 
   async createPullRequest(jiraIssue: DetailedIssue) {
-
     this.log(`Creating pull request for branch ${jiraIssue.branch.name} ....`)
 
     let rfcIssue: DetailedIssue

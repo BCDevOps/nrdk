@@ -21,7 +21,6 @@ export interface CreatePullRequestOptions {
 }
 
 export class AxiosBitBucketClient extends AxiosClient {
-
   static createPullRequestUrl(repo: RepositoryReference, pullRequestNumber: string): string {
     return `https://apps.nrs.gov.bc.ca/int/stash/projects/${repo.project.key}/repos/${repo.slug}/pull-requests/${pullRequestNumber}/overview`
   }

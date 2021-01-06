@@ -10,11 +10,11 @@ export class AxiosClient {
 
   constructor(baseURL: string, idirAuthorizationHeader: string) {
     this.client = axios.create({
-        baseURL: baseURL,
-        timeout: 10000,
-        headers: {
-          Authorization: idirAuthorizationHeader
-        },
-      })
+      baseURL: baseURL,
+      timeout: 10000,
+      headers: {
+        Authorization: idirAuthorizationHeader,
+      },
+    })
   }
 }
