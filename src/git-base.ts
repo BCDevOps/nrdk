@@ -8,9 +8,9 @@ import * as Config from '@oclif/config'
 import {_spawn} from './util/child-process'
 
 export abstract class GitBaseCommand extends Command {
-  jira?: AxiosJiraClient
+  jiraClient?: AxiosJiraClient
 
-  bitBucket?: AxiosBitBucketClient
+  bitBucketClient?: AxiosBitBucketClient
 
   logger: winston.Logger
 
@@ -27,8 +27,16 @@ export abstract class GitBaseCommand extends Command {
   }
 
   async init() {
-    this.jira = await AxiosFactory.jira()
-    this.bitBucket = await AxiosFactory.bitBucket()
+    this.jiraClient = await AxiosFactory.jira()
+    this.bitBucketClient = await AxiosFactory.bitBucket()
+  }
+
+  jira(): AxiosJiraClient {
+    return this.jiraClient as AxiosJiraClient
+  }
+
+  bitBucket(): AxiosBitBucketClient {
+    return this.bitBucketClient as AxiosBitBucketClient
   }
 
   async _spawn(command: string, argsv?: readonly string[], options?: SpawnOptions): Promise<SpawnSyncReturns<string>> {
@@ -36,14 +44,12 @@ export abstract class GitBaseCommand extends Command {
   }
 
   async createBranch(issue: any, repository: RepositoryReference, branchName: string, startPoint = 'master') {
-    const jira = this.jira as AxiosJiraClient
-    const bitBucket = this.bitBucket as AxiosBitBucketClient
-    const devDetails = (await jira.getBranches(issue.id))
+    const devDetails = (await this.jira().getBranches(issue.id))
     const branches = devDetails.branches.filter((item: { name: string }) => item.name === branchName)
     // this.log('branches:', branches)
     if (branches.length === 0) {
       this.log(`Creating branch '${branchName}' from '${startPoint}' in repository '${repository.slug}' in project '${repository.project.key}'`)
-      await bitBucket.createBranch(repository.project.key, repository.slug, branchName, startPoint)
+      await this.bitBucket().createBranch(repository.project.key, repository.slug, branchName, startPoint)
     } else if (branches.length > 1) {
       return this.error(`Expected 1 release but found '${branches.length}'`)
     }
