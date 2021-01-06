@@ -97,12 +97,12 @@ export class SecretManager {
   static async getInstance(): Promise<SecretManager> {
     if (!SecretManager.instance) {
       SecretManager.instance = new SecretManager()
-      await SecretManager.instance.load()
+      SecretManager.instance.load()
     }
     return SecretManager.instance
   }
 
-  private async load() {
+  private load() {
     // resolve ~/ to current user home directory
     const location = this.location.replace(/^~(?=$|\/|\\)/, homedir())
     if (fs.existsSync(location)) {
