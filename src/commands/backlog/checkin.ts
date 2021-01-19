@@ -27,7 +27,6 @@ export default class BacklogCheckin extends GitBaseCommand {
 
   async getJiraIssue(): Promise<DetailedIssue> {
     this.log('Fetching Jira issue associated with current Git branch')
-    const jira = this.jira as AxiosJiraClient
 
     let gitCurrentTrackingBranchName = await this._spawn('git', ['rev-parse', '--abbrev-ref', '--symbolic-full-name', '@{u}'])
     if (gitCurrentTrackingBranchName.stdout.trim() === '@u') {   // catch and counteract bash curly brace evaluation
@@ -37,7 +36,7 @@ export default class BacklogCheckin extends GitBaseCommand {
     this.log('expectedCurrentTrackingBranchName', expectedCurrentTrackingBranchName)
 
     const issueKey = await AxiosJiraClient.parseJiraIssueKeyFromUri(expectedCurrentTrackingBranchName)
-    const issue = await jira.getIssue(issueKey, {fields: 'issuetype,components,project'})
+    const issue = await this.jira().getIssue(issueKey, {fields: 'issuetype,components,project'})
 
     const gitPush = await this._spawn('git', ['push', 'origin'])
     if (gitPush.status !== 0) {
@@ -46,7 +45,7 @@ export default class BacklogCheckin extends GitBaseCommand {
 
     const baseBranchName = expectedCurrentTrackingBranchName.split('/').slice(1)
     .join('/')
-    const devDetails = (await jira.getBranches(issue.id))
+    const devDetails = (await this.jira().getBranches(issue.id))
     // console.dir(devDetails.branches)
     const branch = devDetails.branches.find((item: { name: string }) => item.name === baseBranchName)
     if (!branch) {
@@ -63,25 +62,22 @@ export default class BacklogCheckin extends GitBaseCommand {
   }
 
   async createPullRequest(jiraIssue: DetailedIssue) {
-    const jira = this.jira as AxiosJiraClient
-    const bitBucket = this.bitBucket as AxiosBitBucketClient
-
     this.log(`Creating pull request for branch ${jiraIssue.branch.name} ....`)
 
     let rfcIssue: DetailedIssue
     if (jiraIssue.fields.issuetype.name === 'RFC') {
       rfcIssue = jiraIssue
     } else {
-      rfcIssue = await jira.getRfcByIssue(jiraIssue.key) as DetailedIssue
+      rfcIssue = await this.jira().getRfcByIssue(jiraIssue.key) as DetailedIssue
     }
 
-    const rfcDevDetails = (await jira.getBranches(rfcIssue.id))
+    const rfcDevDetails = (await this.jira().getBranches(rfcIssue.id))
     if (rfcDevDetails.branches.length === 0) {
       return this.error(`Missing release branch 'release/${rfcIssue.key}'`)
     }
     const releaseBranch = rfcDevDetails.branches[0]
     const repository = AxiosBitBucketClient.parseUrl(releaseBranch.url)
-    jiraIssue.pullRequest = await bitBucket.createPullRequest(
+    jiraIssue.pullRequest = await this.bitBucket().createPullRequest(
       {
         title: jiraIssue.key,
         fromRef: {id: `refs/heads/${jiraIssue.branch.name}`, repository},

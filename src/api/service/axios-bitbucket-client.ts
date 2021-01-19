@@ -1,4 +1,4 @@
-import {AxiosInstance} from 'axios'
+import {AxiosClient} from './axios-client'
 
 export const FIELDS = Object.freeze({
   ISSUE_TYPE: 'issuetype',
@@ -20,9 +20,7 @@ export interface CreatePullRequestOptions {
   toRef: {id: string; repository: RepositoryReference};
 }
 
-export class AxiosBitBucketClient {
-  readonly client: AxiosInstance
-
+export class AxiosBitBucketClient extends AxiosClient {
   static createPullRequestUrl(repo: RepositoryReference, pullRequestNumber: string): string {
     return `https://apps.nrs.gov.bc.ca/int/stash/projects/${repo.project.key}/repos/${repo.slug}/pull-requests/${pullRequestNumber}/overview`
   }
@@ -39,8 +37,8 @@ export class AxiosBitBucketClient {
     return {url: m[0] as string, slug: m.groups?.repository as string, project: {key: m.groups?.project as string}}
   }
 
-  constructor(client: AxiosInstance) {
-    this.client = client
+  constructor(idirAuthorizationHeader: string) {
+    super(process.env.BITBUCKET_URL || 'https://bwa.nrs.gov.bc.ca/int/stash', idirAuthorizationHeader)
   }
 
   public createBranch(projectKey: string, repositorySlug: string, name: string, startPoint: string) {

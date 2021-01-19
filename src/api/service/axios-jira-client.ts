@@ -1,5 +1,5 @@
 /* eslint-disable valid-jsdoc */
-import {AxiosInstance} from 'axios'
+import {AxiosClient} from './axios-client'
 import {AxiosBitBucketClient} from './axios-bitbucket-client'
 import {GeneralError} from '../../error'
 import {IssueReference} from '../model/jira'
@@ -11,16 +11,16 @@ export type Issue = {key: string; id: string; fields: any}
 export const FIELDS = Object.freeze({
   ISSUE_TYPE: 'issuetype',
 })
-export class AxiosJiraClient {
+export class AxiosJiraClient extends AxiosClient {
   logger = LoggerFactory.createLogger(__filename.slice(__dirname.length + 1))
 
   // eslint-disable-next-line no-useless-escape
   private static JIRA_ISSUE_KEY_REGEX = /(?<issueKey>\w+-\d+)/m;
 
-  readonly client: AxiosInstance
+  constructor(idirAuthorizationHeader: string) {
+    super(
+      process.env.JIRA_URL || 'https://bwa.nrs.gov.bc.ca/int/jira', idirAuthorizationHeader)
 
-  constructor(client: AxiosInstance) {
-    this.client = client
     this.client.interceptors.response.use(response => {
       this.logger.debug(`< ${response.request.method} - ${response.request.path} - ${response.status}`)
       return response

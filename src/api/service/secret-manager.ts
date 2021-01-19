@@ -1,7 +1,5 @@
-
 import * as fs from 'fs'
 import {homedir} from 'os'
-import * as util from 'util'
 import * as inquirer from 'inquirer'
 import {LoggerFactory} from '../../util/logger'
 import {spawn} from 'child_process'
@@ -108,8 +106,7 @@ export class SecretManager {
     // resolve ~/ to current user home directory
     const location = this.location.replace(/^~(?=$|\/|\\)/, homedir())
     if (fs.existsSync(location)) {
-      const readFile = util.promisify(fs.readFile)
-      const content = await readFile(location, {encoding: 'utf8'})
+      const content = fs.readFileSync(location, {encoding: 'utf8'})
       Object.assign(this.entries, JSON.parse(content))
     }
   }
