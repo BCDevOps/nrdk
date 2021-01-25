@@ -1,5 +1,6 @@
 import {Command, flags} from '@oclif/command'
-
+import {Maven} from '../../tools/maven'
+import { waitForSuccessfulExitCode } from '../../util/child-process'
 export default class ToolMvn extends Command {
   static description = 'describe the command here'
 
@@ -13,14 +14,13 @@ export default class ToolMvn extends Command {
     force: flags.boolean({char: 'f'}),
   }
 
+  static strict = false
+
   static args = [{name: 'file'}]
 
   async run() {
-    const {args, flags} = this.parse(ToolMvn)
-    const name = flags.name ?? 'world'
-    this.log(`hello ${name} from ${__dirname}/${__filename}`)
-    if (args.file && flags.force) {
-      this.log(`you input --force and --file: ${args.file}`)
-    }
+    const {argv} = this.parse(ToolMvn)
+    const mvn = new Maven()
+    return mvn.run(argv, {stdio: ['ignore', process.stdout, process.stderr]}).then(waitForSuccessfulExitCode)
   }
 }
