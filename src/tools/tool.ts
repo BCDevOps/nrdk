@@ -4,9 +4,9 @@ import * as os from 'os'
 import {ChildProcess, SpawnOptions} from 'child_process'
 
 export abstract class Tool {
-  abstract async run(args: readonly string[], options: SpawnOptions): Promise<ChildProcess>
+  abstract run(args: readonly string[], options: SpawnOptions): Promise<ChildProcess>
 
-  abstract async install(version: string): Promise<any>
+  abstract install(version: string): Promise<any>
 
   public async exists(location: string): Promise<boolean> {
     return new Promise(resolve => {

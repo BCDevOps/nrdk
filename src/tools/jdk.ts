@@ -21,7 +21,11 @@ export class Jdk extends Tool {
 
   async run(args: readonly string[], options: SpawnOptions): Promise<ChildProcess> {
     Jdk.logger.debug(`Running java: ${args.map(v => `'${v}'`).join(' ')}`)
-    return this.install(this.version).then(() => spawn('java', args, options))
+    return this.install(this.version)
+    .then(home => {
+      // options.env = {JAVA_HOME: path.join(home, 'jre')}
+      return spawn(path.join(home, 'bin', 'java'), args, options)
+    })
   }
 
   getInstallerPackagePlatform(): string {
@@ -42,22 +46,36 @@ export class Jdk extends Tool {
     const versions = require('./jdk-versions.json')
     const versionInfo = versions[version]
     const homeDirectory = await this.getHomeDirectory('jdk', versionInfo.basename || version)
-    return this.exists(homeDirectory).then(async exists => {
-      if (exists) return homeDirectory
-      const platform = await this.getInstallerPackagePlatform()
-      const arch = await this.getInstallerPackageArch()
-      const versionOsInfo = versionInfo[`${platform}-${arch}`]
-      const url = new URL(versionOsInfo.url as string)
-      const cacheFile = path.join(await this.getCacheDirectory('jdk'), path.basename(url.pathname))
-      const packageFile = await MavenHelper.downloadFromUrl(url, cacheFile)
-      await fs.promises.mkdir(homeDirectory, {recursive: true}).catch(error => {
-        if (error.code !== 'EEXIST') {
-          throw new GeneralError('Directory already exists', error)
-        }
-      })
-      return tar.x({file: packageFile, C: homeDirectory, strip: 2}).then(() => {
-        return homeDirectory
-      })
+    const platform = this.getInstallerPackagePlatform()
+    let effectiveHomeDir = path.join(homeDirectory, `jdk${versionInfo.basename}`)
+    if (platform === 'mac') {
+      effectiveHomeDir = path.join(homeDirectory, `jdk${versionInfo.basename}`, 'Contents', 'Home')
+    }
+    if (fs.existsSync(path.join(effectiveHomeDir, 'bin', 'java')) || fs.existsSync(path.join(effectiveHomeDir, 'bin', 'java.exe'))) {
+      return effectiveHomeDir
+    }
+    const arch = this.getInstallerPackageArch()
+    const versionOsInfo = versionInfo[`${platform}-${arch}`]
+    const url = new URL(versionOsInfo.url as string)
+    const cacheFile = path.join(await this.getCacheDirectory('jdk'), path.basename(url.pathname))
+    if (!fs.existsSync(cacheFile)) {
+      await MavenHelper.downloadFromUrl(url, cacheFile)
+    }
+    // cleanup if there is any failed/interrupted attempt
+    if (fs.existsSync(homeDirectory)) {
+      fs.rmdirSync(homeDirectory, {recursive: true})
+    }
+    await fs.promises.mkdir(homeDirectory, {recursive: true}).catch(error => {
+      if (error.code !== 'EEXIST') {
+        throw new GeneralError('Directory already exists', error)
+      }
+    })
+    return tar.x({file: cacheFile, cwd: homeDirectory}).then(() => {
+      return effectiveHomeDir
+    })
+    .catch(error => {
+      Jdk.logger.error(error)
+      return error
     })
   }
 }

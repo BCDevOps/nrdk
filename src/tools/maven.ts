@@ -29,8 +29,6 @@ export class Maven extends Tool {
     })
   }
 
-  async run(args: readonly string[]): Promise<ChildProcess>
-
   async run(args: readonly string[], options?: SpawnOptions): Promise<ChildProcess> {
     return this.install('3.6.3')
     .then(mavenHome => {
