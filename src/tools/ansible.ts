@@ -53,6 +53,7 @@ export class Ansible extends Tool {
   }
 
   async run(args: readonly string[], options?: SpawnOptions): Promise<ChildProcess> {
+    if (process.platform === "win32") return this.run_in_docker(args, options)
     return this.run_native(args, options)
   }
 
