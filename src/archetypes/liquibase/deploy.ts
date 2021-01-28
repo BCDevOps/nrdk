@@ -28,7 +28,11 @@ export class LiquibaseDeployer {
     const targetBranch = (this.settings?.options?.git?.change?.target || '').trim()
     const repo = AxiosBitBucketClient.parseUrl(this.settings.options.git.url)
     const issueKey =  await AxiosJiraClient.parseJiraIssueKeyFromUri(sourceBranch)
-    if (this.settings.options['rfc-validation'] === true) {
+
+    if (this.settings.options[FlagNames.DRY_RUN] === true || this.settings.options['rfc-validation'] === false) {
+      // eslint-disable-next-line no-console
+      console.warn('RFC Validation has been turned off!!!')
+    } else {
       await helper.deploymentStarted({
         issue: {key: issueKey},
         pullRequest: {
@@ -51,10 +55,8 @@ export class LiquibaseDeployer {
         }
         return result
       })
-    } else {
-      // eslint-disable-next-line no-console
-      console.warn('RFC Validation has been turned off!!!')
     }
+
     await this.migrateAll(path.resolve(this.cwd(), './migrations'))
     .then(async () => {
       if (this.settings.options[FlagNames.DRY_RUN] === true) return true
