@@ -39,10 +39,18 @@ export async function waitAndBuffer(child: ChildProcess): Promise<SpawnSyncRetur
     if (!child.stdout) throw new Error('Null stdout property!')
     if (!child.stderr) throw new Error('Null stderr property!')
     child.stdout.on('data', data => {
-      stdout += data
+      if (data instanceof Buffer) {
+        stdout += data.toString('utf8')
+      } else {
+        stdout += data
+      }
     })
     child.stderr.on('data', data => {
-      stderr += data
+      if (data instanceof Buffer) {
+        stderr += data.toString('utf8')
+      } else {
+        stderr += data
+      }
     })
     child.on('exit', status => {
       resolve({pid: 0, status: status as number, stdout, stderr, output: (null as unknown) as string[], signal: null})
