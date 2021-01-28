@@ -5,6 +5,7 @@ import {LoggerFactory} from '../util/logger'
 import {_spawn2, waitAndBuffer, waitToExit} from '../util/child-process'
 import * as os from 'os'
 import * as fs from 'fs'
+import { SecretManager, SVC_IDIR_SPEC } from '../api/service/secret-manager'
 
 export class Ansible extends Tool {
   static logger = LoggerFactory.createLogger(Ansible)
@@ -53,8 +54,8 @@ export class Ansible extends Tool {
   }
 
   async run(args: readonly string[], options?: SpawnOptions): Promise<ChildProcess> {
-    if (process.platform === "win32") return this.run_in_docker(args, options)
-    return this.run_native(args, options)
+    // if (process.platform === "win32") return this.run_in_docker(args, options)
+    return this.run_in_docker(args, options)
   }
 
   async run_native(args: readonly string[], options?: SpawnOptions): Promise<ChildProcess> {
@@ -71,6 +72,8 @@ export class Ansible extends Tool {
     // const homeDirectory = await this.getHomeDirectory('ansible', version)
     const dockerImageTag = `nrdk/ansible:${version}`
     const dockerContainerIdFile  = path.join(os.tmpdir(), `nrdk-ansible-${version}.cid`)
+    if (fs.existsSync(dockerContainerIdFile)) fs.unlinkSync(dockerContainerIdFile)
+
     return _spawn2('docker', ['build', '-t', dockerImageTag, '--build-arg', `ANSIBLE_VERSION=${version}`, path.join(__dirname, 'ansible')])
     .then(waitAndBuffer)
     .then(proc => {
@@ -80,20 +83,38 @@ export class Ansible extends Tool {
     .then(waitToExit)
     .then(() => {
       const containerId = fs.readFileSync(dockerContainerIdFile, {encoding: 'utf8'})
-      // docker exec -ti "$(< container.cid)" git config --global url."https://bwa.nrs.gov.bc.ca".insteadOf https://apps.nrs.gov.bc.ca
-      // docker exec -ti "$(< container.cid)" git config --global credential.helper 'cache --timeout 3600'
-      // echo -e 'protocol=https\nhost=bwa.nrs.gov.bc.ca\nusername=XYZ\npassword=XXX' | docker exec -ti "$(< container.cid)" git credential approve
-      return _spawn2('docker', ['exec', '-w', '/workdir', containerId, '/opt/ansible/bin/python3', path.posix.join('/opt/ansible/bin', this.ansible_bin_run_command), ...args], options)
-      .then(proc => {
-        proc.on('exit', async () => {
-          return _spawn2('docker', ['rm', '--force', containerId])
-          .then(waitToExit)
-          .then(() => {
-            fs.unlinkSync(dockerContainerIdFile)
-            return proc
-          })
+      // we will setup git in-memory credential caching and warm it up to avoid password prompts
+      return _spawn2('docker', ['exec', '-w', '/workdir', containerId, 'git', 'config', '--global', 'url.https://bwa.nrs.gov.bc.ca.insteadOf', 'https://apps.nrs.gov.bc.ca'], {stdio: 'ignore'})
+      .then(waitToExit)
+      .then(() => {
+        return _spawn2('docker', ['exec', '-w', '/workdir', containerId, 'git', 'config', '--global', 'credential.helper', 'cache --timeout 3600'], {stdio: 'ignore'})
+        .then(waitToExit)
+      })
+      .then(async () => {
+        const entry = await (await SecretManager.getInstance()).getEntry(SVC_IDIR_SPEC)
+        const idirUsername = (await entry.getProperty(SVC_IDIR_SPEC.fields.UPN.name)).getPlainText()
+        const idirPassword = (await entry.getProperty(SVC_IDIR_SPEC.fields.PASSWORD.name))
+        return _spawn2('docker', ['exec', '-i', '-w', '/workdir', containerId, 'git', 'credential', 'approve'], {stdio: ['pipe', 'inherit', 'inherit']})
+        .then(proc => {
+          proc.stdin?.end(`protocol=https\nhost=bwa.nrs.gov.bc.ca\nusername=${idirUsername}\npassword=${idirPassword}\n`, 'utf8')
+          return proc
         })
-        return proc
+        .then(waitToExit)
+      })
+      .then(() => {
+        return _spawn2('docker', ['exec', '-w', '/workdir', containerId, '/opt/ansible/bin/python3', path.posix.join('/opt/ansible/bin', this.ansible_bin_run_command), ...args], options)
+        .then(proc => {
+          proc.on('exit', async () => {
+            return _spawn2('docker', ['rm', '--force', containerId])
+            .then(waitToExit)
+            // eslint-disable-next-line max-nested-callbacks
+            .then(() => {
+              fs.unlinkSync(dockerContainerIdFile)
+              return proc
+            })
+          })
+          return proc
+        })
       })
     })
     .then(proc => {
