@@ -20,11 +20,12 @@ export class Jdk extends Tool {
   }
 
   async run(args: readonly string[], options: SpawnOptions): Promise<ChildProcess> {
-    Jdk.logger.debug(`Running java: ${args.map(v => `'${v}'`).join(' ')}`)
     return this.install(this.version)
     .then(home => {
+      const cmd = path.join(home, 'bin', 'java')
+      Jdk.logger.debug(`Running ${cmd}: ${args.map(v => `'${v}'`).join(' ')}`)
       // options.env = {JAVA_HOME: path.join(home, 'jre')}
-      return spawn(path.join(home, 'bin', 'java'), args, options)
+      return spawn(cmd, args, options)
     })
   }
 
