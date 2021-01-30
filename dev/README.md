@@ -67,7 +67,7 @@ Open the OpenShift Web Console and copy the login command. e.g.:
 
 ## Docker Compose - Quick Method
 
-1. Start interactive shell in a container
+1. Start shell and background build watcher
 
    ```
    docker-compose run nrdk
@@ -83,4 +83,10 @@ Open the OpenShift Web Console and copy the login command. e.g.:
 
    ```
    ./bin/run build --dev-mode=true --pr=0
+   ```
+
+4. When done remove the background build watcher
+
+   ```
+   docker rm -fv nrdk_watch-build_1
    ```
