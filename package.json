@@ -30,6 +30,7 @@
     "safe-buffer": "^5.2.1",
     "shelljs": "^0.8.4",
     "tar": "^6.0.5",
+    "watch": "^1.0.2",
     "winston": "^3.3.3"
   },
   "devDependencies": {
@@ -97,6 +98,7 @@
   },
   "repository": "https://github.com/bcdevops/nrdk",
   "scripts": {
+    "watch-build": "npm i && watch 'npm run build' src",
     "prebuild": "oclif-dev manifest",
     "build": "tsc -b",
     "postpack": "rm -f oclif.manifest.json",
