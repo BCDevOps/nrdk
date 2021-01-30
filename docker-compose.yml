@@ -1,0 +1,16 @@
+version: "3.7"
+services:
+  nrdk:
+    build: ./dev
+    entrypoint:
+      - "bash"
+      - "-c"
+      - "npx @bcgov/nrdk version && bash"
+    environment:
+      - CHANGE_ID="${CHANGE_ID:-0}"
+    stdin_open: true # docker run -i
+    tty: true # docker run -t
+    working_dir: "/app"
+    volumes:
+      - "./:/app"
+      - "/app/node_modules"
