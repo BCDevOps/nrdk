@@ -1,32 +1,31 @@
 version: "3.7"
 services:
+  # Run npm install, build and watch
   watch-build:
     build: ./dev
-    entrypoint:
-      - "bash"
-      - "-c"
-      - "npm run watch-build"
+    entrypoint: ["bash", "-c", "npm run watch-build"]
     healthcheck:
       test: ["CMD", "bash", "-c", "./bin/run", version"]
       timeout: 5s
       interval: 10s
       retries: 10
     working_dir: "/app"
+    # Mount repo to /app, but not node_modules
     volumes:
       - "./:/app"
       - "/app/node_modules"
+
+  # Interactive shell for running commands
   nrdk:
     depends_on:
       watch-build:
         condition: service_healthy
     build: ./dev
-    entrypoint:
-      - "bash"
-    environment:
-      - CHANGE_ID="${CHANGE_ID:-0}"
+    entrypoint: ["bash"]
     restart: always
-    stdin_open: true # docker run -i
-    tty: true # docker run -t
+    # stdin_open (run -i) and tty (run -t) for interactive shell
+    stdin_open: true
+    tty: true
     working_dir: "/app"
     volumes_from:
       - watch-build
