@@ -1,16 +1,32 @@
 version: "3.7"
 services:
-  nrdk:
+  watch-build:
     build: ./dev
     entrypoint:
       - "bash"
       - "-c"
-      - "npx @bcgov/nrdk version && bash"
-    environment:
-      - CHANGE_ID="${CHANGE_ID:-0}"
-    stdin_open: true # docker run -i
-    tty: true # docker run -t
+      - "npm run watch-build"
+    healthcheck:
+      test: ["CMD", "bash", "-c", "./bin/run", version"]
+      timeout: 5s
+      interval: 10s
+      retries: 10
     working_dir: "/app"
     volumes:
       - "./:/app"
       - "/app/node_modules"
+  nrdk:
+    depends_on:
+      watch-build:
+        condition: service_healthy
+    build: ./dev
+    entrypoint:
+      - "bash"
+    environment:
+      - CHANGE_ID="${CHANGE_ID:-0}"
+    restart: always
+    stdin_open: true # docker run -i
+    tty: true # docker run -t
+    working_dir: "/app"
+    volumes_from:
+      - watch-build
