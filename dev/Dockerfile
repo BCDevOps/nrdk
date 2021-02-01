@@ -11,4 +11,8 @@ RUN yum install -y git && \
     source /root/.bashrc && \
     nvm install v12 --lts
 
+# Convenience shortcut - target doesn't exist yet
+RUN ln -s /app/bin/run /usr/local/bin/nrdk
+
+# Entrypoint - version
 ENTRYPOINT npx @bcgov/nrdk version
