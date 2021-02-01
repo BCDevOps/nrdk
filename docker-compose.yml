@@ -28,6 +28,7 @@ services:
       test: ["CMD", "bash", "-c", "./bin/run", version"]
       timeout: 5s
     hostname: nrdk-watcher
+    restart: always
     # Mount repo to /app, but not node_modules
     volumes:
       - "./:/app"
