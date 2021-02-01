@@ -1,31 +1,35 @@
 version: "3.7"
 services:
-  # Run npm install, build and watch
-  watch-build:
-    build: ./dev
-    entrypoint: ["bash", "-c", "npm run watch-build"]
-    healthcheck:
-      test: ["CMD", "bash", "-c", "./bin/run", version"]
-      timeout: 5s
-      interval: 10s
-      retries: 10
-    working_dir: "/app"
-    # Mount repo to /app, but not node_modules
-    volumes:
-      - "./:/app"
-      - "/app/node_modules"
-
   # Interactive shell for running commands
   nrdk:
-    depends_on:
-      watch-build:
-        condition: service_healthy
     build: ./dev
+    container_name: nrdk
+    depends_on:
+      watcher:
+        condition: service_healthy
     entrypoint: ["bash"]
+    hostname: nrdk
     restart: always
     # stdin_open (run -i) and tty (run -t) for interactive shell
     stdin_open: true
     tty: true
-    working_dir: "/app"
     volumes_from:
-      - watch-build
+      - watcher
+    working_dir: "/app"
+
+  # Run npm install, build and watch
+  watcher:
+    build: ./dev
+    container_name: nrdk-watcher
+    entrypoint: ["bash", "-c", "npm run watcher"]
+    healthcheck:
+      interval: 5s
+      retries: 10
+      test: ["CMD", "bash", "-c", "./bin/run", version"]
+      timeout: 5s
+    hostname: nrdk-watcher
+    # Mount repo to /app, but not node_modules
+    volumes:
+      - "./:/app"
+      - "/app/node_modules"
+    working_dir: "/app"
