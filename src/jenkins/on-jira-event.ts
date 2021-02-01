@@ -20,7 +20,7 @@ export class JiraEventHandler {
     const libAsString = readFileSync(resolve(__dirname, './lib.groovy'), {encoding: 'utf8'})
     const client = axios.create({
       baseURL: process.env.__SECRET_JENKINS_URL,
-      timeout: 10000,
+      timeout: 20000,
       headers: {
         Authorization: `Basic ${Buffer.from(process.env.__SECRET_JENKINS_USERNAME + ':' + process.env.__SECRET_JENKINS_PASSWORD, 'utf8').toString('base64')}`,
       },
