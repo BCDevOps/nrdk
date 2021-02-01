@@ -39,27 +39,26 @@ npm run publish:latest
    npx @bcgov/nrdk version
    ```
 
-2.1 Login to Openshift using `oc`
-Open the OpenShift Web Console and copy the login command. e.g.:
+3. Login to oc using an OpenShift Web Console token
 
-    ```
-    oc login https://console.pathfinder.gov.bc.ca:8443 --token=<REDACTED>
-    ```
+   ```
+   oc login https://console.pathfinder.gov.bc.ca:8443 --token=<REDACTED>
+   ```
 
-3. Install nrdk
+4. Install nrdk
 
    ```
    npm i -g @bcgov/nrdk # or `npm link` from the checked out source code
    npx @bcgov/nrdk version
    ```
 
-4. Prepare Build/Deployment environment
+5. Prepare Build/Deployment environment
 
    ```
    export CHANGE_ID=15
    ```
 
-5. Run build
+6. Run build
 
    ```
    npx @bcgov/nrdk build --archetype=java-web-app --pr=${CHANGE_ID}
@@ -73,7 +72,7 @@ Open the OpenShift Web Console and copy the login command. e.g.:
    docker-compose run nrdk
    ```
 
-2. Login to oc using OpenShift Web Console token
+2. Login to oc using an OpenShift Web Console token
 
    ```
    oc login https://console.pathfinder.gov.bc.ca:8443 --token=<REDACTED>
