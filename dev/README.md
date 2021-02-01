@@ -68,7 +68,7 @@ npm run publish:latest
 
 ### Start
 
-1. Start nrdk (foreground) and its build watcher (background)
+1. Run nrdk (foreground) and its build watcher (background)
 
    ```
    docker-compose run nrdk
@@ -77,13 +77,13 @@ npm run publish:latest
 2. Login to oc using an OpenShift Web Console token
 
    ```
-   oc login https://console.pathfinder.gov.bc.ca:8443 --token=<REDACTED>
+   [container]$ oc login https://console.pathfinder.gov.bc.ca:8443 --token=<REDACTED>
    ```
 
-3. Run build (dev mode short circuit)
+3. Run nrdk (local build)
 
    ```
-   ./bin/run build --dev-mode=true --pr=0
+   [container]$ nrdk
    ```
 
 ### Stop
