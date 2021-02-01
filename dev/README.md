@@ -66,7 +66,9 @@ npm run publish:latest
 
 ## Docker Compose - Quick Method
 
-1. Start shell and background build watcher
+### Start
+
+1. Start nrdk (foreground) and its build watcher (background)
 
    ```
    docker-compose run nrdk
@@ -84,8 +86,10 @@ npm run publish:latest
    ./bin/run build --dev-mode=true --pr=0
    ```
 
-4. When done remove the background build watcher
+### Stop
+
+1. Stop any background services (i.e. build watcher)
 
    ```
-   docker rm -fv nrdk_watch-build_1
+   docker-compose down
    ```
