@@ -62,7 +62,8 @@
     "sinon": "^9.2.0",
     "ts-loader": "^7.0.5",
     "ts-node": "^8",
-    "typescript": "^3.9.7"
+    "typescript": "^3.9.7",
+    "watch": "^1.0.2"
   },
   "engines": {
     "node": ">=12.0.0"
@@ -97,6 +98,7 @@
   },
   "repository": "https://github.com/bcdevops/nrdk",
   "scripts": {
+    "watcher": "npm i && watch 'npm run build' src",
     "prebuild": "oclif-dev manifest",
     "build": "tsc -b",
     "postpack": "rm -f oclif.manifest.json",
