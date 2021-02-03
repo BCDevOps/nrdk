@@ -16,10 +16,12 @@ sleep 20
 npx @bcgov/nrdk greetings
 npx @bcgov/nrdk greetings Earth
 npx @bcgov/nrdk greetings -n Earth
-docker-compose build
 
 # Test
 npm run mocha -- "test/commands/greetings.test.ts"
+
+# Breakpoints
+node --inspect @bcgov/nrdk greetings Earth
 
 # Stop container
 docker-compose down
