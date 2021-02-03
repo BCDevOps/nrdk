@@ -20,3 +20,6 @@ docker-compose build
 
 # Test
 npm run mocha -- "test/commands/greetings.test.ts"
+
+# Stop container
+docker-compose down
