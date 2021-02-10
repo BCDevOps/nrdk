@@ -59,6 +59,7 @@
     "nyc": "^14",
     "oclif": "^1.16.1",
     "pkg": "^4.4.9",
+    "rimraf": "^3.0.2",
     "sanitize-filename": "^1.6.3",
     "sinon": "^9.2.0",
     "ts-loader": "^7.0.5",
@@ -99,7 +100,7 @@
   },
   "repository": "https://github.com/bcdevops/nrdk",
   "scripts": {
-    "watcher": "npm i && watch 'npm run build' src",
+    "watcher": "npm i && watch \"npm run build\" src",
     "prebuild": "oclif-dev manifest",
     "build": "tsc -b",
     "postpack": "npx rimraf oclif.manifest.json",
