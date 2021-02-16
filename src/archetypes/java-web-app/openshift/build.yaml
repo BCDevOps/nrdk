@@ -93,7 +93,9 @@ objects:
           - name: MAVEN_S2I_ARTIFACT_DIRS
             value: 'target/'
           - name: MAVEN_SETTINGS_XML
-            value: '/home/jboss/.m2/settings.xml'
+            value: '/opt/app-root/src/.m2/settings.xml'
+          - name: MAVEN_ARGS_APPEND
+            value: '-Dsettings.security=/opt/app-root/src/.m2/settings-security.xml'
           - name: MAVEN_CLEAR_REPO
             value: 'true'
         incremental: true
@@ -184,7 +186,7 @@ parameters:
 - name: OPENJDK18_IMAGE_NAME
   value: openjdk18-openshift
 - name: TOMCAT_IMAGE_NAMESPACE
-  value: perrsi-prod
+  value: c2053d-prod
 - name: TOMCAT_IMAGE_NAME
   value: ha-tomcat9
 - name: TOMCAT_IMAGE_TAG
