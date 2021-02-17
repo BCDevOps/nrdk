@@ -157,6 +157,7 @@ objects:
         name: "${NAME}"
         labels:
           name: "${NAME}"
+          app: "${NAME}${SUFFIX}"
       spec:
         serviceAccountName: "${NAME}${SUFFIX}-tomcat"
         containers:
