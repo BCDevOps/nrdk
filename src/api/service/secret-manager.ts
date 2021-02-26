@@ -148,7 +148,7 @@ export class SecretManager {
     if (creds.length > 0) {
       // delete env.GIT_ASKPASS // Fix for VSCODE as it may interfere with the user/system git credential store
       const gitCredentialHelper = spawnSync('git', ['config', 'credential.helper'], {encoding: 'utf-8'}).stdout.trim()
-      if (gitCredentialHelper === 'osxkeychain' || gitCredentialHelper === 'manager') {
+      if (gitCredentialHelper === 'osxkeychain' || gitCredentialHelper === 'manager' || gitCredentialHelper === 'manager-core') {
         SecretManager.logger.info(`Retrieving credentials from git credentential helper (${gitCredentialHelper}) for '${spec.url}'`)
         const child = spawn('git', ['credential', 'fill'], {env})
         child.stdin.end(`url=${spec.url}`, 'utf-8')
