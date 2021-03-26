@@ -1,12 +1,13 @@
 import {spawn, SpawnOptions, SpawnSyncReturns, ChildProcess} from 'child_process'
 import winston from 'winston'
 
-export async function _spawn(logger: winston.Logger, command: string, argsv: readonly string[], options: SpawnOptions): Promise<SpawnSyncReturns<string>> {
+export async function _spawn(logger: winston.Logger, command: string, argsv: readonly string[], options?: SpawnOptions): Promise<SpawnSyncReturns<string>> {
   logger.child({group: ['exec', command], args: argsv}).debug('%s %s', command, (argsv || []).join(' '))
-  return new Promise(resolve => {
+  return new Promise<SpawnSyncReturns<string>>(resolve => {
     let stdout = ''
     let stderr = ''
-    const child = spawn(command, argsv, options)
+    let _options = options || {}
+    const child = spawn(command, argsv, _options)
     if (!child.stdout) throw new Error('Null stdout property!')
     if (!child.stderr) throw new Error('Null stderr property!')
     child.stdout.on('data', data => {
@@ -16,7 +17,7 @@ export async function _spawn(logger: winston.Logger, command: string, argsv: rea
       stderr += data
     })
     child.on('exit', status => {
-      resolve({pid: 0, status: status as number, stdout, stderr, output: (null as unknown) as string[], signal: null})
+      resolve({pid: child.pid, status: status as number, stdout, stderr, output: (null as unknown) as string[], signal: null})
     })
   })
 }
