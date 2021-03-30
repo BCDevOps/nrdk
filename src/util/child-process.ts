@@ -6,7 +6,7 @@ export async function _spawn(logger: winston.Logger, command: string, argsv: rea
   return new Promise<SpawnSyncReturns<string>>(resolve => {
     let stdout = ''
     let stderr = ''
-    let _options = options || {}
+    const _options = options || {}
     const child = spawn(command, argsv, _options)
     if (!child.stdout) throw new Error('Null stdout property!')
     if (!child.stderr) throw new Error('Null stderr property!')

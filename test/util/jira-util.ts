@@ -52,7 +52,7 @@ export async function createRFC(jira: AxiosJiraClient, issue: any) {
       customfield_11301: {value: 'Low'}, // Impact
       customfield_10103: {value: 'Infrastructure Change'}, // RFC Category
       customfield_12202: {value: 'Yes'}, // Automated/Pipeline
-      customfield_10107: tomorrow.toISOString().slice(0, -1) + '-0700' // Requested Production Deployment Date
+      customfield_10107: tomorrow.toISOString().slice(0, -1) + '-0700', // Requested Production Deployment Date
     },
   }
   merge(defaultIssue, issue)
