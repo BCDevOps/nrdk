@@ -5,6 +5,7 @@ import {OpenShiftClientX, CONST} from '../'
 import {AxiosBitBucketClient} from '../api/service/axios-bitbucket-client'
 import {AxiosJiraClient} from '../api/service/axios-jira-client'
 import {GeneralError} from '../error'
+import {FlagNames} from '../flags'
 import {RfdHelper} from '../util/rfd-helper'
 import {ValidationError} from '../validation-error'
 
@@ -35,7 +36,7 @@ export class BasicJavaApplicationDeployer {
   }
 
   async deploy() {
-    if (this.settings.options['local-mode'] === 'true' || !this.isCDdeployment()) {
+    if (this.settings.options['local-mode'] === 'true' || this.settings.options[FlagNames.RFC_VALIDATION] === false || !this.isCDdeployment()) {
       await this.deployOpenshift()
     } else {
       const helper = new RfdHelper({})

@@ -106,6 +106,9 @@ objects:
     - name: 8080-tcp
       port: 8080
       targetPort: 8080
+    - name: 8443-tcp
+      port: 8443
+      targetPort: 8443
     selector:
       deploymentconfig: "${NAME}${SUFFIX}"
 
@@ -121,7 +124,7 @@ objects:
   spec:
     host: "${HOST}"
     port:
-      targetPort: 8080-tcp
+      targetPort: 8443-tcp
     path: "/${ROUTE_PATH}/"
     to:
       kind: Service
@@ -157,26 +160,26 @@ objects:
         name: "${NAME}"
         labels:
           name: "${NAME}"
+          app: "${NAME}${SUFFIX}"
       spec:
         serviceAccountName: "${NAME}${SUFFIX}-tomcat"
         containers:
           - name:  tomcat
             image: " "
             ports:
-              - name:  ${NAME}
+              - name:  http
                 containerPort: 8080
                 protocol: TCP
               - name: jolokia
                 containerPort: 8778
                 protocol: TCP
-              - containerPort: 8443
+              - name:  https
+                containerPort: 8443
                 protocol: TCP
               - name: debug
                 containerPort: 8090
                 protocol: TCP
             env:
-              - name: PORT
-                value: "8080"
               - name: PROXY_HOST
                 value: ${ENV_PROXY_HOST}
               - name: TNS_ADMIN

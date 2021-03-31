@@ -40,6 +40,9 @@ export async function createRFC(jira: AxiosJiraClient, issue: any) {
   if (!issue?.fields?.labels) throw new Error('Missing issue "fields.labels" field')
   if (!issue?.fields?.summary) throw new Error('Missing issue "fields.summary" field')
 
+  const today = new Date()
+  const tomorrow = new Date(today)
+  tomorrow.setDate(tomorrow.getDate() + 1)
   const defaultIssue = {
     fields: {
       issuetype: {name: 'RFC'},
@@ -49,6 +52,7 @@ export async function createRFC(jira: AxiosJiraClient, issue: any) {
       customfield_11301: {value: 'Low'}, // Impact
       customfield_10103: {value: 'Infrastructure Change'}, // RFC Category
       customfield_12202: {value: 'Yes'}, // Automated/Pipeline
+      customfield_10107: tomorrow.toISOString().slice(0, -1) + '-0700', // Requested Production Deployment Date
     },
   }
   merge(defaultIssue, issue)
