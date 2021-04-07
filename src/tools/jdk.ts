@@ -5,7 +5,7 @@ import * as path from 'path'
 import {ChildProcess, spawn, SpawnOptions} from 'child_process'
 import {LoggerFactory} from '../util/logger'
 import * as fs from 'fs'
-import { GeneralError } from '../error'
+import {GeneralError} from '../error'
 
 export class Jdk extends Tool {
   static logger = LoggerFactory.createLogger(Jdk)
@@ -57,6 +57,7 @@ export class Jdk extends Tool {
     }
     const arch = this.getInstallerPackageArch()
     const versionOsInfo = versionInfo[`${platform}-${arch}`]
+    if (!versionOsInfo) throw new Error(`Unable to find jdk install information for ${platform}-${arch}`)
     const url = new URL(versionOsInfo.url as string)
     const cacheFile = path.join(await this.getCacheDirectory('jdk'), path.basename(url.pathname))
     if (!fs.existsSync(cacheFile)) {
@@ -71,6 +72,18 @@ export class Jdk extends Tool {
         throw new GeneralError('Directory already exists', error)
       }
     })
+    if (cacheFile.endsWith('.zip')) {
+      return new Promise((resolve, reject) => {
+        const unzipper = require('unzipper')
+        fs.createReadStream(cacheFile)
+        // eslint-disable-next-line new-cap
+        .pipe(unzipper.Extract({path: homeDirectory}))
+        .on('error', reject)
+        .on('finish', () => {
+          resolve(effectiveHomeDir)
+        })
+      })
+    }
     return tar.x({file: cacheFile, cwd: homeDirectory}).then(() => {
       return effectiveHomeDir
     })

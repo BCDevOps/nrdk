@@ -1,6 +1,6 @@
 import {Command, flags} from '@oclif/command'
 import {Maven} from '../../tools/maven'
-import { waitForSuccessfulExitCode } from '../../util/child-process'
+import {waitForSuccessfulExitCode} from '../../util/child-process'
 export default class ToolMvn extends Command {
   static description = 'describe the command here'
 
@@ -21,6 +21,10 @@ export default class ToolMvn extends Command {
   async run() {
     const {argv} = this.parse(ToolMvn)
     const mvn = new Maven()
-    return mvn.run(argv, {stdio: ['ignore', process.stdout, process.stderr]}).then(waitForSuccessfulExitCode)
+    return mvn.run(argv, {stdio: ['ignore', process.stdout, process.stderr]})
+    .then(waitForSuccessfulExitCode)
+    .then(() => {
+      this.exit(0)
+    })
   }
 }

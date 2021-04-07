@@ -66,7 +66,7 @@ export async function waitToExit(proc: ChildProcess): Promise<SpawnSyncReturns<s
   })
 }
 export async function waitForSuccessfulExitCode(proc: ChildProcess) {
-  return new Promise((resolve, reject) => {
+  return new Promise<number>((resolve, reject) => {
     proc.on('exit', exitCode => {
       if (exitCode === 0) {
         resolve(exitCode)

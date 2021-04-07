@@ -5,7 +5,7 @@ import {LoggerFactory} from '../util/logger'
 import {_spawn2, waitAndBuffer, waitToExit} from '../util/child-process'
 import * as os from 'os'
 import * as fs from 'fs'
-import { SecretManager, SVC_IDIR_SPEC } from '../api/service/secret-manager'
+import {SecretManager, SVC_IDIR_SPEC} from '../api/service/secret-manager'
 
 export class Ansible extends Tool {
   static logger = LoggerFactory.createLogger(Ansible)
