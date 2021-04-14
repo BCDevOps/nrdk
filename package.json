@@ -30,6 +30,7 @@
     "safe-buffer": "^5.2.1",
     "shelljs": "^0.8.4",
     "tar": "^6.0.5",
+    "unzipper": "^0.10.11",
     "winston": "^3.3.3"
   },
   "devDependencies": {
