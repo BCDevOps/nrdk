@@ -1,0 +1,1412 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE workflow PUBLIC "-//OpenSymphony Group//DTD OSWorkflow 2.8//EN" "http://www.opensymphony.com/osworkflow/workflow_2_8.dtd">
+<workflow>
+  <meta name="jira.description">Workflow for RFD</meta>
+  <meta name="jira.update.author.key">brydixon</meta>
+  <meta name="jira.updated.date">1618435864483</meta>
+  <initial-actions>
+    <action id="1" name="Create Issue">
+      <meta name="opsbar-sequence">0</meta>
+      <meta name="jira.description"></meta>
+      <meta name="jira.i18n.title">common.forms.create</meta>
+      <meta name="jira.fieldscreen.id"></meta>
+      <validators>
+        <validator name="" type="class">
+          <arg name="permission">Create Issue</arg>
+          <arg name="class.name">com.atlassian.jira.workflow.validator.PermissionValidator</arg>
+        </validator>
+      </validators>
+      <results>
+        <unconditional-result old-status="Finished" status="Open" step="1">
+          <post-functions>
+            <function type="class">
+              <arg name="full.module.key">com.innovalog.jmwe.jira-misc-workflow-extensionsClearFieldValue-function</arg>
+              <arg name="throwExceptions">false</arg>
+              <arg name="class.name">com.innovalog.jmwe.plugins.functions.ClearFieldValueFunction</arg>
+              <arg name="fields">customfield_13000,customfield_10636,customfield_13106,customfield_12201,timeoriginalestimate,timeestimate,timespent</arg>
+              <arg name="useGroovyCondition">false</arg>
+            </function>
+            <function type="class">
+              <arg name="class.name">com.atlassian.jira.workflow.function.issue.IssueCreateFunction</arg>
+            </function>
+            <function type="class">
+              <arg name="runAsUser">admin</arg>
+              <arg name="ignoreEmptyValue">no</arg>
+              <arg name="createMissingValues">no</arg>
+              <arg name="field">customfield_10101</arg>
+              <arg name="appendValues">no</arg>
+              <arg name="full.module.key">com.innovalog.jmwe.jira-misc-workflow-extensionsSetFieldValue-function</arg>
+              <arg name="copyOnlyIfNotSet">yes</arg>
+              <arg name="valueType">template</arg>
+              <arg name="throwExceptions">false</arg>
+              <arg name="class.name">com.innovalog.jmwe.plugins.functions.SetFieldValueFunction</arg>
+              <arg name="value">Please provide a brief desciption of the business impact of rolling back this deployment.  This will help us understand how much effort to expend on resolving deployment issues. </arg>
+              <arg name="useGroovyCondition">false</arg>
+            </function>
+            <function type="class">
+              <arg name="runAsUser">admin</arg>
+              <arg name="ignoreEmptyValue">no</arg>
+              <arg name="createMissingValues">no</arg>
+              <arg name="field">customfield_10104</arg>
+              <arg name="appendValues">no</arg>
+              <arg name="full.module.key">com.innovalog.jmwe.jira-misc-workflow-extensionsSetFieldValue-function</arg>
+              <arg name="copyOnlyIfNotSet">yes</arg>
+              <arg name="valueType">template</arg>
+              <arg name="throwExceptions">false</arg>
+              <arg name="class.name">com.innovalog.jmwe.plugins.functions.SetFieldValueFunction</arg>
+              <arg name="value">Please provide a high level plan for rolling back this deplyment if the need arises.</arg>
+              <arg name="useGroovyCondition">false</arg>
+            </function>
+            <function type="class">
+              <arg name="runAsUser">admin</arg>
+              <arg name="ignoreEmptyValue">no</arg>
+              <arg name="createMissingValues">no</arg>
+              <arg name="field">customfield_13128</arg>
+              <arg name="appendValues">no</arg>
+              <arg name="full.module.key">com.innovalog.jmwe.jira-misc-workflow-extensionsSetFieldValue-function</arg>
+              <arg name="copyOnlyIfNotSet">no</arg>
+              <arg name="valueType">template</arg>
+              <arg name="throwExceptions">false</arg>
+              <arg name="class.name">com.innovalog.jmwe.plugins.functions.SetFieldValueFunction</arg>
+              <arg name="value">Not yet</arg>
+              <arg name="useGroovyCondition">false</arg>
+            </function>
+            <function type="class">
+              <arg name="runAsUser">admin</arg>
+              <arg name="ignoreEmptyValue">no</arg>
+              <arg name="createMissingValues">no</arg>
+              <arg name="field">customfield_13129</arg>
+              <arg name="appendValues">no</arg>
+              <arg name="full.module.key">com.innovalog.jmwe.jira-misc-workflow-extensionsSetFieldValue-function</arg>
+              <arg name="copyOnlyIfNotSet">no</arg>
+              <arg name="valueType">template</arg>
+              <arg name="throwExceptions">false</arg>
+              <arg name="class.name">com.innovalog.jmwe.plugins.functions.SetFieldValueFunction</arg>
+              <arg name="value">Not yet</arg>
+              <arg name="useGroovyCondition">false</arg>
+            </function>
+            <function type="class">
+              <arg name="runAsUser">admin</arg>
+              <arg name="ignoreEmptyValue">no</arg>
+              <arg name="createMissingValues">no</arg>
+              <arg name="field">customfield_13105</arg>
+              <arg name="appendValues">no</arg>
+              <arg name="full.module.key">com.innovalog.jmwe.jira-misc-workflow-extensionsSetFieldValue-function</arg>
+              <arg name="copyOnlyIfNotSet">no</arg>
+              <arg name="valueType">template</arg>
+              <arg name="throwExceptions">false</arg>
+              <arg name="class.name">com.innovalog.jmwe.plugins.functions.SetFieldValueFunction</arg>
+              <arg name="value">Not yet</arg>
+              <arg name="useGroovyCondition">false</arg>
+            </function>
+            <function type="class">
+              <arg name="runAsUser">admin</arg>
+              <arg name="ignoreEmptyValue">no</arg>
+              <arg name="createMissingValues">no</arg>
+              <arg name="field">customfield_13135</arg>
+              <arg name="appendValues">no</arg>
+              <arg name="full.module.key">com.innovalog.jmwe.jira-misc-workflow-extensionsSetFieldValue-function</arg>
+              <arg name="copyOnlyIfNotSet">no</arg>
+              <arg name="valueType">template</arg>
+              <arg name="throwExceptions">false</arg>
+              <arg name="class.name">com.innovalog.jmwe.plugins.functions.SetFieldValueFunction</arg>
+              <arg name="value">Not yet</arg>
+              <arg name="useGroovyCondition">false</arg>
+            </function>
+            <function type="class">
+              <arg name="runAsUser">admin</arg>
+              <arg name="ignoreEmptyValue">no</arg>
+              <arg name="createMissingValues">no</arg>
+              <arg name="field">customfield_13131</arg>
+              <arg name="appendValues">no</arg>
+              <arg name="full.module.key">com.innovalog.jmwe.jira-misc-workflow-extensionsSetFieldValue-function</arg>
+              <arg name="copyOnlyIfNotSet">no</arg>
+              <arg name="valueType">template</arg>
+              <arg name="throwExceptions">false</arg>
+              <arg name="class.name">com.innovalog.jmwe.plugins.functions.SetFieldValueFunction</arg>
+              <arg name="value">Not yet</arg>
+              <arg name="useGroovyCondition">false</arg>
+            </function>
+            <function type="class">
+              <arg name="runAsUser">admin</arg>
+              <arg name="ignoreEmptyValue">no</arg>
+              <arg name="createMissingValues">no</arg>
+              <arg name="field">customfield_13127</arg>
+              <arg name="appendValues">no</arg>
+              <arg name="full.module.key">com.innovalog.jmwe.jira-misc-workflow-extensionsSetFieldValue-function</arg>
+              <arg name="copyOnlyIfNotSet">no</arg>
+              <arg name="valueType">template</arg>
+              <arg name="throwExceptions">false</arg>
+              <arg name="class.name">com.innovalog.jmwe.plugins.functions.SetFieldValueFunction</arg>
+              <arg name="value">Not yet</arg>
+              <arg name="useGroovyCondition">false</arg>
+            </function>
+            <function type="class">
+              <arg name="runAsUser">admin</arg>
+              <arg name="ignoreEmptyValue">no</arg>
+              <arg name="createMissingValues">no</arg>
+              <arg name="field">customfield_13125</arg>
+              <arg name="appendValues">no</arg>
+              <arg name="full.module.key">com.innovalog.jmwe.jira-misc-workflow-extensionsSetFieldValue-function</arg>
+              <arg name="copyOnlyIfNotSet">no</arg>
+              <arg name="valueType">template</arg>
+              <arg name="throwExceptions">false</arg>
+              <arg name="class.name">com.innovalog.jmwe.plugins.functions.SetFieldValueFunction</arg>
+              <arg name="value">Not applicable</arg>
+              <arg name="useGroovyCondition">false</arg>
+            </function>
+            <function type="class">
+              <arg name="runAsUser">admin</arg>
+              <arg name="ignoreEmptyValue">no</arg>
+              <arg name="createMissingValues">no</arg>
+              <arg name="field">customfield_13133</arg>
+              <arg name="appendValues">no</arg>
+              <arg name="full.module.key">com.innovalog.jmwe.jira-misc-workflow-extensionsSetFieldValue-function</arg>
+              <arg name="copyOnlyIfNotSet">no</arg>
+              <arg name="valueType">template</arg>
+              <arg name="throwExceptions">false</arg>
+              <arg name="class.name">com.innovalog.jmwe.plugins.functions.SetFieldValueFunction</arg>
+              <arg name="value">Not yet</arg>
+              <arg name="useGroovyCondition">false</arg>
+            </function>
+            <function type="class">
+              <arg name="runAsUser">admin</arg>
+              <arg name="ignoreEmptyValue">no</arg>
+              <arg name="createMissingValues">no</arg>
+              <arg name="field">customfield_12424</arg>
+              <arg name="appendValues">no</arg>
+              <arg name="full.module.key">com.innovalog.jmwe.jira-misc-workflow-extensionsSetFieldValue-function</arg>
+              <arg name="copyOnlyIfNotSet">no</arg>
+              <arg name="valueType">template</arg>
+              <arg name="throwExceptions">false</arg>
+              <arg name="class.name">com.innovalog.jmwe.plugins.functions.SetFieldValueFunction</arg>
+              <arg name="value">Not Required</arg>
+              <arg name="useGroovyCondition">false</arg>
+            </function>
+            <function type="class">
+              <arg name="runAsUser">admin</arg>
+              <arg name="ignoreEmptyValue">no</arg>
+              <arg name="createMissingValues">no</arg>
+              <arg name="field">customfield_10615</arg>
+              <arg name="appendValues">no</arg>
+              <arg name="full.module.key">com.innovalog.jmwe.jira-misc-workflow-extensionsSetFieldValue-function</arg>
+              <arg name="copyOnlyIfNotSet">no</arg>
+              <arg name="valueType">template</arg>
+              <arg name="throwExceptions">false</arg>
+              <arg name="class.name">com.innovalog.jmwe.plugins.functions.SetFieldValueFunction</arg>
+              <arg name="value">Not yet</arg>
+              <arg name="useGroovyCondition">false</arg>
+            </function>
+            <function type="class">
+              <arg name="runAsUser">admin</arg>
+              <arg name="ignoreEmptyValue">no</arg>
+              <arg name="createMissingValues">no</arg>
+              <arg name="field">customfield_13126</arg>
+              <arg name="appendValues">no</arg>
+              <arg name="full.module.key">com.innovalog.jmwe.jira-misc-workflow-extensionsSetFieldValue-function</arg>
+              <arg name="copyOnlyIfNotSet">no</arg>
+              <arg name="valueType">template</arg>
+              <arg name="throwExceptions">false</arg>
+              <arg name="class.name">com.innovalog.jmwe.plugins.functions.SetFieldValueFunction</arg>
+              <arg name="value">Not yet</arg>
+              <arg name="useGroovyCondition">false</arg>
+            </function>
+            <function type="class">
+              <arg name="runAsUser">admin</arg>
+              <arg name="ignoreEmptyValue">no</arg>
+              <arg name="createMissingValues">no</arg>
+              <arg name="field">customfield_13134</arg>
+              <arg name="appendValues">no</arg>
+              <arg name="full.module.key">com.innovalog.jmwe.jira-misc-workflow-extensionsSetFieldValue-function</arg>
+              <arg name="copyOnlyIfNotSet">no</arg>
+              <arg name="valueType">template</arg>
+              <arg name="throwExceptions">false</arg>
+              <arg name="class.name">com.innovalog.jmwe.plugins.functions.SetFieldValueFunction</arg>
+              <arg name="value">Not yet</arg>
+              <arg name="useGroovyCondition">false</arg>
+            </function>
+            <function type="class">
+              <arg name="full.module.key">com.atlassian.jira.plugin.system.workflowassigntoreporter-function</arg>
+              <arg name="class.name">com.atlassian.jira.workflow.function.issue.AssignToReporterFunction</arg>
+            </function>
+            <function type="class">
+              <arg name="eventTypeId">1</arg>
+              <arg name="class.name">com.atlassian.jira.workflow.function.event.FireIssueEventFunction</arg>
+            </function>
+          </post-functions>
+        </unconditional-result>
+      </results>
+    </action>
+  </initial-actions>
+  <global-actions>
+    <action id="921" name="Cancel" view="fieldscreen">
+      <meta name="jira.description"></meta>
+      <meta name="jira.fieldscreen.id">12901</meta>
+      <restrict-to>
+        <conditions>
+          <condition type="class">
+            <arg name="jira.previousstatus">3,4,5,6</arg>
+            <arg name="jira.not">yes</arg>
+            <arg name="class.name">com.innovalog.jmwe.plugins.conditions.CurrentStatusCondition</arg>
+          </condition>
+        </conditions>
+      </restrict-to>
+      <results>
+        <unconditional-result old-status="null" status="null" step="6">
+          <post-functions>
+            <function type="class">
+              <arg name="field.name">resolution</arg>
+              <arg name="full.module.key">com.atlassian.jira.plugin.system.workflowupdate-issue-field-function</arg>
+              <arg name="field.value">10100</arg>
+              <arg name="class.name">com.atlassian.jira.workflow.function.issue.UpdateIssueFieldFunction</arg>
+            </function>
+            <function type="class">
+              <arg name="runAsUser"></arg>
+              <arg name="field">resolution</arg>
+              <arg name="selectedLinkType">outward:10100</arg>
+              <arg name="appendValues">no</arg>
+              <arg name="full.module.key">com.innovalog.jmwe.jira-misc-workflow-extensionsCopyFieldValueToLinkedIssues-function</arg>
+              <arg name="copyOnlyIfNotSet">yes</arg>
+              <arg name="class.name">com.innovalog.jmwe.plugins.functions.CopyFieldValueToLinkedIssuesFunction</arg>
+              <arg name="useGroovyCondition">false</arg>
+            </function>
+            <function type="class">
+              <arg name="class.name">com.atlassian.jira.workflow.function.issue.UpdateIssueStatusFunction</arg>
+            </function>
+            <function type="class">
+              <arg name="class.name">com.atlassian.jira.workflow.function.misc.CreateCommentFunction</arg>
+            </function>
+            <function type="class">
+              <arg name="class.name">com.atlassian.jira.workflow.function.issue.GenerateChangeHistoryFunction</arg>
+            </function>
+            <function type="class">
+              <arg name="runAsUser"></arg>
+              <arg name="selectedLinkType">outward:10100</arg>
+              <arg name="full.module.key">com.innovalog.jmwe.jira-misc-workflow-extensionsTransitionLinkedIssues-function</arg>
+              <arg name="class.name">com.innovalog.jmwe.plugins.functions.TransitionLinkedIssuesFunction</arg>
+              <arg name="transition">Cancel</arg>
+              <arg name="useGroovyCondition">false</arg>
+            </function>
+            <function type="class">
+              <arg name="class.name">com.atlassian.jira.workflow.function.issue.IssueReindexFunction</arg>
+            </function>
+            <function type="class">
+              <arg name="eventTypeId">13</arg>
+              <arg name="class.name">com.atlassian.jira.workflow.function.event.FireIssueEventFunction</arg>
+            </function>
+          </post-functions>
+        </unconditional-result>
+      </results>
+    </action>
+  </global-actions>
+  <common-actions>
+    <action id="801" name="Request  info" view="fieldscreen">
+      <meta name="opsbar-sequence">10</meta>
+      <meta name="jira.description">This will alert the Reporter that the processing of this ticket has stopped until the information is provided.  </meta>
+      <meta name="jira.fieldscreen.id">10403</meta>
+      <validators>
+        <validator name="" type="class">
+          <arg name="errorMessage">Please indicate the information required in the comment field</arg>
+          <arg name="class.name">com.innovalog.jmwe.plugins.validators.CommentRequiredValidator</arg>
+          <arg name="conditionalValidation">no</arg>
+          <arg name="hidGroupsList"></arg>
+        </validator>
+      </validators>
+      <results>
+        <unconditional-result old-status="null" status="null" step="10">
+          <post-functions>
+            <function type="class">
+              <arg name="class.name">com.atlassian.jira.workflow.function.issue.UpdateIssueStatusFunction</arg>
+            </function>
+            <function type="class">
+              <arg name="full.module.key">com.atlassian.jira.plugin.system.workflowassigntoreporter-function</arg>
+              <arg name="class.name">com.atlassian.jira.workflow.function.issue.AssignToReporterFunction</arg>
+            </function>
+            <function type="class">
+              <arg name="class.name">com.atlassian.jira.workflow.function.misc.CreateCommentFunction</arg>
+            </function>
+            <function type="class">
+              <arg name="class.name">com.atlassian.jira.workflow.function.issue.GenerateChangeHistoryFunction</arg>
+            </function>
+            <function type="class">
+              <arg name="class.name">com.atlassian.jira.workflow.function.issue.IssueReindexFunction</arg>
+            </function>
+            <function type="class">
+              <arg name="eventTypeId">13</arg>
+              <arg name="class.name">com.atlassian.jira.workflow.function.event.FireIssueEventFunction</arg>
+            </function>
+          </post-functions>
+        </unconditional-result>
+      </results>
+    </action>
+    <action id="961" name="Re-open" view="fieldscreen">
+      <meta name="jira.description">For RFD-subtasks only.  Re-open to add information.  RFD-SUBTASKS CANNOT BE RE-USED FOR A DIFFERENT DEPLOYMENT.</meta>
+      <meta name="jira.fieldscreen.id">12900</meta>
+      <results>
+        <unconditional-result old-status="null" status="null" step="14">
+          <post-functions>
+            <function type="class">
+              <arg name="class.name">com.atlassian.jira.workflow.function.issue.UpdateIssueStatusFunction</arg>
+            </function>
+            <function type="class">
+              <arg name="class.name">com.atlassian.jira.workflow.function.misc.CreateCommentFunction</arg>
+            </function>
+            <function type="class">
+              <arg name="class.name">com.atlassian.jira.workflow.function.issue.GenerateChangeHistoryFunction</arg>
+            </function>
+            <function type="class">
+              <arg name="class.name">com.atlassian.jira.workflow.function.issue.IssueReindexFunction</arg>
+            </function>
+            <function type="class">
+              <arg name="eventTypeId">13</arg>
+              <arg name="class.name">com.atlassian.jira.workflow.function.event.FireIssueEventFunction</arg>
+            </function>
+          </post-functions>
+        </unconditional-result>
+      </results>
+    </action>
+    <action id="1011" name="Revoke">
+      <meta name="jira.description"></meta>
+      <meta name="jira.fieldscreen.id"></meta>
+      <restrict-to>
+        <conditions>
+          <condition type="class">
+            <arg name="class.name">com.innovalog.jmwe.plugins.conditions.NonInteractiveCondition</arg>
+          </condition>
+        </conditions>
+      </restrict-to>
+      <results>
+        <unconditional-result old-status="null" status="null" step="16">
+          <post-functions>
+            <function type="class">
+              <arg name="class.name">com.atlassian.jira.workflow.function.issue.UpdateIssueStatusFunction</arg>
+            </function>
+            <function type="class">
+              <arg name="class.name">com.atlassian.jira.workflow.function.misc.CreateCommentFunction</arg>
+            </function>
+            <function type="class">
+              <arg name="class.name">com.atlassian.jira.workflow.function.issue.GenerateChangeHistoryFunction</arg>
+            </function>
+            <function type="class">
+              <arg name="class.name">com.atlassian.jira.workflow.function.issue.IssueReindexFunction</arg>
+            </function>
+            <function type="class">
+              <arg name="eventTypeId">13</arg>
+              <arg name="class.name">com.atlassian.jira.workflow.function.event.FireIssueEventFunction</arg>
+            </function>
+          </post-functions>
+        </unconditional-result>
+      </results>
+    </action>
+    <action id="4" name="Start progress">
+      <meta name="opsbar-sequence">20</meta>
+      <meta name="jira.description"></meta>
+      <meta name="jira.i18n.title">startprogress.title</meta>
+      <meta name="jira.fieldscreen.id"></meta>
+      <restrict-to>
+        <conditions>
+          <condition type="class">
+            <arg name="class.name">com.innovalog.jmwe.plugins.conditions.NonInteractiveCondition</arg>
+          </condition>
+        </conditions>
+      </restrict-to>
+      <results>
+        <unconditional-result old-status="Finished" status="Underway" step="3">
+          <post-functions>
+            <function type="class">
+              <arg name="class.name">com.atlassian.jira.workflow.function.issue.UpdateIssueStatusFunction</arg>
+            </function>
+            <function type="class">
+              <arg name="full.module.key">com.atlassian.jira.plugin.system.workflowassigntocurrentuser-function</arg>
+              <arg name="class.name">com.atlassian.jira.workflow.function.issue.AssignToCurrentUserFunction</arg>
+            </function>
+            <function type="class">
+              <arg name="class.name">com.atlassian.jira.workflow.function.misc.CreateCommentFunction</arg>
+            </function>
+            <function type="class">
+              <arg name="class.name">com.atlassian.jira.workflow.function.issue.GenerateChangeHistoryFunction</arg>
+            </function>
+            <function type="class">
+              <arg name="class.name">com.atlassian.jira.workflow.function.issue.IssueReindexFunction</arg>
+            </function>
+            <function type="class">
+              <arg name="eventTypeId">11</arg>
+              <arg name="class.name">com.atlassian.jira.workflow.function.event.FireIssueEventFunction</arg>
+            </function>
+          </post-functions>
+        </unconditional-result>
+      </results>
+    </action>
+    <action id="1021" name="Back to Open">
+      <meta name="jira.description"></meta>
+      <meta name="jira.fieldscreen.id"></meta>
+      <restrict-to>
+        <conditions>
+          <condition type="class">
+            <arg name="class.name">com.atlassian.jira.workflow.condition.AllowOnlyReporter</arg>
+          </condition>
+        </conditions>
+      </restrict-to>
+      <validators>
+        <validator name="" type="class">
+          <arg name="conditionMode">all-in-status</arg>
+          <arg name="selectedLinkType">outward:10100</arg>
+          <arg name="errorMessage">All RFD-subtasks must be active but not In Progress.  Contact the Assignee(s) to correct the status of the RDF-subtask(s), or contact the Release Manager for additional support.</arg>
+          <arg name="statuses">1,10005,10312,10317,10500</arg>
+          <arg name="class.name">com.innovalog.jmwe.plugins.validators.LinkedIssuesStatusValidator</arg>
+          <arg name="conditionalValidation">no</arg>
+          <arg name="selectedIssueType">10402</arg>
+        </validator>
+      </validators>
+      <results>
+        <unconditional-result old-status="null" status="null" step="1">
+          <post-functions>
+            <function type="class">
+              <arg name="class.name">com.atlassian.jira.workflow.function.issue.UpdateIssueStatusFunction</arg>
+            </function>
+            <function type="class">
+              <arg name="class.name">com.atlassian.jira.workflow.function.misc.CreateCommentFunction</arg>
+            </function>
+            <function type="class">
+              <arg name="class.name">com.atlassian.jira.workflow.function.issue.GenerateChangeHistoryFunction</arg>
+            </function>
+            <function type="class">
+              <arg name="selectedLinkType">outward:10100</arg>
+              <arg name="skipValidators">no</arg>
+              <arg name="transition">Back to Open</arg>
+              <arg name="restrictToProjectRole"></arg>
+              <arg name="runAsUser"></arg>
+              <arg name="skipConditions">yes</arg>
+              <arg name="restrictToGroup"></arg>
+              <arg name="skipPermissions">no</arg>
+              <arg name="fieldsToSet">{}</arg>
+              <arg name="restrictToInternal">no</arg>
+              <arg name="full.module.key">com.innovalog.jmwe.jira-misc-workflow-extensionsTransitionLinkedIssues-function</arg>
+              <arg name="commentType">template</arg>
+              <arg name="triggerEvent">no</arg>
+              <arg name="comment"></arg>
+              <arg name="throwExceptions">false</arg>
+              <arg name="class.name">com.innovalog.jmwe.plugins.functions.TransitionLinkedIssuesFunction</arg>
+              <arg name="transitionType">rawValue</arg>
+              <arg name="useGroovyCondition">false</arg>
+            </function>
+            <function type="class">
+              <arg name="class.name">com.atlassian.jira.workflow.function.issue.IssueReindexFunction</arg>
+            </function>
+            <function type="class">
+              <arg name="eventTypeId">13</arg>
+              <arg name="class.name">com.atlassian.jira.workflow.function.event.FireIssueEventFunction</arg>
+            </function>
+          </post-functions>
+        </unconditional-result>
+      </results>
+    </action>
+  </common-actions>
+  <steps>
+    <step id="1" name="Open">
+      <meta name="jira.status.id">1</meta>
+      <actions>
+        <action id="731" name="Submit" view="fieldscreen">
+          <meta name="jira.description">Verify the Change Owners Checklist.</meta>
+          <meta name="jira.fieldscreen.id">12800</meta>
+          <restrict-to>
+            <conditions type="AND">
+              <condition type="class">
+                <arg name="class.name">com.atlassian.jira.workflow.condition.AllowOnlyReporter</arg>
+              </condition>
+              <condition type="class">
+                <arg name="class.name">com.atlassian.jira.workflow.condition.UserInGroupCondition</arg>
+                <arg name="group">IIT Change Coordinators</arg>
+              </condition>
+            </conditions>
+          </restrict-to>
+          <validators>
+            <validator name="" type="class">
+              <arg name="maxLinkedIssues"></arg>
+              <arg name="groovyExpression">relatedIssue.getAsString(&quot;issuetype&quot;) == &quot;RFC&quot;  </arg>
+              <arg name="validatorMode">requireLinks</arg>
+              <arg name="minLinkedIssues">1</arg>
+              <arg name="selectedLinkType">*:*</arg>
+              <arg name="errorMessage">A single RFC must be linked:  check that it is Under Review or Approved (not Open, Closed or Resolved), and that the link type is specifically 'RFD linked to RFC' (not vice versa). </arg>
+              <arg name="checkAllLinkedIssues">no</arg>
+              <arg name="class.name">com.innovalog.jmwe.plugins.validators.IssueLinkingValidator</arg>
+              <arg name="conditionalValidation">no</arg>
+            </validator>
+            <validator name="" type="class">
+              <arg name="maxLinkedIssues"></arg>
+              <arg name="groovyExpression">relatedIssue.getAsString(&quot;issuetype&quot;) == &quot;RFC&quot;  &amp;&amp;  relatedIssue.getAsString(&quot;status&quot;) != &quot;Open&quot;  &amp;&amp;  relatedIssue.getAsString(&quot;status&quot;) != &quot;Closed&quot;  &amp;&amp;  relatedIssue.getAsString(&quot;status&quot;) != &quot;Resolved&quot;  
+</arg>
+              <arg name="validatorMode">checkLinks</arg>
+              <arg name="minLinkedIssues">1</arg>
+              <arg name="selectedLinkType">*:*</arg>
+              <arg name="errorMessage">The RFC must be Under Review or Approved (not Open, Closed or Resolved).  Check that the link is 'RFD link to RFC' as well.</arg>
+              <arg name="checkAllLinkedIssues">no</arg>
+              <arg name="class.name">com.innovalog.jmwe.plugins.validators.IssueLinkingValidator</arg>
+              <arg name="conditionalValidation">no</arg>
+            </validator>
+            <validator name="" type="class">
+              <arg name="maxLinkedIssues"></arg>
+              <arg name="groovyExpression">relatedIssue.getAsString(&quot;issuetype&quot;) == &quot;RFC&quot;  &amp;&amp;  relatedIssue.getAsString(&quot;status&quot;) != &quot;Open&quot;  &amp;&amp;  relatedIssue.getAsString(&quot;status&quot;) != &quot;Closed&quot;  &amp;&amp;  relatedIssue.getAsString(&quot;status&quot;) != &quot;Resolved&quot;</arg>
+              <arg name="validatorMode">checkLinks</arg>
+              <arg name="minLinkedIssues">1</arg>
+              <arg name="selectedLinkType">inward:10300</arg>
+              <arg name="errorMessage">The RFC must be linked using 'RFD link to RFC'.  You will need to break the current link to the RFC and relink it using the correct link type.</arg>
+              <arg name="checkAllLinkedIssues">no</arg>
+              <arg name="class.name">com.innovalog.jmwe.plugins.validators.IssueLinkingValidator</arg>
+              <arg name="conditionalValidation">no</arg>
+            </validator>
+            <validator name="" type="class">
+              <arg name="groovyExpression">issue.getAsString(&quot;customfield_13126&quot;) == &quot;RFC is linked (RFD to RFC) and 'Submitted' (or Approved)&quot;</arg>
+              <arg name="scriptDescription"></arg>
+              <arg name="field">customfield_13126</arg>
+              <arg name="errorMessage">Please select an answer</arg>
+              <arg name="class.name">com.innovalog.jmwe.plugins.validators.GroovyValidator</arg>
+            </validator>
+            <validator name="" type="class">
+              <arg name="maxLinkedIssues"></arg>
+              <arg name="groovyExpression">relatedIssue.getAsString(&quot;issuetype&quot;) == &quot;RFD-subtask&quot;</arg>
+              <arg name="validatorMode">requireLinks</arg>
+              <arg name="minLinkedIssues">1</arg>
+              <arg name="selectedLinkType">outward:10100</arg>
+              <arg name="errorMessage">There must be at least one RFD-subtask attached before submitting this RFD for review. (Note that sub-tasks are not the same kind of ticket). </arg>
+              <arg name="checkAllLinkedIssues">no</arg>
+              <arg name="class.name">com.innovalog.jmwe.plugins.validators.IssueLinkingValidator</arg>
+              <arg name="conditionalValidation">no</arg>
+            </validator>
+            <validator name="" type="class">
+              <arg name="maxLinkedIssues"></arg>
+              <arg name="groovyExpression">relatedIssue.getAsString(&quot;description&quot;) != &quot;&quot;  &amp;&amp;  relatedIssue.getAsString(&quot;description&quot;) != &quot;.&quot; &amp;&amp; relatedIssue.get(&quot;timeoriginalestimate&quot;) &gt;= 0</arg>
+              <arg name="validatorMode">checkLinks</arg>
+              <arg name="minLinkedIssues">1</arg>
+              <arg name="selectedLinkType">outward:10100</arg>
+              <arg name="errorMessage">All subtasks (including RFD-subtasks) must have a description and a time estimate prior to submitting for deployment review.</arg>
+              <arg name="conditionalValidationScript">issue.getAsString(&quot;customfield_10121&quot;) == &quot;PROD&quot; ||  issue.getAsString(&quot;customfield_10121&quot;) == &quot;WFPRD&quot;  ||  issue.getAsString(&quot;customfield_10121&quot;) == &quot;TRAIN&quot;    ||  issue.getAsString(&quot;customfield_10121&quot;) == &quot;PREPROD&quot; ||  issue.getAsString(&quot;customfield_10121&quot;) == &quot;TEST&quot;  ||  issue.getAsString(&quot;customfield_10121&quot;) == &quot;WFTST&quot; </arg>
+              <arg name="checkAllLinkedIssues">yes</arg>
+              <arg name="class.name">com.innovalog.jmwe.plugins.validators.IssueLinkingValidator</arg>
+              <arg name="conditionalValidation">yes</arg>
+            </validator>
+            <validator name="" type="class">
+              <arg name="groovyExpression">issue.getAsString(&quot;customfield_13128&quot;) == &quot;Confirmed&quot;</arg>
+              <arg name="scriptDescription"></arg>
+              <arg name="field">customfield_13128</arg>
+              <arg name="errorMessage">Please select an answer.</arg>
+              <arg name="class.name">com.innovalog.jmwe.plugins.validators.GroovyValidator</arg>
+            </validator>
+            <validator name="" type="class">
+              <arg name="maxLinkedIssues"></arg>
+              <arg name="groovyExpression">relatedIssue.getAsString(&quot;project&quot;) == &quot;IMBADSLOT&quot;   &amp;&amp;  relatedIssue.get(&quot;issuelinks&quot;)?.first()?.issueLinkType.name == &quot;Reserves&quot;  </arg>
+              <arg name="validatorMode">requireLinks</arg>
+              <arg name="minLinkedIssues">1</arg>
+              <arg name="selectedLinkType">*:*</arg>
+              <arg name="errorMessage">Click on 'Schedule' to select a deployment slot before submitting for review. Additional deployment slots can be requested for Emergency changes, critical business impact or for automated Jenkins deployments.  Otherwise, select the next open slot.</arg>
+              <arg name="conditionalValidationScript">issue.getAsString(&quot;customfield_10121&quot;) != &quot;INT&quot;  &amp;&amp;  issue.getAsString(&quot;customfield_10121&quot;) != &quot;WFINT&quot; &amp;&amp; issue.getAsString(&quot;customfield_10121&quot;) != &quot;DLVR&quot; &amp;&amp; issue.getAsString(&quot;customfield_10121&quot;) != &quot;WFDLV&quot;  &amp;&amp; issue.getAsString(&quot;customfield_10121&quot;) != &quot;S1&quot;</arg>
+              <arg name="checkAllLinkedIssues">no</arg>
+              <arg name="class.name">com.innovalog.jmwe.plugins.validators.IssueLinkingValidator</arg>
+              <arg name="conditionalValidation">yes</arg>
+            </validator>
+            <validator name="" type="class">
+              <arg name="maxLinkedIssues">1</arg>
+              <arg name="groovyExpression">relatedIssue.getAsString(&quot;customfield_10636&quot;) ==  issue.getAsString(&quot;customfield_10636&quot;)</arg>
+              <arg name="validatorMode">checkLinks</arg>
+              <arg name="minLinkedIssues">1</arg>
+              <arg name="selectedLinkType">outward:10500</arg>
+              <arg name="errorMessage">The RFD deployment time does not align with the deployment slot selected.  This is usually due to cloning.  Please 'Cancel Booking' (not 'Reschedule') then 'Schedule' a new deployment slot.</arg>
+              <arg name="conditionalValidationScript">issue.getAsString(&quot;customfield_10121&quot;) != &quot;INT&quot;  &amp;&amp;  issue.getAsString(&quot;customfield_10121&quot;) != &quot;WFINT&quot;  &amp;&amp;  issue.getAsString(&quot;customfield_10121&quot;) != &quot;DLVR&quot;  &amp;&amp;  issue.getAsString(&quot;customfield_10121&quot;) != &quot;WFDLV&quot;  &amp;&amp;  issue.getAsString(&quot;customfield_10121&quot;) != &quot;S1&quot;</arg>
+              <arg name="checkAllLinkedIssues">no</arg>
+              <arg name="class.name">com.innovalog.jmwe.plugins.validators.IssueLinkingValidator</arg>
+              <arg name="conditionalValidation">yes</arg>
+            </validator>
+            <validator name="" type="class">
+              <arg name="groovyExpression">issue.getAsString(&quot;customfield_13129&quot;) == &quot;Scheduled&quot;</arg>
+              <arg name="scriptDescription"></arg>
+              <arg name="field">customfield_13129</arg>
+              <arg name="errorMessage">Please select an answer.</arg>
+              <arg name="class.name">com.innovalog.jmwe.plugins.validators.GroovyValidator</arg>
+            </validator>
+            <validator name="" type="class">
+              <arg name="showAsterisk">no</arg>
+              <arg name="hidFieldsList"></arg>
+              <arg name="fieldKey">customfield_12425</arg>
+              <arg name="errorMessage">Please identify who the Development Team Lead is.  They must be available for consultation during the deployment.</arg>
+              <arg name="conditionalValidationScript">issue.getAsString(&quot;customfield_10121&quot;) != &quot;INT&quot;&amp;&amp; issue.getAsString(&quot;customfield_10121&quot;) != &quot;WFINT&quot; || issue.getAsString(&quot;customfield_10121&quot;) != &quot;DLVR&quot; || issue.getAsString(&quot;customfield_10121&quot;) != &quot;WFDLV&quot;  || issue.getAsString(&quot;customfield_10121&quot;) != &quot;S1&quot;</arg>
+              <arg name="class.name">com.innovalog.jmwe.plugins.validators.FieldRequiredValidator</arg>
+              <arg name="conditionalValidation">yes</arg>
+            </validator>
+            <validator name="" type="class">
+              <arg name="groovyExpression">issue.getAsString(&quot;customfield_13135&quot;) == &quot;No dependencies&quot;  || issue.getAsString(&quot;customfield_13135&quot;) == &quot;Technology risks have been identified and managed&quot;  ||  (issue.getAsString(&quot;customfield_13135&quot;) == &quot;Not required for INT/DLVR&quot;  &amp;&amp;  (issue.getAsString(&quot;customfield_10121&quot;) == &quot;INT&quot;&amp;&amp; issue.getAsString(&quot;customfield_10121&quot;) == &quot;WFINT&quot; || issue.getAsString(&quot;customfield_10121&quot;) == &quot;DLVR&quot; || issue.getAsString(&quot;customfield_10121&quot;) == &quot;WFDLV&quot;  || issue.getAsString(&quot;customfield_10121&quot;) == &quot;S1&quot;)  )</arg>
+              <arg name="scriptDescription"></arg>
+              <arg name="field">customfield_13135</arg>
+              <arg name="errorMessage">Run an IRS Outage Report to determine technical dependencies and stakeholders and include a summary in the RFD description.</arg>
+              <arg name="class.name">com.innovalog.jmwe.plugins.validators.GroovyValidator</arg>
+            </validator>
+            <validator name="" type="class">
+              <arg name="showAsterisk">no</arg>
+              <arg name="hidFieldsList"></arg>
+              <arg name="fieldKey">timeoriginalestimate</arg>
+              <arg name="errorMessage">Please provide an estimate for the effort being spent to manage this RFD (in addition to the RFD-subtasks).  </arg>
+              <arg name="conditionalValidationScript">issue.getAsString(&quot;customfield_10121&quot;) == &quot;PROD&quot; || issue.getAsString(&quot;customfield_10121&quot;) == &quot;WFPRD&quot; || issue.getAsString(&quot;customfield_10121&quot;) == &quot;TRAIN&quot;  ||  issue.getAsString(&quot;customfield_10121&quot;) == &quot;PREPROD&quot;</arg>
+              <arg name="class.name">com.innovalog.jmwe.plugins.validators.FieldRequiredValidator</arg>
+              <arg name="conditionalValidation">yes</arg>
+            </validator>
+            <validator name="" type="class">
+              <arg name="showAsterisk">no</arg>
+              <arg name="hidFieldsList"></arg>
+              <arg name="fieldKey">description</arg>
+              <arg name="errorMessage">Please provide a high-level (but meaningful) description of the technical changes being made.</arg>
+              <arg name="conditionalValidationScript">issue.getAsString(&quot;customfield_10121&quot;) != &quot;INT&quot; &amp;&amp; issue.getAsString(&quot;customfield_10121&quot;) != &quot;WFINT&quot; &amp;&amp; issue.getAsString(&quot;customfield_10121&quot;) != &quot;DLVR&quot; &amp;&amp; issue.getAsString(&quot;customfield_10121&quot;) != &quot;WFDLV&quot;  &amp;&amp;  issue.getAsString(&quot;customfield_10121&quot;) != &quot;S1&quot;</arg>
+              <arg name="class.name">com.innovalog.jmwe.plugins.validators.FieldRequiredValidator</arg>
+              <arg name="conditionalValidation">yes</arg>
+            </validator>
+            <validator name="" type="class">
+              <arg name="maxLinkedIssues"></arg>
+              <arg name="groovyExpression"> relatedIssue.getAsString(&quot;project&quot;) == &quot;IMBADSLOT&quot;  &amp;&amp;  relatedIssue.get(&quot;issuelinks&quot;)?.first()?.issueLinkType.name == &quot;Reserves&quot;  </arg>
+              <arg name="validatorMode">requireLinks</arg>
+              <arg name="minLinkedIssues">1</arg>
+              <arg name="selectedLinkType">*:*</arg>
+              <arg name="errorMessage">Click on 'Schedule' to select a deployment slot before submitting for review. Additional deployment slots can be requested for Emergency changes, critical business impact or for automated Jenkins deployments. Otherwise, select the next open slot.</arg>
+              <arg name="conditionalValidationScript">issue.getAsString(&quot;customfield_10121&quot;) != &quot;INT&quot;  &amp;&amp;  issue.getAsString(&quot;customfield_10121&quot;) != &quot;WFINT&quot;  &amp;&amp;  issue.getAsString(&quot;customfield_10121&quot;) != &quot;DLVR&quot;  &amp;&amp;  issue.getAsString(&quot;customfield_10121&quot;) != &quot;WFDLV&quot;  &amp;&amp;  issue.getAsString(&quot;customfield_10121&quot;) != &quot;S1&quot; </arg>
+              <arg name="checkAllLinkedIssues">no</arg>
+              <arg name="class.name">com.innovalog.jmwe.plugins.validators.IssueLinkingValidator</arg>
+              <arg name="conditionalValidation">yes</arg>
+            </validator>
+          </validators>
+          <results>
+            <unconditional-result old-status="null" status="null" step="16">
+              <post-functions>
+                <function type="class">
+                  <arg name="ignoreEmptyValue">no</arg>
+                  <arg name="createMissingValues">no</arg>
+                  <arg name="field">customfield_10119</arg>
+                  <arg name="destField"></arg>
+                  <arg name="selectedLinkType">inward:10300</arg>
+                  <arg name="appendValues">no</arg>
+                  <arg name="full.module.key">com.innovalog.jmwe.jira-misc-workflow-extensionsCopyFieldValueFromLinkedIssue-function</arg>
+                  <arg name="copyOnlyIfNotSet">no</arg>
+                  <arg name="throwExceptions">false</arg>
+                  <arg name="class.name">com.innovalog.jmwe.plugins.functions.CopyFieldValueFromLinkedIssueFunction</arg>
+                  <arg name="useGroovyCondition">false</arg>
+                </function>
+                <function type="class">
+                  <arg name="ignoreEmptyValue">no</arg>
+                  <arg name="createMissingValues">no</arg>
+                  <arg name="field">customfield_10637</arg>
+                  <arg name="destField"></arg>
+                  <arg name="selectedLinkType">inward:10300</arg>
+                  <arg name="appendValues">no</arg>
+                  <arg name="full.module.key">com.innovalog.jmwe.jira-misc-workflow-extensionsCopyFieldValueFromLinkedIssue-function</arg>
+                  <arg name="copyOnlyIfNotSet">no</arg>
+                  <arg name="throwExceptions">false</arg>
+                  <arg name="class.name">com.innovalog.jmwe.plugins.functions.CopyFieldValueFromLinkedIssueFunction</arg>
+                  <arg name="useGroovyCondition">false</arg>
+                </function>
+                <function type="class">
+                  <arg name="ignoreEmptyValue">no</arg>
+                  <arg name="createMissingValues">no</arg>
+                  <arg name="field">priority</arg>
+                  <arg name="destField"></arg>
+                  <arg name="selectedLinkType">inward:10300</arg>
+                  <arg name="appendValues">no</arg>
+                  <arg name="full.module.key">com.innovalog.jmwe.jira-misc-workflow-extensionsCopyFieldValueFromLinkedIssue-function</arg>
+                  <arg name="copyOnlyIfNotSet">no</arg>
+                  <arg name="throwExceptions">false</arg>
+                  <arg name="class.name">com.innovalog.jmwe.plugins.functions.CopyFieldValueFromLinkedIssueFunction</arg>
+                  <arg name="useGroovyCondition">false</arg>
+                </function>
+                <function type="class">
+                  <arg name="ignoreEmptyValue">no</arg>
+                  <arg name="createMissingValues">no</arg>
+                  <arg name="field">fixVersions</arg>
+                  <arg name="destField"></arg>
+                  <arg name="selectedLinkType">inward:10300</arg>
+                  <arg name="appendValues">no</arg>
+                  <arg name="full.module.key">com.innovalog.jmwe.jira-misc-workflow-extensionsCopyFieldValueFromLinkedIssue-function</arg>
+                  <arg name="copyOnlyIfNotSet">no</arg>
+                  <arg name="throwExceptions">false</arg>
+                  <arg name="class.name">com.innovalog.jmwe.plugins.functions.CopyFieldValueFromLinkedIssueFunction</arg>
+                  <arg name="useGroovyCondition">false</arg>
+                </function>
+                <function type="class">
+                  <arg name="ignoreEmptyValue">no</arg>
+                  <arg name="createMissingValues">no</arg>
+                  <arg name="destField"></arg>
+                  <arg name="selectedLinkType">outward:10100</arg>
+                  <arg name="appendValues">no</arg>
+                  <arg name="copyOnlyIfNotSet">yes</arg>
+                  <arg name="sendNotification">no</arg>
+                  <arg name="runAsUser"></arg>
+                  <arg name="field">customfield_10636</arg>
+                  <arg name="full.module.key">com.innovalog.jmwe.jira-misc-workflow-extensionsCopyFieldValueToLinkedIssues-function</arg>
+                  <arg name="throwExceptions">false</arg>
+                  <arg name="class.name">com.innovalog.jmwe.plugins.functions.CopyFieldValueToLinkedIssuesFunction</arg>
+                  <arg name="useGroovyCondition">false</arg>
+                </function>
+                <function type="class">
+                  <arg name="runAsUser"></arg>
+                  <arg name="field">customfield_10121</arg>
+                  <arg name="selectedLinkType">outward:10100</arg>
+                  <arg name="appendValues">no</arg>
+                  <arg name="full.module.key">com.innovalog.jmwe.jira-misc-workflow-extensionsCopyFieldValueToLinkedIssues-function</arg>
+                  <arg name="copyOnlyIfNotSet">no</arg>
+                  <arg name="class.name">com.innovalog.jmwe.plugins.functions.CopyFieldValueToLinkedIssuesFunction</arg>
+                  <arg name="useGroovyCondition">false</arg>
+                </function>
+                <function type="class">
+                  <arg name="class.name">com.atlassian.jira.workflow.function.issue.UpdateIssueStatusFunction</arg>
+                </function>
+                <function type="class">
+                  <arg name="class.name">com.atlassian.jira.workflow.function.misc.CreateCommentFunction</arg>
+                </function>
+                <function type="class">
+                  <arg name="class.name">com.atlassian.jira.workflow.function.issue.GenerateChangeHistoryFunction</arg>
+                </function>
+                <function type="class">
+                  <arg name="runAsUser"></arg>
+                  <arg name="selectedLinkType">outward:10100</arg>
+                  <arg name="full.module.key">com.innovalog.jmwe.jira-misc-workflow-extensionsTransitionLinkedIssues-function</arg>
+                  <arg name="class.name">com.innovalog.jmwe.plugins.functions.TransitionLinkedIssuesFunction</arg>
+                  <arg name="transition">Submit</arg>
+                  <arg name="useGroovyCondition">false</arg>
+                </function>
+                <function type="class">
+                  <arg name="class.name">com.atlassian.jira.workflow.function.issue.IssueReindexFunction</arg>
+                </function>
+                <function type="class">
+                  <arg name="eventTypeId">13</arg>
+                  <arg name="class.name">com.atlassian.jira.workflow.function.event.FireIssueEventFunction</arg>
+                </function>
+              </post-functions>
+            </unconditional-result>
+          </results>
+        </action>
+      </actions>
+    </step>
+    <step id="3" name="In Progress">
+      <meta name="jira.status.id">3</meta>
+      <actions>
+<common-action id="1011" />
+        <action id="301" name="Stop Progress">
+          <meta name="opsbar-sequence">20</meta>
+          <meta name="jira.i18n.title">stopprogress.title</meta>
+          <restrict-to>
+            <conditions>
+              <condition type="class">
+                <arg name="class.name">com.atlassian.jira.workflow.condition.AllowOnlyReporter</arg>
+              </condition>
+            </conditions>
+          </restrict-to>
+          <results>
+            <unconditional-result old-status="Finished" status="Assigned" step="19">
+              <post-functions>
+                <function type="class">
+                  <arg name="class.name">com.atlassian.jira.workflow.function.issue.UpdateIssueStatusFunction</arg>
+                </function>
+                <function type="class">
+                  <arg name="class.name">com.atlassian.jira.workflow.function.misc.CreateCommentFunction</arg>
+                </function>
+                <function type="class">
+                  <arg name="class.name">com.atlassian.jira.workflow.function.issue.GenerateChangeHistoryFunction</arg>
+                </function>
+                <function type="class">
+                  <arg name="class.name">com.atlassian.jira.workflow.function.issue.IssueReindexFunction</arg>
+                </function>
+                <function type="class">
+                  <arg name="eventTypeId">12</arg>
+                  <arg name="class.name">com.atlassian.jira.workflow.function.event.FireIssueEventFunction</arg>
+                </function>
+              </post-functions>
+            </unconditional-result>
+          </results>
+        </action>
+        <action id="971" name="Resolve">
+          <meta name="jira.description">The deployment sub-tasks have been completed and this is ready for deployment verification.</meta>
+          <meta name="jira.fieldscreen.id"></meta>
+          <restrict-to>
+            <conditions>
+              <condition type="class">
+                <arg name="selectedLinkType">outward:10100</arg>
+                <arg name="statuses">5,6</arg>
+                <arg name="class.name">com.innovalog.jmwe.plugins.conditions.LinkedIssuesStatusCondition</arg>
+                <arg name="selectedIssueType">10402</arg>
+              </condition>
+            </conditions>
+          </restrict-to>
+          <results>
+            <unconditional-result old-status="null" status="null" step="18">
+              <post-functions>
+                <function type="class">
+                  <arg name="runAsUser">nrsci</arg>
+                  <arg name="groovyExpression">issue.getAsString(&quot;customfield_10121&quot;) != &quot;INT&quot;  ||  issue.getAsString(&quot;customfield_10121&quot;) != &quot;WFINT&quot;  ||issue.getAsString(&quot;customfield_10121&quot;) != &quot;DLVR&quot;  ||  issue.getAsString(&quot;customfield_10121&quot;) != &quot;WFDLV&quot;</arg>
+                  <arg name="restrictToGroup"></arg>
+                  <arg name="restrictToInternal">no</arg>
+                  <arg name="full.module.key">com.innovalog.jmwe.jira-misc-workflow-extensionscommentIssue-function</arg>
+                  <arg name="valueType">template</arg>
+                  <arg name="throwExceptions">false</arg>
+                  <arg name="sendNotification">yes</arg>
+                  <arg name="class.name">com.innovalog.jmwe.plugins.functions.CommentIssueFunction</arg>
+                  <arg name="value">All RFD-subtasks have been completed.  Please have this deployment verified then close the ticket.</arg>
+                  <arg name="restrictToProjectRole"></arg>
+                  <arg name="useGroovyCondition">yes</arg>
+                </function>
+                <function type="class">
+                  <arg name="class.name">com.atlassian.jira.workflow.function.issue.UpdateIssueStatusFunction</arg>
+                </function>
+                <function type="class">
+                  <arg name="class.name">com.atlassian.jira.workflow.function.misc.CreateCommentFunction</arg>
+                </function>
+                <function type="class">
+                  <arg name="class.name">com.atlassian.jira.workflow.function.issue.GenerateChangeHistoryFunction</arg>
+                </function>
+                <function type="class">
+                  <arg name="class.name">com.atlassian.jira.workflow.function.issue.IssueReindexFunction</arg>
+                </function>
+                <function type="class">
+                  <arg name="eventTypeId">13</arg>
+                  <arg name="class.name">com.atlassian.jira.workflow.function.event.FireIssueEventFunction</arg>
+                </function>
+              </post-functions>
+            </unconditional-result>
+          </results>
+        </action>
+      </actions>
+    </step>
+    <step id="6" name="Closed">
+      <meta name="jira.status.id">6</meta>
+      <actions>
+<common-action id="961" />
+      </actions>
+    </step>
+    <step id="10" name="Waiting for info">
+      <meta name="jira.status.id">10317</meta>
+      <actions>
+<common-action id="1021" />
+        <action id="911" name="Info   provided">
+          <meta name="jira.description"></meta>
+          <meta name="jira.fieldscreen.id"></meta>
+          <restrict-to>
+            <conditions>
+              <condition type="class">
+                <arg name="jira.includeCurrent">no</arg>
+                <arg name="jira.previousstatus">10312,10500</arg>
+                <arg name="jira.not">no</arg>
+                <arg name="jira.mostRecentStatusOnly">yes</arg>
+                <arg name="class.name">com.innovalog.jmwe.plugins.conditions.PreviousStatusCondition</arg>
+                <arg name="jira.ignoreLoopTransitions">yes</arg>
+              </condition>
+            </conditions>
+          </restrict-to>
+          <results>
+            <unconditional-result old-status="null" status="null" step="16">
+              <post-functions>
+                <function type="class">
+                  <arg name="forceSelectedUser">no</arg>
+                  <arg name="jira.projectrole.id">10000</arg>
+                  <arg name="includeCurrentAssignee">no</arg>
+                  <arg name="full.module.key">com.innovalog.jmwe.jira-misc-workflow-extensionsassigntolastrolemember</arg>
+                  <arg name="skipInactiveUsers">no</arg>
+                  <arg name="class.name">com.innovalog.jmwe.plugins.functions.AssignToLastRoleMemberFunction</arg>
+                  <arg name="includeReporter">no</arg>
+                  <arg name="useGroovyCondition">false</arg>
+                  <arg name="skipIfAssignee">no</arg>
+                </function>
+                <function type="class">
+                  <arg name="class.name">com.atlassian.jira.workflow.function.issue.UpdateIssueStatusFunction</arg>
+                </function>
+                <function type="class">
+                  <arg name="class.name">com.atlassian.jira.workflow.function.misc.CreateCommentFunction</arg>
+                </function>
+                <function type="class">
+                  <arg name="class.name">com.atlassian.jira.workflow.function.issue.GenerateChangeHistoryFunction</arg>
+                </function>
+                <function type="class">
+                  <arg name="class.name">com.atlassian.jira.workflow.function.issue.IssueReindexFunction</arg>
+                </function>
+                <function type="class">
+                  <arg name="eventTypeId">13</arg>
+                  <arg name="class.name">com.atlassian.jira.workflow.function.event.FireIssueEventFunction</arg>
+                </function>
+              </post-functions>
+            </unconditional-result>
+          </results>
+        </action>
+      </actions>
+    </step>
+    <step id="14" name="Reopened">
+      <meta name="jira.status.id">4</meta>
+      <actions>
+        <action id="951" name="Re-close">
+          <meta name="jira.description">Close this issue but retain the Resolution entry of 'Done' rather than 'Cancelled'. </meta>
+          <meta name="jira.fieldscreen.id"></meta>
+          <results>
+            <unconditional-result old-status="null" status="null" step="6">
+              <post-functions>
+                <function type="class">
+                  <arg name="class.name">com.atlassian.jira.workflow.function.issue.UpdateIssueStatusFunction</arg>
+                </function>
+                <function type="class">
+                  <arg name="class.name">com.atlassian.jira.workflow.function.misc.CreateCommentFunction</arg>
+                </function>
+                <function type="class">
+                  <arg name="class.name">com.atlassian.jira.workflow.function.issue.GenerateChangeHistoryFunction</arg>
+                </function>
+                <function type="class">
+                  <arg name="class.name">com.atlassian.jira.workflow.function.issue.IssueReindexFunction</arg>
+                </function>
+                <function type="class">
+                  <arg name="eventTypeId">13</arg>
+                  <arg name="class.name">com.atlassian.jira.workflow.function.event.FireIssueEventFunction</arg>
+                </function>
+              </post-functions>
+            </unconditional-result>
+          </results>
+        </action>
+      </actions>
+    </step>
+    <step id="16" name="Under Review">
+      <meta name="jira.status.id">10500</meta>
+      <actions>
+<common-action id="801" />
+<common-action id="1021" />
+        <action id="721" name="Approve" view="fieldscreen">
+          <meta name="opsbar-sequence">0</meta>
+          <meta name="jira.description">The RFD submission has been accepted.  All RFD-subtasks must be accepted first.</meta>
+          <meta name="jira.fieldscreen.id">12903</meta>
+          <restrict-to>
+            <conditions>
+              <condition type="class">
+                <arg name="class.name">com.atlassian.jira.workflow.condition.UserInGroupCondition</arg>
+                <arg name="group">IIT Change Coordinators</arg>
+              </condition>
+            </conditions>
+          </restrict-to>
+          <validators>
+            <validator name="" type="class">
+              <arg name="conditionMode">all-in-status</arg>
+              <arg name="selectedLinkType">outward:10100</arg>
+              <arg name="errorMessage">All RFD-subtasks must be Approved, In Progress or Closed before the RFD can be approved.  </arg>
+              <arg name="statuses">3,6,10312</arg>
+              <arg name="class.name">com.innovalog.jmwe.plugins.validators.LinkedIssuesStatusValidator</arg>
+              <arg name="conditionalValidation">no</arg>
+              <arg name="selectedIssueType">10402</arg>
+            </validator>
+            <validator name="" type="class">
+              <arg name="conditionMode">all-in-status</arg>
+              <arg name="selectedLinkType">*:*</arg>
+              <arg name="errorMessage">The RFC must be approved before the RFD can be approved.  Ops cannot deploy without CAB authorization.</arg>
+              <arg name="statuses">10312</arg>
+              <arg name="class.name">com.innovalog.jmwe.plugins.validators.LinkedIssuesStatusValidator</arg>
+              <arg name="conditionalValidation">no</arg>
+              <arg name="selectedIssueType">10400</arg>
+            </validator>
+            <validator name="" type="class">
+              <arg name="groovyExpression">(issue.getAsString(&quot;customfield_13125&quot;) == &quot;UAT is signed off and ready for production&quot;  &amp;&amp;  ( issue.getAsString(&quot;customfield_10121&quot;) == &quot;PROD&quot;  ||  issue.getAsString(&quot;customfield_10121&quot;) == &quot;WFPRD&quot; ))  ||   
+(issue.getAsString(&quot;customfield_13125&quot;) == &quot;Testing completed in the lower environment&quot;   &amp;&amp;  issue.getAsString(&quot;customfield_10121&quot;) != &quot;PROD&quot;   &amp;&amp;  issue.getAsString(&quot;customfield_10121&quot;) != &quot;WFPRD&quot;)  ||
+(issue.getAsString(&quot;customfield_13125&quot;) == &quot;Not applicable&quot;   &amp;&amp;  (issue.getAsString(&quot;customfield_10121&quot;) == &quot;INT&quot;  || issue.getAsString(&quot;customfield_10121&quot;) == &quot;WFINT&quot; || issue.getAsString(&quot;customfield_10121&quot;) == &quot;S1&quot;  ||   issue.getAsString(&quot;customfield_10121&quot;) == &quot;DLVR&quot;  ||  issue.getAsString(&quot;customfield_10121&quot;) == &quot;WFDLV&quot; ))</arg>
+              <arg name="scriptDescription"></arg>
+              <arg name="field">customfield_13125</arg>
+              <arg name="errorMessage">Testing must be completed to the appropriate level for the Target Environment.  Contact Quality Assurance for more information about testing requirements.</arg>
+              <arg name="class.name">com.innovalog.jmwe.plugins.validators.GroovyValidator</arg>
+            </validator>
+            <validator name="" type="class">
+              <arg name="groovyExpression">( issue.getAsString(&quot;customfield_13133&quot;) == &quot;Not required for INT or DLVR&quot; &amp;&amp; issue.getAsString(&quot;customfield_10121&quot;) == &quot;INT&quot;  || issue.getAsString(&quot;customfield_10121&quot;) == &quot;WFINT&quot;  ||  issue.getAsString(&quot;customfield_10121&quot;) == &quot;DLVR&quot;  || issue.getAsString(&quot;customfield_10121&quot;) == &quot;WFDLV&quot;  || issue.getAsString(&quot;customfield_10121&quot;) == &quot;S1&quot;)   ||  issue.getAsString(&quot;customfield_13133&quot;) == &quot;Approved&quot;  ||  issue.getAsString(&quot;customfield_13133&quot;) == &quot;No changes to the data model&quot;</arg>
+              <arg name="scriptDescription"></arg>
+              <arg name="field">customfield_13133</arg>
+              <arg name="errorMessage">Data Model changes must be approved before deploying to TEST.</arg>
+              <arg name="class.name">com.innovalog.jmwe.plugins.validators.GroovyValidator</arg>
+            </validator>
+            <validator name="" type="class">
+              <arg name="groovyExpression">( issue.getAsString(&quot;customfield_13134&quot;) == &quot;Not required for INT or DLVR&quot; &amp;&amp; issue.getAsString(&quot;customfield_10121&quot;) == &quot;INT&quot;  || issue.getAsString(&quot;customfield_10121&quot;) == &quot;WFINT&quot;  ||  issue.getAsString(&quot;customfield_10121&quot;) == &quot;DLVR&quot;  || issue.getAsString(&quot;customfield_10121&quot;) == &quot;WFDLV&quot;  || issue.getAsString(&quot;customfield_10121&quot;) == &quot;S1&quot;)   ||   issue.getAsString(&quot;customfield_13134&quot;) == &quot;Communications sent&quot;</arg>
+              <arg name="scriptDescription"></arg>
+              <arg name="field">customfield_13134</arg>
+              <arg name="errorMessage">Communications must have been sent to the stakeholders (including those identified with dependencies in the outage report) before deploying to TEST or PROD.</arg>
+              <arg name="class.name">com.innovalog.jmwe.plugins.validators.GroovyValidator</arg>
+            </validator>
+            <validator name="" type="class">
+              <arg name="showAsterisk">no</arg>
+              <arg name="hidFieldsList"></arg>
+              <arg name="fieldKey">customfield_13000</arg>
+              <arg name="errorMessage">Someone must be available to verify the deployment was successful.  </arg>
+              <arg name="conditionalValidationScript">issue.getAsString(&quot;customfield_10121&quot;) != &quot;INT&quot;  &amp;&amp;  issue.getAsString(&quot;customfield_10121&quot;) != &quot;WFINT&quot;  &amp;&amp;  issue.getAsString(&quot;customfield_10121&quot;) != &quot;DLVR&quot;  &amp;&amp;  issue.getAsString(&quot;customfield_10121&quot;) != &quot;WFDLV&quot;  &amp;&amp;  issue.getAsString(&quot;customfield_10121&quot;) != &quot;S1&quot;</arg>
+              <arg name="class.name">com.innovalog.jmwe.plugins.validators.FieldRequiredValidator</arg>
+              <arg name="conditionalValidation">yes</arg>
+            </validator>
+          </validators>
+          <results>
+            <unconditional-result old-status="null" status="null" step="17">
+              <post-functions>
+                <function type="class">
+                  <arg name="ignoreEmptyValue">no</arg>
+                  <arg name="groovyExpression">issue.getAsString(&quot;customfield_10121&quot;) == &quot;PROD&quot;  ||  issue.getAsString(&quot;customfield_10121&quot;) == &quot;WFPROD&quot;  ||  issue.getAsString(&quot;customfield_10121&quot;) == &quot;PREPROD&quot;  ||  issue.getAsString(&quot;customfield_10121&quot;) == &quot;TRAIN&quot; </arg>
+                  <arg name="createMissingValues">no</arg>
+                  <arg name="appendValues">no</arg>
+                  <arg name="copyOnlyIfNotSet">no</arg>
+                  <arg name="runAsUser">nrsci</arg>
+                  <arg name="field">watches</arg>
+                  <arg name="full.module.key">com.innovalog.jmwe.jira-misc-workflow-extensionsSetFieldValue-function</arg>
+                  <arg name="valueType">expression</arg>
+                  <arg name="throwExceptions">false</arg>
+                  <arg name="class.name">com.innovalog.jmwe.plugins.functions.SetFieldValueFunction</arg>
+                  <arg name="value">issue.getAsString(&quot;customfield_10119&quot;)</arg>
+                  <arg name="useGroovyCondition">yes</arg>
+                </function>
+                <function type="class">
+                  <arg name="ignoreEmptyValue">no</arg>
+                  <arg name="groovyExpression">issue.getAsString(&quot;customfield_10121&quot;) == &quot;PROD&quot;</arg>
+                  <arg name="createMissingValues">no</arg>
+                  <arg name="destField">customfield_10107</arg>
+                  <arg name="selectedLinkType">inward:10300</arg>
+                  <arg name="appendValues">no</arg>
+                  <arg name="copyOnlyIfNotSet">no</arg>
+                  <arg name="sendNotification">no</arg>
+                  <arg name="runAsUser">nrsci</arg>
+                  <arg name="field">customfield_10636</arg>
+                  <arg name="full.module.key">com.innovalog.jmwe.jira-misc-workflow-extensionsCopyFieldValueToLinkedIssues-function</arg>
+                  <arg name="throwExceptions">true</arg>
+                  <arg name="class.name">com.innovalog.jmwe.plugins.functions.CopyFieldValueToLinkedIssuesFunction</arg>
+                  <arg name="useGroovyCondition">yes</arg>
+                </function>
+                <function type="class">
+                  <arg name="runAsUser"></arg>
+                  <arg name="restrictToGroup"></arg>
+                  <arg name="selectedLinkType">inward:10300</arg>
+                  <arg name="restrictToInternal">no</arg>
+                  <arg name="full.module.key">com.innovalog.jmwe.jira-misc-workflow-extensionscommentLinkedIssues-function</arg>
+                  <arg name="valueType">expression</arg>
+                  <arg name="sendNotification">yes</arg>
+                  <arg name="class.name">com.innovalog.jmwe.plugins.functions.CommentLinkedIssuesFunction</arg>
+                  <arg name="value">issue.get('issuekey')+&quot; &quot;+issue.get('summary')+&quot; RFD approved for &quot;+issue.get('Target environment')</arg>
+                  <arg name="useGroovyCondition">false</arg>
+                </function>
+                <function type="class">
+                  <arg name="class.name">com.atlassian.jira.workflow.function.issue.UpdateIssueStatusFunction</arg>
+                </function>
+                <function type="class">
+                  <arg name="class.name">com.atlassian.jira.workflow.function.misc.CreateCommentFunction</arg>
+                </function>
+                <function type="class">
+                  <arg name="class.name">com.atlassian.jira.workflow.function.issue.GenerateChangeHistoryFunction</arg>
+                </function>
+                <function type="class">
+                  <arg name="class.name">com.atlassian.jira.workflow.function.issue.IssueReindexFunction</arg>
+                </function>
+                <function type="class">
+                  <arg name="eventTypeId">13</arg>
+                  <arg name="class.name">com.atlassian.jira.workflow.function.event.FireIssueEventFunction</arg>
+                </function>
+              </post-functions>
+            </unconditional-result>
+          </results>
+        </action>
+      </actions>
+    </step>
+    <step id="17" name="Approved">
+      <meta name="jira.status.id">10312</meta>
+      <actions>
+<common-action id="4" />
+<common-action id="801" />
+<common-action id="1011" />
+<common-action id="1021" />
+      </actions>
+    </step>
+    <step id="18" name="Resolved">
+      <meta name="jira.status.id">5</meta>
+      <actions>
+<common-action id="961" />
+        <action id="701" name="Close issue" view="fieldscreen">
+          <meta name="opsbar-sequence">60</meta>
+          <meta name="jira.i18n.submit">closeissue.close</meta>
+          <meta name="jira.description">All aspects of this deployment are complete.</meta>
+          <meta name="jira.i18n.description">closeissue.desc</meta>
+          <meta name="jira.i18n.title">closeissue.title</meta>
+          <meta name="jira.fieldscreen.id">12901</meta>
+          <restrict-to>
+            <conditions type="AND">
+              <condition type="class">
+                <arg name="permission">Close Issue</arg>
+                <arg name="class.name">com.atlassian.jira.workflow.condition.PermissionCondition</arg>
+              </condition>
+              <condition type="class">
+                <arg name="conditionMode">all-in-status</arg>
+                <arg name="selectedLinkType">outward:10100</arg>
+                <arg name="statuses">5,6</arg>
+                <arg name="class.name">com.innovalog.jmwe.plugins.conditions.LinkedIssuesStatusCondition</arg>
+                <arg name="selectedIssueType"></arg>
+              </condition>
+              <condition type="class">
+                <arg name="class.name">com.atlassian.jira.workflow.condition.UserInGroupCondition</arg>
+                <arg name="group">IIT Change Coordinators</arg>
+              </condition>
+            </conditions>
+          </restrict-to>
+          <validators>
+            <validator name="" type="class">
+              <arg name="groovyExpression">issue.getAsString(&quot;customfield_13106&quot;) == &quot;Verified deployed correctly&quot; ||  issue.getAsString(&quot;customfield_13106&quot;) == &quot;Cancelled deployment&quot;  ||   issue.getAsString(&quot;customfield_13106&quot;) == &quot;Rolled back deployment&quot;</arg>
+              <arg name="scriptDescription"></arg>
+              <arg name="field">customfield_13106</arg>
+              <arg name="errorMessage">Please provide an answer for RFD Deployment Status.</arg>
+              <arg name="class.name">com.innovalog.jmwe.plugins.validators.GroovyValidator</arg>
+            </validator>
+            <validator name="" type="class">
+              <arg name="groovyExpression">issue.getAsString(&quot;customfield_10615&quot;) == &quot;Already updated&quot;  || issue.getAsString(&quot;customfield_10615&quot;) == &quot;Not required&quot;  </arg>
+              <arg name="scriptDescription"></arg>
+              <arg name="field">customfield_10615</arg>
+              <arg name="errorMessage">Do not close this RFD until IRS has been confirmed to be up to date.</arg>
+              <arg name="class.name">com.innovalog.jmwe.plugins.validators.GroovyValidator</arg>
+            </validator>
+            <validator name="" type="class">
+              <arg name="groovyExpression">issue.getAsString(&quot;customfield_13105&quot;) == &quot;Not required&quot;  ||  issue.getAsString(&quot;customfield_13105&quot;) == &quot;Approved for PROD deployment&quot;</arg>
+              <arg name="scriptDescription"></arg>
+              <arg name="field">customfield_13105</arg>
+              <arg name="errorMessage">Do not close this RFD until it has been signed off for Transition to Operations.</arg>
+              <arg name="class.name">com.innovalog.jmwe.plugins.validators.GroovyValidator</arg>
+            </validator>
+          </validators>
+          <results>
+            <unconditional-result old-status="Finished" status="Closed" step="6">
+              <post-functions>
+                <function type="class">
+                  <arg name="runAsUser"></arg>
+                  <arg name="ignoreEmptyValue">no</arg>
+                  <arg name="createMissingValues">no</arg>
+                  <arg name="field">timeestimate</arg>
+                  <arg name="appendValues">no</arg>
+                  <arg name="full.module.key">com.innovalog.jmwe.jira-misc-workflow-extensionsSetFieldValue-function</arg>
+                  <arg name="copyOnlyIfNotSet">no</arg>
+                  <arg name="valueType">template</arg>
+                  <arg name="throwExceptions">false</arg>
+                  <arg name="class.name">com.innovalog.jmwe.plugins.functions.SetFieldValueFunction</arg>
+                  <arg name="value">0</arg>
+                  <arg name="useGroovyCondition">false</arg>
+                </function>
+                <function type="class">
+                  <arg name="groovyExpression">linkedIssue.getAsString(&quot;issuetype&quot;) == &quot;RFC&quot;  &amp;&amp;  issue.getAsString(&quot;customfield_13106&quot;) == &quot;Rolled back deployment&quot; &amp;&amp;  (issue.getAsString(&quot;customfield_10121&quot;) == &quot;PROD&quot; || issue.getAsString(&quot;customfield_10121&quot;) == &quot;WFPROD&quot; )</arg>
+                  <arg name="selectedLinkType">*:*</arg>
+                  <arg name="sendNotification">no</arg>
+                  <arg name="restrictToProjectRole"></arg>
+                  <arg name="runAsUser"></arg>
+                  <arg name="restrictToGroup"></arg>
+                  <arg name="restrictToInternal">no</arg>
+                  <arg name="full.module.key">com.innovalog.jmwe.jira-misc-workflow-extensionscommentLinkedIssues-function</arg>
+                  <arg name="valueType">template</arg>
+                  <arg name="throwExceptions">false</arg>
+                  <arg name="class.name">com.innovalog.jmwe.plugins.functions.CommentLinkedIssuesFunction</arg>
+                  <arg name="value">&lt;%= issue.getAsString(&quot;issuekey&quot;)%&gt; - '&lt;%=issue.getAsString(&quot;summary&quot;)%&gt;' to PROD failed and was rolled back.  A PIR will be required. </arg>
+                  <arg name="useGroovyCondition">yes</arg>
+                </function>
+                <function type="class">
+                  <arg name="groovyExpression">linkedIssue.getAsString(&quot;issuetype&quot;) == &quot;RFC&quot;  &amp;&amp; issue.getAsString(&quot;customfield_10121&quot;) != &quot;PROD&quot;  &amp;&amp;  issue.getAsString(&quot;customfield_10121&quot;) != &quot;WFPROD&quot;  &amp;&amp; issue.getAsString(&quot;customfield_13106&quot;) == &quot;Verified deployed correctly&quot;</arg>
+                  <arg name="selectedLinkType">*:*</arg>
+                  <arg name="sendNotification">no</arg>
+                  <arg name="restrictToProjectRole"></arg>
+                  <arg name="runAsUser">nrsci</arg>
+                  <arg name="restrictToGroup"></arg>
+                  <arg name="restrictToInternal">no</arg>
+                  <arg name="full.module.key">com.innovalog.jmwe.jira-misc-workflow-extensionscommentLinkedIssues-function</arg>
+                  <arg name="valueType">template</arg>
+                  <arg name="throwExceptions">false</arg>
+                  <arg name="class.name">com.innovalog.jmwe.plugins.functions.CommentLinkedIssuesFunction</arg>
+                  <arg name="value">&lt;%= issue.getAsString(&quot;issuekey&quot;)%&gt; - '&lt;%=issue.getAsString(&quot;summary&quot;)%&gt;' to &lt;%=issue.getAsString(&quot;customfield_10121&quot;)%&gt; was completed succesfully. </arg>
+                  <arg name="useGroovyCondition">yes</arg>
+                </function>
+                <function type="class">
+                  <arg name="groovyExpression">issue.getAsString(&quot;customfield_13106&quot;) == &quot;Verified deployed correctly&quot; &amp;&amp;  (issue.getAsString(&quot;customfield_10121&quot;) == &quot;PROD&quot; || issue.getAsString(&quot;customfield_10121&quot;) == &quot;WFPROD&quot; )</arg>
+                  <arg name="selectedLinkType">inward:10300</arg>
+                  <arg name="sendNotification">yes</arg>
+                  <arg name="restrictToProjectRole"></arg>
+                  <arg name="runAsUser">nrsci</arg>
+                  <arg name="restrictToGroup"></arg>
+                  <arg name="restrictToInternal">no</arg>
+                  <arg name="full.module.key">com.innovalog.jmwe.jira-misc-workflow-extensionscommentLinkedIssues-function</arg>
+                  <arg name="valueType">template</arg>
+                  <arg name="throwExceptions">false</arg>
+                  <arg name="class.name">com.innovalog.jmwe.plugins.functions.CommentLinkedIssuesFunction</arg>
+                  <arg name="value">&lt;%= issue.getAsString(&quot;issuekey&quot;)%&gt; - &lt;%=issue.getAsString(&quot;summary&quot;)%&gt; to PROD was completed successfully.  Please resolve/close this RFC. </arg>
+                  <arg name="useGroovyCondition">yes</arg>
+                </function>
+                <function type="class">
+                  <arg name="ignoreEmptyValue">no</arg>
+                  <arg name="groovyExpression">issue.getAsString(&quot;customfield_13106&quot;) == &quot;Rolled back deployment&quot;</arg>
+                  <arg name="createMissingValues">no</arg>
+                  <arg name="appendValues">no</arg>
+                  <arg name="copyOnlyIfNotSet">no</arg>
+                  <arg name="runAsUser"></arg>
+                  <arg name="field">resolution</arg>
+                  <arg name="full.module.key">com.innovalog.jmwe.jira-misc-workflow-extensionsSetFieldValue-function</arg>
+                  <arg name="valueType">template</arg>
+                  <arg name="throwExceptions">false</arg>
+                  <arg name="class.name">com.innovalog.jmwe.plugins.functions.SetFieldValueFunction</arg>
+                  <arg name="value">Abandoned</arg>
+                  <arg name="useGroovyCondition">yes</arg>
+                </function>
+                <function type="class">
+                  <arg name="ignoreEmptyValue">no</arg>
+                  <arg name="groovyExpression">issue.getAsString(&quot;customfield_13106&quot;) == &quot;Verified deployed correctly&quot;</arg>
+                  <arg name="createMissingValues">no</arg>
+                  <arg name="appendValues">no</arg>
+                  <arg name="copyOnlyIfNotSet">no</arg>
+                  <arg name="runAsUser"></arg>
+                  <arg name="field">resolution</arg>
+                  <arg name="full.module.key">com.innovalog.jmwe.jira-misc-workflow-extensionsSetFieldValue-function</arg>
+                  <arg name="valueType">template</arg>
+                  <arg name="throwExceptions">false</arg>
+                  <arg name="class.name">com.innovalog.jmwe.plugins.functions.SetFieldValueFunction</arg>
+                  <arg name="value">Done</arg>
+                  <arg name="useGroovyCondition">yes</arg>
+                </function>
+                <function type="class">
+                  <arg name="runAsUser"></arg>
+                  <arg name="field">resolution</arg>
+                  <arg name="selectedLinkType">outward:10100</arg>
+                  <arg name="appendValues">no</arg>
+                  <arg name="full.module.key">com.innovalog.jmwe.jira-misc-workflow-extensionsCopyFieldValueToLinkedIssues-function</arg>
+                  <arg name="copyOnlyIfNotSet">yes</arg>
+                  <arg name="class.name">com.innovalog.jmwe.plugins.functions.CopyFieldValueToLinkedIssuesFunction</arg>
+                  <arg name="useGroovyCondition">false</arg>
+                </function>
+                <function type="class">
+                  <arg name="class.name">com.atlassian.jira.workflow.function.issue.UpdateIssueStatusFunction</arg>
+                </function>
+                <function type="class">
+                  <arg name="class.name">com.atlassian.jira.workflow.function.misc.CreateCommentFunction</arg>
+                </function>
+                <function type="class">
+                  <arg name="class.name">com.atlassian.jira.workflow.function.issue.GenerateChangeHistoryFunction</arg>
+                </function>
+                <function type="class">
+                  <arg name="ignoreEmptyValue">no</arg>
+                  <arg name="groovyExpression">issue.getAsString(&quot;resolution&quot;) == &quot;Abandoned&quot;</arg>
+                  <arg name="createMissingValues">no</arg>
+                  <arg name="appendValues">no</arg>
+                  <arg name="copyOnlyIfNotSet">no</arg>
+                  <arg name="runAsUser">nrsci</arg>
+                  <arg name="field">customfield_12201</arg>
+                  <arg name="full.module.key">com.innovalog.jmwe.jira-misc-workflow-extensionsSetFieldValue-function</arg>
+                  <arg name="valueType">template</arg>
+                  <arg name="throwExceptions">false</arg>
+                  <arg name="class.name">com.innovalog.jmwe.plugins.functions.SetFieldValueFunction</arg>
+                  <arg name="value">PIR Required</arg>
+                  <arg name="useGroovyCondition">yes</arg>
+                </function>
+                <function type="class">
+                  <arg name="ignoreEmptyValue">yes</arg>
+                  <arg name="createMissingValues">no</arg>
+                  <arg name="destField"></arg>
+                  <arg name="selectedLinkType">inward:10300</arg>
+                  <arg name="appendValues">no</arg>
+                  <arg name="copyOnlyIfNotSet">no</arg>
+                  <arg name="sendNotification">no</arg>
+                  <arg name="runAsUser"></arg>
+                  <arg name="field">customfield_12201</arg>
+                  <arg name="full.module.key">com.innovalog.jmwe.jira-misc-workflow-extensionsCopyFieldValueToLinkedIssues-function</arg>
+                  <arg name="throwExceptions">false</arg>
+                  <arg name="class.name">com.innovalog.jmwe.plugins.functions.CopyFieldValueToLinkedIssuesFunction</arg>
+                  <arg name="useGroovyCondition">false</arg>
+                </function>
+                <function type="class">
+                  <arg name="selectedLinkType">outward:10100</arg>
+                  <arg name="skipValidators">no</arg>
+                  <arg name="transition">Close issue
+Close Issue@@classic default workflow
+Close Issue@@classic default workflow</arg>
+                  <arg name="restrictToProjectRole"></arg>
+                  <arg name="runAsUser"></arg>
+                  <arg name="skipConditions">no</arg>
+                  <arg name="restrictToGroup"></arg>
+                  <arg name="skipPermissions">no</arg>
+                  <arg name="fieldsToSet">{}</arg>
+                  <arg name="restrictToInternal">no</arg>
+                  <arg name="full.module.key">com.innovalog.jmwe.jira-misc-workflow-extensionsTransitionLinkedIssues-function</arg>
+                  <arg name="commentType">rawValue</arg>
+                  <arg name="triggerEvent">no</arg>
+                  <arg name="comment"></arg>
+                  <arg name="throwExceptions">false</arg>
+                  <arg name="class.name">com.innovalog.jmwe.plugins.functions.TransitionLinkedIssuesFunction</arg>
+                  <arg name="transitionType">rawValue</arg>
+                  <arg name="useGroovyCondition">false</arg>
+                </function>
+                <function type="class">
+                  <arg name="class.name">com.atlassian.jira.workflow.function.issue.IssueReindexFunction</arg>
+                </function>
+                <function type="class">
+                  <arg name="eventTypeId">5</arg>
+                  <arg name="class.name">com.atlassian.jira.workflow.function.event.FireIssueEventFunction</arg>
+                </function>
+              </post-functions>
+            </unconditional-result>
+          </results>
+        </action>
+        <action id="1031" name="Back to In Progress">
+          <meta name="jira.description"></meta>
+          <meta name="jira.fieldscreen.id"></meta>
+          <restrict-to>
+            <conditions>
+              <condition type="class">
+                <arg name="class.name">com.atlassian.jira.workflow.condition.UserInGroupCondition</arg>
+                <arg name="group">IMB Release Managers</arg>
+              </condition>
+            </conditions>
+          </restrict-to>
+          <results>
+            <unconditional-result old-status="null" status="null" step="3">
+              <post-functions>
+                <function type="class">
+                  <arg name="class.name">com.atlassian.jira.workflow.function.issue.UpdateIssueStatusFunction</arg>
+                </function>
+                <function type="class">
+                  <arg name="class.name">com.atlassian.jira.workflow.function.misc.CreateCommentFunction</arg>
+                </function>
+                <function type="class">
+                  <arg name="class.name">com.atlassian.jira.workflow.function.issue.GenerateChangeHistoryFunction</arg>
+                </function>
+                <function type="class">
+                  <arg name="class.name">com.atlassian.jira.workflow.function.issue.IssueReindexFunction</arg>
+                </function>
+                <function type="class">
+                  <arg name="eventTypeId">13</arg>
+                  <arg name="class.name">com.atlassian.jira.workflow.function.event.FireIssueEventFunction</arg>
+                </function>
+              </post-functions>
+            </unconditional-result>
+          </results>
+        </action>
+      </actions>
+    </step>
+    <step id="19" name="Paused">
+      <meta name="jira.status.id">11202</meta>
+      <actions>
+        <action id="1001" name="Resume Progress">
+          <meta name="jira.description"></meta>
+          <meta name="jira.fieldscreen.id"></meta>
+          <restrict-to>
+            <conditions>
+              <condition type="class">
+                <arg name="class.name">com.atlassian.jira.workflow.condition.AllowOnlyReporter</arg>
+              </condition>
+            </conditions>
+          </restrict-to>
+          <results>
+            <unconditional-result old-status="null" status="null" step="3">
+              <post-functions>
+                <function type="class">
+                  <arg name="class.name">com.atlassian.jira.workflow.function.issue.UpdateIssueStatusFunction</arg>
+                </function>
+                <function type="class">
+                  <arg name="class.name">com.atlassian.jira.workflow.function.misc.CreateCommentFunction</arg>
+                </function>
+                <function type="class">
+                  <arg name="class.name">com.atlassian.jira.workflow.function.issue.GenerateChangeHistoryFunction</arg>
+                </function>
+                <function type="class">
+                  <arg name="class.name">com.atlassian.jira.workflow.function.issue.IssueReindexFunction</arg>
+                </function>
+                <function type="class">
+                  <arg name="eventTypeId">13</arg>
+                  <arg name="class.name">com.atlassian.jira.workflow.function.event.FireIssueEventFunction</arg>
+                </function>
+              </post-functions>
+            </unconditional-result>
+          </results>
+        </action>
+      </actions>
+    </step>
+  </steps>
+</workflow>
