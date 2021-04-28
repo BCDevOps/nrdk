@@ -12,6 +12,7 @@ import {BasicJavaApplicationDeployer} from './util/basic-java-application-deploy
 import {SecretManager} from './api/service/secret-manager'
 import {BasicBuilder} from './util/basic-builder'
 import {BasicDeployer} from './util/basic-deployer'
+import {GeneralError as GenericError} from './error'
 export {
   OpenShiftClient,
   OpenShiftClientX,
@@ -26,6 +27,7 @@ export {
   GitOperation,
   CONST,
   SecretManager,
+  GenericError,
 }
 
 export {run} from '@oclif/command'
