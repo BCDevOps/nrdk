@@ -38,7 +38,7 @@ export default class ToolTerraform extends Command {
       const {data} = require('node-cmd').runSync('terraform version')
       console.log(data)
     } else {
-      console.log('Unhandled error!')
+      console.log('Please run with the flag --help')
     }
   }
 }
