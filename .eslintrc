@@ -4,6 +4,7 @@
     "oclif-typescript"
   ],
   "rules": {
-    "newline-per-chained-call": ["error"]
+    "newline-per-chained-call": ["error"],
+    "no-console": "off"
   }
 }
