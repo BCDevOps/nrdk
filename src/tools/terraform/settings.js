@@ -1,15 +1,16 @@
-{
-  "apt": [
-    "curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add -",
-    "sudo apt-add-repository \"deb [arch=$(dpkg --print-architecture)] https://apt.releases.hashicorp.com $(lsb_release -cs) main\"",
-    "sudo apt update && sudo apt install terraform"
-  ],
-  "dnf": [
-    "sudo dnf install -y dnf-plugins-core && sudo dnf config-manager --add-repo https://rpm.releases.hashicorp.com/$release/hashicorp.repo",
-    "sudo dnf install terraform"
-  ],
-  "yum": [
-    "sudo yum install -y yum-utils && sudo yum-config-manager --add-repo https://rpm.releases.hashicorp.com/$release/hashicorp.repo",
-    "sudo yum install terraform"
-  ],
+const VERSION = '0.15.3'
+const DL_PATH = 'https://releases.hashicorp.com/terraform'
+
+module.exports = {
+  version: VERSION,
+  binary: {
+    linux: `${DL_PATH}/${VERSION}/terraform_${VERSION}_linux_amd64.zip`,
+    macos: `${DL_PATH}/${VERSION}/terraform_${VERSION}_darwin_amd64.zip`,
+    windows: `${DL_PATH}/${VERSION}/terraform_${VERSION}_windows_amd64.zip`,
+  },
+  destination: {
+    linux: '/usr/local/bin',
+    macos: '/usr/local/bin',
+    windows: '/usr/local/bin',
+  },
 }
