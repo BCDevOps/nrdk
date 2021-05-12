@@ -32,8 +32,8 @@ export default class ToolTerraform extends Command {
     } else if (flags.remove) {
       console.log('TODO: remove terraform')
     } else if (flags.settings) {
-      console.log('settings.js:')
-      console.log(fs.readFileSync('./src/tools/terraform/settings.js', 'utf8'))
+      const settingsJs = require('../../tools/terraform/settings')
+      console.log('settings.js:', settingsJs)
     } else if (flags.version) {
       const {data} = require('node-cmd').runSync('terraform version')
       console.log(data)
