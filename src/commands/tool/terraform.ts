@@ -1,7 +1,7 @@
 import {Command, flags} from '@oclif/command'
 
 // Terraform install settings
-const settingsJs = require('../../tools/terraform/settings')
+const settingsJs = require('../../tools/terraform/settings.ts')
 
 export default class ToolTerraform extends Command {
   static description = 'Terraform commands'
