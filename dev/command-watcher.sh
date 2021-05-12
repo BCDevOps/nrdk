@@ -2,7 +2,7 @@
 #%
 #% Development watcher for oclif commands
 #%
-#%   Runs commands on save.  Provide a command name wit flags and/or arguments
+#%   Runs commands on save.  Provide a command name with flags and/or arguments
 #%
 #%   USAGE
 #%     $ ${THIS_FILE} [COMMAND] [flags] [args]
@@ -41,15 +41,15 @@ COMMANDS="${@}"
 	exit
 }
 
-# Verify nodemon is installed
+# Verify tsc-watch is installed
 #
-if (! which nodemon)
+if (! which tsc-watch)
 then
-	echo -e "\n Install nodemon globally to use this tool.  E.g.:"
-	echo -e "   $ npm i -g nodemon"
+	echo -e "\n Install tsc-watch globally to use this tool.  E.g.:"
+	echo -e "   $ npm i -g tsc-watch"
 	exit
 fi
 
-# Run commanbd on save using nodemon
+# Run command on save using tsc-watch
 #
-nodemon -w ${SCRIPT_DIR}/../src/ -e "js,ts" --exec "clear; npm run build && ./bin/run ${COMMANDS}"
+tsc-watch --onSuccess "${SCRIPT_DIR}/../bin/run ${COMMANDS}"
