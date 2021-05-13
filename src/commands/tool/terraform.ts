@@ -30,7 +30,7 @@ export default class ToolTerraform extends Command {
     console.log('')
 
     if (flags.install) {
-      console.log('install:', settingsJs.installer)
+      console.log('install:', settingsJs.getInstaller())
     } else if (flags.remove) {
       console.log('TODO: remove terraform')
     } else if (flags.settings) {

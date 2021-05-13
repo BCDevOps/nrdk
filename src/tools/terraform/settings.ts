@@ -17,7 +17,7 @@ const binaries = {
   },
 }
 
-class Settings {
+class Installer {
   app = 'Terraform';
 
   platform = platform;
@@ -27,20 +27,20 @@ class Settings {
   binary: object = {};
 }
 
-function installer(platform: string): Settings {
-  const settings = new Settings()
-  if (platform === 'linux') {
+export function getInstaller(os = platform): Installer {
+  const settings = new Installer()
+  if (os === 'linux') {
     settings.binary = binaries.linux
-  } else if (platform === 'darwin') {
+  } else if (os === 'darwin' || os === 'macos') {
     settings.binary = binaries.macos
-  } else if (platform === 'win32') {
+  } else if (os === 'win32' || os === 'windows') {
     settings.binary = binaries.windows
   }
   return settings
 }
 
-module.exports = {
+export const settings = {
   version: version,
-  binary: binaries,
-  installer: installer(platform),
+  binaries: binaries,
+  installer: getInstaller(),
 }
