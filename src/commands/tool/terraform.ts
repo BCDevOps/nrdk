@@ -1,5 +1,6 @@
 import {Command, flags} from '@oclif/command'
 import {Terraform} from '../../tools/terraform'
+import * as fs from 'fs'
 
 // Terraform install settings
 const settings = require('../../tools/terraform/settings.ts')
@@ -33,11 +34,21 @@ export default class ToolTerraform extends Command {
     // Installer object contains name, platform, version and binary path
     const installer: Record<string, any> = settings.getInstaller()
     const bin = installer.binary.bin
+    const dest = installer.binary.dest
     if (flags.install) {
       const tf = new Terraform()
       tf.install(installer)
     } else if (flags.remove) {
-      console.log('TODO: remove terraform')
+      console.log(`Removing ${dest}`)
+      if (fs.existsSync(bin)) {
+        fs.rmdir(dest, {recursive: true}, error => {
+          if (error) {
+            throw error
+          }
+        })
+      } else {
+        console.log('Expected terraform install is not present')
+      }
     } else if (flags.settings) {
       console.log('settings.js:', settings)
     } else if (flags.version) {
