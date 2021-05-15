@@ -4,14 +4,17 @@ const platform = require('os').platform() || 'Failed to detect operating system'
 
 const binaries = {
   linux: {
+    bin: `/tmp/.nrdk/terraform/${version}/terraform`,
     dest: `/tmp/.nrdk/terraform/${version}`,
     url: `${urlBase}/terraform_${version}_linux_amd64.zip`,
   },
   macos: {
+    bin: `/tmp/.nrdk/terraform/${version}/terraform`,
     dest: `/tmp/.nrdk/terraform/${version}`,
     url: `${urlBase}/terraform_${version}_darwin_amd64.zip`,
   },
   windows: {
+    bin: `/tmp/.nrdk/terraform/${version}/terraform`,
     dest: `/tmp/.nrdk/terraform/${version}`,
     url: `${urlBase}/terraform_${version}_windows_amd64.zip`,
   },
