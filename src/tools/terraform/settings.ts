@@ -1,19 +1,19 @@
 const version = '0.15.3'
-const linkbase = `https://releases.hashicorp.com/terraform/${version}`
+const urlBase = `https://releases.hashicorp.com/terraform/${version}`
 const platform = require('os').platform() || 'Failed to detect operating system'
 
 const binaries = {
   linux: {
-    dest: '/usr/local/bin',
-    link: `${linkbase}/terraform_${version}_linux_amd64.zip`,
+    dest: `/tmp/.nrdk/terraform/${version}`,
+    url: `${urlBase}/terraform_${version}_linux_amd64.zip`,
   },
   macos: {
-    dest: '/usr/local/bin',
-    link: `${linkbase}/terraform_${version}_darwin_amd64.zip`,
+    dest: `/tmp/.nrdk/terraform/${version}`,
+    url: `${urlBase}/terraform_${version}_darwin_amd64.zip`,
   },
   windows: {
-    dest: '/usr/local/bin',
-    link: `${linkbase}/terraform_${version}_windows_amd64.zip`,
+    dest: `/tmp/.nrdk/terraform/${version}`,
+    url: `${urlBase}/terraform_${version}_windows_amd64.zip`,
   },
 }
 
