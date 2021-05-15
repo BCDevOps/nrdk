@@ -34,9 +34,9 @@ export default class ToolTerraform extends Command {
     const installer: Record<string, any> = settings.getInstaller()
     const tf = new Terraform()
     if (flags.install) {
-      tf.install(installer)
+      tf.install()
     } else if (flags.remove) {
-      tf.remove(installer)
+      tf.remove()
     } else if (flags.settings) {
       console.log('settings:', settings)
     } else if (flags.version) {

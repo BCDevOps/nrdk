@@ -7,19 +7,15 @@ import {LoggerFactory} from '../util/logger'
 import Axios from 'axios'
 
 // Terraform install settings
-const settings = require('./terraform/settings.ts')
+const installer = require('./terraform/settings.ts').getInstaller()
 
 export class Terraform extends Tool {
   static logger = LoggerFactory.createLogger(Terraform)
 
   // Installer
-  async install(installer: any): Promise<string> {
-    // Version, download url and destination from Installer object
-    const version = installer.version
-    const url = installer.binary.url
-    const dest = installer.binary.dest
-
-    // Binary and temporary zip download
+  async install(): Promise<string> {
+    // Bin destination, source url, bin path and temporary zip download
+    const {dest, url} = installer.binary
     const bin = path.join(dest, 'terraform')
     const zip = path.join('/tmp', `terraform-${Date.now()}.zip`)
 
@@ -28,7 +24,7 @@ export class Terraform extends Tool {
       console.log(`${bin} already present\n`)
       return 'Exists'
     }
-    console.log(`Installing Terraform ${version}`)
+    console.log(`Installing Terraform ${installer.version}`)
 
     // Make install dir (exists != error)
     fs.promises.mkdir(dest, {recursive: true}).catch(error => {
@@ -74,7 +70,7 @@ export class Terraform extends Tool {
   }
 
   // Remover/uninstaller
-  async remove(installer: any): Promise<string> {
+  async remove(): Promise<string> {
     const {dest} = installer.binary
     console.log(`Removing ${dest}`)
     if (fs.existsSync(dest)) {
@@ -91,8 +87,7 @@ export class Terraform extends Tool {
 
   // Run
   async run(args: readonly string[], options: SpawnOptions): Promise<ChildProcess> {
-    const installer: Record<string, any> = settings.getInstaller()
-    return this.install(installer)
+    return this.install()
     .then(async () => {
       return spawn(installer.binary.bin, args, options)
     })
