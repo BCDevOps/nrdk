@@ -12,31 +12,24 @@ export default class ToolTerraform extends Command {
     `,
   ]
 
-  static strict = false
-
-  static hidden = true
-
   static flags = {
     help: flags.help({char: 'h', description: 'terraform wrapper help'}),
-    install: flags.boolean({char: 'i', description: 'install terraform'}),
-    remove: flags.boolean({char: 'r', description: 'remove terraform'}),
     version: flags.boolean({char: 'v', description: 'terraform version'}),
     command: flags.boolean({char: 'c', description: 'pass commands directly to terraform'}),
   }
 
+  static hidden = true
+
+  static strict = false
+
   async run() {
-    const {flags} = this.parse(ToolTerraform)
-    console.log('')
+    const {argv, flags} = this.parse(ToolTerraform)
 
     const tf = new Terraform()
-    if (flags.install) {
-      tf.install()
-    } else if (flags.remove) {
-      tf.remove()
-    } else if (flags.version) {
+    if (flags.version) {
       tf.run(['version'])
     } else if (flags.command) {
-      tf.run(this.parse(ToolTerraform).argv)
+      tf.run(argv)
     } else {
       console.log('Please run with the flag --help')
     }
