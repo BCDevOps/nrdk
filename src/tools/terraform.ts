@@ -1,11 +1,13 @@
 import {Tool} from './tool'
 import * as fs from 'fs'
 import * as path from 'path'
-import {ChildProcess} from 'child_process'
-import {Jdk} from './jdk'
+import {ChildProcess, spawn, SpawnOptions} from 'child_process'
 import {GeneralError} from '../error'
 import {LoggerFactory} from '../util/logger'
 import Axios from 'axios'
+
+// Terraform install settings
+const settings = require('./terraform/settings.ts')
 
 export class Terraform extends Tool {
   static logger = LoggerFactory.createLogger(Terraform)
@@ -23,7 +25,7 @@ export class Terraform extends Tool {
 
     // Notify and exit if binary already exists
     if (fs.existsSync(bin)) {
-      console.log(`${bin} already exists.  Skipping install.`)
+      console.log(`${bin} already present\n`)
       return 'Exists'
     }
     console.log(`Installing Terraform ${version}`)
@@ -87,12 +89,12 @@ export class Terraform extends Tool {
     return dest
   }
 
-  // Run stub
-  async run(installer: any): Promise<ChildProcess> {
-    const {version} = installer
-    return this.install(version)
+  // Run
+  async run(args: readonly string[], options: SpawnOptions): Promise<ChildProcess> {
+    const installer: Record<string, any> = settings.getInstaller()
+    return this.install(installer)
     .then(async () => {
-      return new Jdk().run([],  {stdio: ['ignore', 'pipe', 'pipe']})
+      return spawn(installer.binary.bin, args, options)
     })
   }
 }
