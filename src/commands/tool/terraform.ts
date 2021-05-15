@@ -6,26 +6,23 @@ export default class ToolTerraform extends Command {
 
   static examples = [
     `
-    $ nrdk tool:terraform --version
+    $ nrdk tool:terraform -v
+    $ nrdk tool:terraform -c -- --version
     > Terraform v0.15.1
     `,
   ]
 
+  static strict = false
+
   static hidden = true
 
   static flags = {
-    help: flags.help({char: 'h', description: 'Terraform wrapper help'}),
-    install: flags.boolean({char: 'i', description: 'Install terraform'}),
-    remove: flags.boolean({char: 'r', description: 'Remove terraform'}),
-    version: flags.boolean({char: 'v', description: 'Terraform version'}),
-    init: flags.boolean({description: 'Prepare your working directory for other commands'}),
-    validate: flags.boolean({description: 'Check whether the configuration is valid'}),
-    plan: flags.boolean({description: 'Show changes required by the current configuration'}),
-    apply: flags.boolean({description: 'Create or update infrastructure'}),
-    destroy: flags.boolean({description: 'Destroy previously-created infrastructure'}),
+    help: flags.help({char: 'h', description: 'terraform wrapper help'}),
+    install: flags.boolean({char: 'i', description: 'install terraform'}),
+    remove: flags.boolean({char: 'r', description: 'remove terraform'}),
+    version: flags.boolean({char: 'v', description: 'terraform version'}),
+    command: flags.boolean({char: 'c', description: 'pass commands directly to terraform'}),
   }
-
-  static strict = false
 
   async run() {
     const {flags} = this.parse(ToolTerraform)
@@ -38,16 +35,8 @@ export default class ToolTerraform extends Command {
       tf.remove()
     } else if (flags.version) {
       tf.run(['version'])
-    } else if (flags.apply) {
-      tf.run(['apply'])
-    } else if (flags.destroy) {
-      tf.run(['destroy'])
-    } else if (flags.init) {
-      tf.run(['init'])
-    } else if (flags.plan) {
-      tf.run(['plan'])
-    } else if (flags.validate) {
-      tf.run(['validate'])
+    } else if (flags.command) {
+      tf.run(this.parse(ToolTerraform).argv)
     } else {
       console.log('Please run with the flag --help')
     }
