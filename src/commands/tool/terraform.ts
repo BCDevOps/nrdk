@@ -1,9 +1,6 @@
 import {Command, flags} from '@oclif/command'
 import {Terraform} from '../../tools/terraform'
 
-// Terraform install settings
-const settings = require('../../tools/terraform/settings.ts')
-
 export default class ToolTerraform extends Command {
   static description = 'Terraform commands'
 
@@ -17,10 +14,9 @@ export default class ToolTerraform extends Command {
   static hidden = true
 
   static flags = {
-    help: flags.help({char: 'h'}),
+    help: flags.help({char: 'h', description: 'terraform wrapper help'}),
     install: flags.boolean({char: 'i', description: 'install terraform'}),
     remove: flags.boolean({char: 'r', description: 'remove terraform'}),
-    settings: flags.boolean({char: 's', description: 'view settings.js'}),
     version: flags.boolean({char: 'v', description: 'terraform version'}),
   }
 
@@ -31,14 +27,11 @@ export default class ToolTerraform extends Command {
     console.log('')
 
     // Installer object contains name, platform, version and binary path
-    const installer: Record<string, any> = settings.getInstaller()
     const tf = new Terraform()
     if (flags.install) {
       tf.install()
     } else if (flags.remove) {
       tf.remove()
-    } else if (flags.settings) {
-      console.log('settings:', settings)
     } else if (flags.version) {
       tf.run(['-v'], {stdio: ['pipe', process.stdout, process.stderr]})
     } else {
