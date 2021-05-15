@@ -32,17 +32,15 @@ export default class ToolTerraform extends Command {
 
     // Installer object contains name, platform, version and binary path
     const installer: Record<string, any> = settings.getInstaller()
-    const {bin} = installer.binary
     const tf = new Terraform()
     if (flags.install) {
       tf.install(installer)
     } else if (flags.remove) {
       tf.remove(installer)
     } else if (flags.settings) {
-      console.log('settings.js:', settings)
+      console.log('settings:', settings)
     } else if (flags.version) {
-      const {data} = require('node-cmd').runSync(`${bin} version`)
-      console.log(data)
+      tf.run(['-v'], {stdio: ['pipe', process.stdout, process.stderr]})
     } else {
       console.log('Please run with the flag --help')
     }
