@@ -73,23 +73,24 @@ export class Terraform extends Tool {
 
   // Remover/uninstaller
   async remove(installer: any): Promise<string> {
-    const {bin, dest} = installer.binary
+    const {dest} = installer.binary
     console.log(`Removing ${dest}`)
-    if (fs.existsSync(bin)) {
+    if (fs.existsSync(dest)) {
       fs.rmdir(dest, {recursive: true}, error => {
         if (error) {
-          throw error
+          throw new GeneralError('Removal error', error)
         }
       })
     } else {
       console.log('Expected terraform install is not present')
     }
-    return bin
+    return dest
   }
 
   // Run stub
-  async run(): Promise<ChildProcess> {
-    return this.install('3.6.3')
+  async run(installer: any): Promise<ChildProcess> {
+    const {version} = installer
+    return this.install(version)
     .then(async () => {
       return new Jdk().run([],  {stdio: ['ignore', 'pipe', 'pipe']})
     })
