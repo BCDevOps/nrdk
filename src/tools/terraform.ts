@@ -27,12 +27,12 @@ export class Terraform extends Tool {
     console.log(`Installing Terraform ${installer.version}`)
 
     // Make install dir (exists != error)
-    fs.promises.mkdir(dest, {recursive: true}).catch(error => {
+    await fs.promises.mkdir(dest, {recursive: true}).catch(error => {
       throw new GeneralError(error)
     })
 
     // Download file from link
-    Axios.get(url, {responseType: 'stream'}).then(response => {
+    await Axios.get(url, {responseType: 'stream'}).then(response => {
       const stream = fs.createWriteStream(zip)
       response.data.pipe(stream)
       return new Promise((resolve, reject) => {
@@ -89,7 +89,6 @@ export class Terraform extends Tool {
   async run(args: readonly string[], options?: SpawnOptions): Promise<ChildProcess> {
     // Install terraform, if necessary
     return this.install()
-
     // Then run terraform with provided arguments
     .then(async () => {
       // Default SpawnOptions
