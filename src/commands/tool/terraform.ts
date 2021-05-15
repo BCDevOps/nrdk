@@ -1,7 +1,8 @@
 import {Command, flags} from '@oclif/command'
+import {Terraform} from '../../tools/terraform'
 
 // Terraform install settings
-const settingsJs = require('../../tools/terraform/settings.ts')
+const settings = require('../../tools/terraform/settings.ts')
 
 export default class ToolTerraform extends Command {
   static description = 'Terraform commands'
@@ -30,11 +31,13 @@ export default class ToolTerraform extends Command {
     console.log('')
 
     if (flags.install) {
-      console.log('install:', settingsJs.getInstaller())
+      const installer: Record<string, any> = settings.getInstaller()
+      const tf = new Terraform()
+      tf.install(installer)
     } else if (flags.remove) {
       console.log('TODO: remove terraform')
     } else if (flags.settings) {
-      console.log('settings.js:', settingsJs)
+      console.log('settings.js:', settings)
     } else if (flags.version) {
       const {data} = require('node-cmd').runSync('terraform version')
       console.log(data)
