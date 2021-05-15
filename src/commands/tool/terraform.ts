@@ -33,7 +33,7 @@ export default class ToolTerraform extends Command {
     } else if (flags.remove) {
       tf.remove()
     } else if (flags.version) {
-      tf.run(['-v'], {stdio: ['pipe', process.stdout, process.stderr]})
+      tf.run(['-v'])
     } else {
       console.log('Please run with the flag --help')
     }

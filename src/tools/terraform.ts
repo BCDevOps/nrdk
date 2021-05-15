@@ -85,11 +85,16 @@ export class Terraform extends Tool {
     return dest
   }
 
-  // Run
-  async run(args: readonly string[], options: SpawnOptions): Promise<ChildProcess> {
+  // Run commanbds using child_process
+  async run(args: readonly string[], options?: SpawnOptions): Promise<ChildProcess> {
+    // Install terraform, if necessary
     return this.install()
+
+    // Then run terraform with provided arguments
     .then(async () => {
-      return spawn(installer.binary.bin, args, options)
+      // Default SpawnOptions
+      const op = options || {stdio: ['pipe', process.stdout, process.stderr]}
+      return spawn(installer.binary.bin, args, op)
     })
   }
 }
