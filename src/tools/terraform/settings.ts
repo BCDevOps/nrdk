@@ -1,49 +1,22 @@
+import {GeneralError} from '../../error'
+
+// Version and url vars
 const version = '0.15.3'
-const urlBase = `https://releases.hashicorp.com/terraform/${version}`
-const platform = require('os').platform() || 'Failed to detect operating system'
-
-const binaries = {
-  linux: {
-    bin: `/tmp/.nrdk/terraform/${version}/terraform`,
-    dest: `/tmp/.nrdk/terraform/${version}`,
-    url: `${urlBase}/terraform_${version}_linux_amd64.zip`,
-  },
-  macos: {
-    bin: `/tmp/.nrdk/terraform/${version}/terraform`,
-    dest: `/tmp/.nrdk/terraform/${version}`,
-    url: `${urlBase}/terraform_${version}_darwin_amd64.zip`,
-  },
-  windows: {
-    bin: `/tmp/.nrdk/terraform/${version}/terraform`,
-    dest: `/tmp/.nrdk/terraform/${version}`,
-    url: `${urlBase}/terraform_${version}_windows_amd64.zip`,
-  },
+const urlBase = `https://releases.hashicorp.com/terraform/${version}/terraform_${version}`
+const zipUrls: Record<string, string> = {
+  linux: `${urlBase}_linux_amd64.zip`,
+  darwin: `${urlBase}_darwin_amd64.zip`,
+  win32: `${urlBase}_windows_amd64.zip`,
 }
 
-class Installer {
-  app = 'Terraform';
-
-  platform = platform;
-
-  version = version;
-
-  binary: object = {};
-}
-
-export function getInstaller(os = platform): Installer {
-  const settings = new Installer()
-  if (os === 'linux') {
-    settings.binary = binaries.linux
-  } else if (os === 'darwin' || os === 'macos') {
-    settings.binary = binaries.macos
-  } else if (os === 'win32' || os === 'windows') {
-    settings.binary = binaries.windows
+// Select url by os (optional platform override)
+function getUrlByOS(platform = require('os').platform()): string {
+  for (const os in zipUrls) {
+    if (os.match(platform)) return zipUrls[os]
   }
-  return settings
+  throw new GeneralError('Failed to match operating system')
 }
 
-export const settings = {
-  version: version,
-  binaries: binaries,
-  installer: getInstaller(),
-}
+export const url = getUrlByOS()
+export const bin = `/tmp/.nrdk/terraform/${version}/terraform`
+export const dest = `/tmp/.nrdk/terraform/${version}`
