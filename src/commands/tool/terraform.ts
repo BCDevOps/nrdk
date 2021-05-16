@@ -2,8 +2,6 @@ import {Command, flags} from '@oclif/command'
 import {Terraform} from '../../tools/terraform'
 
 export default class ToolTerraform extends Command {
-  static description = 'Terraform commands'
-
   static examples = [
     `
     $ nrdk tool:terraform -v

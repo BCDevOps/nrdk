@@ -15,7 +15,6 @@ export class Terraform extends Tool {
   // Installer
   async install(): Promise<string> {
     // Bin destination, source url, bin path and temporary zip download
-    console.log(bin)
     const zip = path.join('/tmp', `terraform-${Date.now()}.zip`)
 
     // Notify and exit if binary already exists
