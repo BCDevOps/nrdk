@@ -10,29 +10,23 @@ describe('tool:terraform', () => {
 
   test
   .stdout()
-  .command(['tool:terraform', '-i'])
-  .it('runs tool:terraform -i', ctx => {
-    expect(ctx.stdout).to.contain('TODO: install terraform')
+  .command(['tool:terraform', '-h'])
+  .exit(0)
+  .it('runs terraform:tool help', ctx => {
+    expect(ctx.stdout).to.contain('terraform wrapper help')
   })
 
   test
   .stdout()
-  .command(['tool:terraform', '-r'])
-  .it('runs tool:terraform -r', ctx => {
-    expect(ctx.stdout).to.contain('TODO: remove terraform')
-  })
-
-  test
-  .stdout()
-  .command(['tool:terraform', '-s'])
-  .it('runs tool:terraform -s', ctx => {
-    expect(ctx.stdout).to.contain('settings.js:')
+  .command(['tool:terraform', '-c', '--', '--version'])
+  .it('runs tool:terraform -c -- --version', ctx => {
+    expect(ctx.stdout).to.contain('Using /tmp/.nrdk/terraform/')
   })
 
   test
   .stdout()
   .command(['tool:terraform', '-v'])
   .it('runs tool:terraform -v', ctx => {
-    expect(ctx.stdout).to.contain('Terraform v')
+    expect(ctx.stdout).to.contain('Using /tmp/.nrdk/terraform')
   })
 })
