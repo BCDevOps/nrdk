@@ -7,7 +7,7 @@ import {LoggerFactory} from '../util/logger'
 import Axios from 'axios'
 
 // Terraform install settings
-const installer = require('./terraform/settings.ts').getInstaller()
+const {bin, dest, url} = require('./terraform/settings.ts')
 
 export class Terraform extends Tool {
   static logger = LoggerFactory.createLogger(Terraform)
@@ -15,16 +15,15 @@ export class Terraform extends Tool {
   // Installer
   async install(): Promise<string> {
     // Bin destination, source url, bin path and temporary zip download
-    const {dest, url} = installer.binary
-    const bin = path.join(dest, 'terraform')
+    console.log(bin)
     const zip = path.join('/tmp', `terraform-${Date.now()}.zip`)
 
     // Notify and exit if binary already exists
     if (fs.existsSync(bin)) {
-      console.log(`${bin} already present\n`)
+      console.log(`\nUsing ${bin}\n`)
       return 'Exists'
     }
-    console.log(`Installing Terraform ${installer.version}`)
+    console.log(`\nInstalling ${bin}\n`)
 
     // Make install dir (exists != error)
     await fs.promises.mkdir(dest, {recursive: true}).catch(error => {
@@ -71,7 +70,6 @@ export class Terraform extends Tool {
 
   // Remover/uninstaller
   async remove(): Promise<string> {
-    const {dest} = installer.binary
     console.log(`Removing ${dest}`)
     if (fs.existsSync(dest)) {
       fs.rmdir(dest, {recursive: true}, error => {
@@ -87,13 +85,14 @@ export class Terraform extends Tool {
 
   // Run commanbds using child_process
   async run(args: readonly string[], options?: SpawnOptions): Promise<ChildProcess> {
+    // Default SpawnOptions
+    const op = options || {stdio: ['pipe', process.stdout, process.stderr]}
+
     // Install terraform, if necessary
     return this.install()
     // Then run terraform with provided arguments
     .then(async () => {
-      // Default SpawnOptions
-      const op = options || {stdio: ['pipe', process.stdout, process.stderr]}
-      return spawn(installer.binary.bin, args, op)
+      return spawn(bin, args, op)
     })
   }
 }
