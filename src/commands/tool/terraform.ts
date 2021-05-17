@@ -3,11 +3,9 @@ import {Terraform} from '../../tools/terraform'
 
 export default class ToolTerraform extends Command {
   static examples = [
-    `
-    $ nrdk tool:terraform -v
-    $ nrdk tool:terraform -c -- --version
-    > Terraform v0.15.1
-    `,
+    '$ nrdk tool:terraform -v',
+    '$ nrdk tool:terraform -c -- --version',
+    '> Terraform v0.15.1',
   ]
 
   static flags = {
