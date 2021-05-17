@@ -49,12 +49,12 @@ export class Terraform extends Tool {
           // eslint-disable-next-line new-cap
           .pipe(unzipper.Extract({path: dest}))
           .on('error', reject)
-          .on('finish', () => {
+          .on('finish', async () => {
             // Make binary executable
-            fs.promises.chmod(bin, 0o775)
+            await fs.promises.chmod(bin, 0o775)
 
             // Remove download
-            fs.promises.unlink(zip)
+            await fs.promises.unlink(zip)
             .catch(error => {
               console.log(error)
               throw new GeneralError('Extract error', error)
@@ -64,7 +64,6 @@ export class Terraform extends Tool {
         })
       })
     })
-    console.log('returning installer:', bin)
     return bin
   }
 
