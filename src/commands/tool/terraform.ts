@@ -25,9 +25,9 @@ export default class ToolTerraform extends Command {
 
     const tf = new Terraform()
     if (flags.version) {
-      tf.run(['version'])
+      await tf.run(['version'])
     } else if (flags.command) {
-      tf.run(argv)
+      await tf.run(argv)
     } else {
       this.log('Please run with the flag --help')
     }
