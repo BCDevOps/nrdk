@@ -29,7 +29,7 @@ export default class ToolTerraform extends Command {
     } else if (flags.command) {
       tf.run(argv)
     } else {
-      console.log('Please run with the flag --help')
+      this.log('Please run with the flag --help')
     }
   }
 }
