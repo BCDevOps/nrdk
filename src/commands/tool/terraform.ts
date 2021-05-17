@@ -18,6 +18,8 @@ export default class ToolTerraform extends Command {
 
   static strict = false
 
+  static usage = 'nrdk tool:terraform -c -- [init|validate|plan|apply|destroy]'
+
   async run() {
     const {argv, flags} = this.parse(ToolTerraform)
 
