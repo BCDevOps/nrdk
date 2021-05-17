@@ -90,8 +90,8 @@ export class Terraform extends Tool {
     // Install terraform, if necessary
     return this.install()
     // Then run terraform with provided arguments
-    .then(async () => {
-      return spawn(bin, args, op)
+    .then(async getBin => {
+      return spawn(getBin, args, op)
     })
   }
 }
