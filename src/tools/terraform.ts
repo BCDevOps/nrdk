@@ -20,7 +20,7 @@ export class Terraform extends Tool {
     // Notify and exit if binary already exists
     if (fs.existsSync(bin)) {
       console.log(`\nUsing ${bin}\n`)
-      return 'Exists'
+      return bin
     }
     console.log(`\nInstalling ${bin}\n`)
 
@@ -64,7 +64,8 @@ export class Terraform extends Tool {
         })
       })
     })
-    return zip
+    console.log('returning installer:', bin)
+    return bin
   }
 
   // Remover/uninstaller

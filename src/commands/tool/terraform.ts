@@ -22,7 +22,6 @@ export default class ToolTerraform extends Command {
 
   async run() {
     const {argv, flags} = this.parse(ToolTerraform)
-
     const tf = new Terraform()
     if (flags.version) {
       await tf.run(['version'])
