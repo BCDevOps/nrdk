@@ -40,7 +40,7 @@ export class Terraform extends Tool {
       fs.createReadStream(zip)
       .pipe(extract({path: homeDir}))
       .on('error', reject)
-      .on('finish', () => resolve(true))
+      .on('close', () => resolve(true))
     })
     // Chmod +x (Linux and MacOS only)
     .then(() => {
