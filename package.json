@@ -100,6 +100,7 @@
   "repository": "https://github.com/bcdevops/nrdk",
   "scripts": {
     "watcher": "npm ci && watch \"npm run build\" src",
+    "watch-command": "tsc-watch --onSuccess \"./bin/run ${argv:-}\"",
     "prebuild": "oclif-dev manifest",
     "build": "tsc -b",
     "postpack": "rimraf oclif.manifest.json",
