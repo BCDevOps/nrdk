@@ -1,5 +1,5 @@
 import {Command} from '@oclif/command'
-import {runner} from '../../util/runner'
+import {runner} from '../../util/runner-tf'
 
 export default class ToolTerraform extends Command {
   static hidden = true
