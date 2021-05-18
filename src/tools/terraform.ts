@@ -25,7 +25,7 @@ export class Terraform extends Tool {
   // Installer
   async install(): Promise<string> {
     // Install dir, zip download and bin path
-    const homeDir = path.join(os.tmpdir(), `terraform/${version}`)
+    const homeDir = path.join(os.tmpdir(), `.nrdk/terraform/${version}`)
     const zip = path.join(os.tmpdir(), `terraform-${Date.now()}.zip`)
     const bin = this.bin(homeDir)
 
