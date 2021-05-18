@@ -4,7 +4,6 @@ import * as path from 'path'
 import {ChildProcess, SpawnOptions} from 'child_process'
 import {LoggerFactory} from '../util/logger'
 import * as os from 'os'
-// import {MavenHelper} from './maven-helper'
 
 // Terraform install settings
 import {url, version} from './terraform/settings'
@@ -25,7 +24,7 @@ export class Terraform extends Tool {
     const zip = path.join(os.tmpdir(), `terraform-${Date.now()}.zip`)
     const homeDir = path.join(os.tmpdir(), `terraform/${version}`)
     const bin = this.bin(homeDir)
-    // Notify and exit if binary already exists
+    // Notify and return if binary already exists
     if (fs.existsSync(bin)) {
       // eslint-disable-next-line no-console
       console.log(`\nUsing ${bin}\n`)
