@@ -1,7 +1,6 @@
 import * as fs from 'fs'
 import * as path from 'path'
 import * as os from 'os'
-import * as unzipper from 'unzipper'
 import {ChildProcess, SpawnOptions} from 'child_process'
 
 // Downloader (maven-helper), install settings and utils
@@ -36,7 +35,7 @@ export class Terraform extends Tool {
     await MavenHelper.downloadFromUrl(new URL(url), zip)
 
     // Extract
-    const extract = unzipper.Extract
+    const extract = require('unzipper').Extract
     return new Promise((resolve, reject) => {
       fs.createReadStream(zip)
       .pipe(extract({path: homeDir}))
