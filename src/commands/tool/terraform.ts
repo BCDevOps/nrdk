@@ -12,8 +12,6 @@ export default class ToolTerraform extends Command {
     const tf = new Terraform()
     await tf.run(argv, {stdio: ['ignore',  'pipe', 'pipe']})
     .then(streamOutput(process.stdout, process.stderr))
-    .then(proc => {
-      this.exit(proc.status as number)
-    })
+    .then(proc => proc.status as number)
   }
 }
