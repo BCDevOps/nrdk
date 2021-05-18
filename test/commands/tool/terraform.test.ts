@@ -19,7 +19,7 @@ describe('tool:terraform', () => {
   .stdout()
   .command(['tool:terraform', '-version'])
   .it('runs tool:terraform -version', ctx => {
-    expect(ctx.stdout).to.match(/\nTerraform v\d+\.\d+\.\d+/)
+    expect(ctx.stdout).to.match(/Terraform v\d+\.\d+\.\d+/)
   })
 
   test
