@@ -26,6 +26,7 @@ export async function _spawn(logger: winston.Logger, command: string, argsv: rea
   })
 }
 
+// Wrap spawn, add logging
 export async function _spawn2(command: string, argsv: readonly string[], options?: SpawnOptions): Promise<ChildProcess> {
   logger.child({group: ['spawn', command], args: argsv}).debug('%s %s', command, (argsv || []).join(' '))
   return new Promise(resolve => {
@@ -33,6 +34,7 @@ export async function _spawn2(command: string, argsv: readonly string[], options
     resolve(child)
   })
 }
+
 export async function waitAndBuffer(child: ChildProcess): Promise<SpawnSyncReturns<string>> {
   return new Promise(resolve => {
     let stdout = ''
@@ -66,6 +68,7 @@ export async function waitToExit(proc: ChildProcess): Promise<SpawnSyncReturns<s
     })
   })
 }
+
 export async function waitForSuccessfulExitCode(proc: ChildProcess) {
   return new Promise<number>((resolve, reject) => {
     proc.on('exit', exitCode => {
@@ -78,6 +81,7 @@ export async function waitForSuccessfulExitCode(proc: ChildProcess) {
   })
 }
 
+// Wrap output to ensure capture by oclif
 export function streamOutput(stdout: Writable, stderr: Writable): (child: ChildProcess) => Promise<SpawnSyncReturns<string>> {
   return (child: ChildProcess): Promise<SpawnSyncReturns<string>> => {
     return new Promise<SpawnSyncReturns<string>>(resolve => {

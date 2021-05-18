@@ -16,7 +16,4 @@ function getUrlByOS(platform = require('os').platform()): string {
   }
   throw new GeneralError('Failed to match operating system')
 }
-
 export const url = getUrlByOS()
-export const bin = `/tmp/.nrdk/terraform/${version}/terraform`
-export const dest = `/tmp/.nrdk/terraform/${version}`

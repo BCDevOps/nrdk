@@ -1,11 +1,17 @@
+import {Terraform} from '../tools/terraform'
 import {streamOutput} from '../util/child-process'
 import {SpawnOptions} from 'child_process'
-import {Terraform} from '../tools/terraform'
 
+// Runner provides a shorthand to oclif commands
 export async function runner(argv: string[], spawnOptions?: SpawnOptions) {
-  const op: SpawnOptions = spawnOptions || {stdio: ['ignore',  'pipe', 'pipe']}
   const tf = new Terraform()
-  return tf.run(argv, op)
+
+  // Run command
+  return tf.run(argv, spawnOptions || {stdio: ['ignore',  'pipe', 'pipe']})
+
+  // Wait for output to complete
   .then(streamOutput(process.stdout, process.stderr))
+
+  // Return exit status
   .then(proc => proc.status as number)
 }
