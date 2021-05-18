@@ -37,7 +37,7 @@ export default class ToolTerraform extends Command {
         this.exit(proc.status as number)
       })
     } else {
-      this.error('Please run with the flag --help')
+      this.log('Please run with the flag --help')
     }
   }
 }

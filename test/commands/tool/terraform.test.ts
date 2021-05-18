@@ -3,10 +3,10 @@ import {expect, test} from '@oclif/test'
 describe('tool:terraform', () => {
   test
   .stdout()
-  .stderr()
   .command(['tool:terraform'])
-  .exit(2)
-  .it('runs tool:terraform')
+  .it('runs tool:terraform', ctx => {
+    expect(ctx.stdout).to.contain('Please run with the flag --help')
+  })
 
   test
   .stdout()
@@ -18,7 +18,6 @@ describe('tool:terraform', () => {
 
   test
   .stdout()
-  .stderr()
   .command(['tool:terraform', '-c', '--', '--version'])
   .exit(0)
   .it('runs tool:terraform -c -- --version', ctx => {
@@ -30,6 +29,6 @@ describe('tool:terraform', () => {
   .command(['tool:terraform', '-v'])
   .exit(0)
   .it('runs tool:terraform -v', ctx => {
-    expect(ctx.stdout).to.match(/\nUsing /)
+    expect(ctx.stdout).to.match(/\nTerraform v\d+\.\d+\.\d+/)
   })
 })
