@@ -1,6 +1,5 @@
 import {Command} from '@oclif/command'
-import {Terraform} from '../../tools/terraform'
-import {streamOutput} from '../../util/child-process'
+import {runner} from '../util/runner'
 
 export default class ToolTerraform extends Command {
   static hidden = true
@@ -9,9 +8,6 @@ export default class ToolTerraform extends Command {
 
   async run() {
     const {argv} = this.parse(ToolTerraform)
-    const tf = new Terraform()
-    await tf.run(argv, {stdio: ['ignore',  'pipe', 'pipe']})
-    .then(streamOutput(process.stdout, process.stderr))
-    .then(proc => proc.status as number)
+    return runner(argv)
   }
 }
