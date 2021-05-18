@@ -45,6 +45,8 @@ export class Terraform extends Tool {
       .on('finish', () => {
         resolve(true)
       })
+    }).then(() => {
+      fs.chmodSync(bin, 0o755)
     })
     .then(() => {
       return bin
