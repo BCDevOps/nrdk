@@ -1,5 +1,6 @@
 import {Command, flags} from '@oclif/command'
 import {Terraform} from '../../tools/terraform'
+import {streamOutput} from '../../util/child-process'
 
 export default class ToolTerraform extends Command {
   static examples = [
@@ -24,11 +25,19 @@ export default class ToolTerraform extends Command {
     const {argv, flags} = this.parse(ToolTerraform)
     const tf = new Terraform()
     if (flags.version) {
-      await tf.run(['version'])
+      await tf.run(['version'], {stdio: ['ignore',  'pipe', 'pipe']})
+      .then(streamOutput(process.stdout, process.stderr))
+      .then(proc => {
+        this.exit(proc.status as number)
+      })
     } else if (flags.command) {
-      await tf.run(argv)
+      await tf.run(argv, {stdio: ['ignore',  'pipe', 'pipe']})
+      .then(streamOutput(process.stdout, process.stderr))
+      .then(proc => {
+        this.exit(proc.status as number)
+      })
     } else {
-      this.log('Please run with the flag --help')
+      this.error('Please run with the flag --help')
     }
   }
 }

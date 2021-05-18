@@ -1,7 +1,7 @@
 import {GeneralError} from '../../error'
 
 // Version and url vars
-const version = '0.15.3'
+export const version = '0.15.3'
 const urlBase = `https://releases.hashicorp.com/terraform/${version}/terraform_${version}`
 const zipUrls: Record<string, string> = {
   linux: `${urlBase}_linux_amd64.zip`,

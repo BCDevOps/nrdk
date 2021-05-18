@@ -1,4 +1,5 @@
 import {spawn, SpawnOptions, SpawnSyncReturns, ChildProcess} from 'child_process'
+import {Writable} from 'stream'
 import winston from 'winston'
 import {LoggerFactory} from '../util/logger'
 
@@ -75,4 +76,20 @@ export async function waitForSuccessfulExitCode(proc: ChildProcess) {
       }
     })
   })
+}
+
+export function streamOutput(stdout: Writable, stderr: Writable): (child: ChildProcess) => Promise<SpawnSyncReturns<string>> {
+  return (child: ChildProcess): Promise<SpawnSyncReturns<string>> => {
+    return new Promise<SpawnSyncReturns<string>>(resolve => {
+      child.stdout?.on('data', data => {
+        stdout.write(data)
+      })
+      child.stderr?.on('data', data => {
+        stderr.write(data)
+      })
+      child.on('exit', status => {
+        resolve({pid: 0, status: status as number, stdout: '', stderr: '', output: (null as unknown) as string[], signal: null})
+      })
+    })
+  }
 }
