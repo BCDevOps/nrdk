@@ -101,9 +101,11 @@
   "repository": "https://github.com/bcdevops/nrdk",
   "scripts": {
     "watch-build": "tsc-watch --onSuccess \"npm run build\"",
+    "watch-build:test": "tsc-watch --onSuccess \"npm run build:test\"",
     "watch-command": "tsc-watch --onSuccess \"./bin/run ${argv:-}\"",
     "prebuild": "oclif-dev manifest",
     "build": "tsc -b",
+    "build:test": "npm run build && npm test",
     "postpack": "rimraf oclif.manifest.json",
     "postbuild": "cpx \"src/**/*.yaml\" lib",
     "lint": "eslint . --ext .ts --config .eslintrc",
