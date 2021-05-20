@@ -1,5 +1,5 @@
 import {BasicJavaApplicationDeployer} from '../../util/basic-java-application-deployer'
-const path = require('path')
+import * as path from 'path'
 
 const MyDeployer = class extends BasicJavaApplicationDeployer {
   // eslint-disable-next-line no-useless-constructor

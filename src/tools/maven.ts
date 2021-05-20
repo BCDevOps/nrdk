@@ -41,7 +41,7 @@ export class Maven extends Tool {
       const entry = await (await SecretManager.getInstance()).getEntry(SVC_IDIR_SPEC)
       const idirUsername = (await entry.getProperty(SVC_IDIR_SPEC.fields.UPN.name)).getPlainText()
       const idirPassword = (await entry.getProperty(SVC_IDIR_SPEC.fields.PASSWORD.name))
-      const crypto = require('crypto')
+      const crypto = await import('crypto')
       const masterPassword = crypto.randomBytes(16).toString('hex')
       const userConfDir = path.join(mavenHome, 'usr')
       const userSecuritySettingsXmlFile = path.join(userConfDir, 'security-settings.xml')

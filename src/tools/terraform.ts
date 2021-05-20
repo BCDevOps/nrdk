@@ -35,7 +35,7 @@ export class Terraform extends Tool {
     await MavenHelper.downloadFromUrl(new URL(url), zip)
 
     // Extract
-    const extract = require('unzipper').Extract
+    const extract = (await import('unzipper')).Extract
     return new Promise((resolve, reject) => {
       fs.createReadStream(zip)
       .pipe(extract({path: homeDir}))
