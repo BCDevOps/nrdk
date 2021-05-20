@@ -68,7 +68,7 @@ npm run publish:latest
 
 ### Start
 
-1. Run nrdk (foreground) and its build watcher (background)
+1. Run nrdk interractively in a container
 
    ```
    docker-compose run nrdk
@@ -83,13 +83,13 @@ npm run publish:latest
 3. Run nrdk (local build)
 
    ```
-   [container]$ nrdk
+   [container]$ nrdk [COMMANDS] [-FLAGS]
    ```
 
 ### Stop
 
-1. Stop any background services (i.e. build watcher)
+1. The container stops automatically when exited
 
    ```
-   docker-compose down
+   [container]$ exit
    ```
