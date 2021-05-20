@@ -1,4 +1,5 @@
 import {GeneralError} from '../../error'
+import * as os from 'os'
 
 // Version and url vars
 export const version = '0.15.3'
@@ -10,7 +11,7 @@ const zipUrls: Record<string, string> = {
 }
 
 // Select url by os (optional platform override)
-function getUrlByOS(platform = require('os').platform()): string {
+function getUrlByOS(platform = os.platform()): string {
   for (const os in zipUrls) {
     if (os.match(platform)) return zipUrls[os]
   }

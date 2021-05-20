@@ -24,7 +24,7 @@ function httpGet(url: URL, callback: (res: http.IncomingMessage) => void): http.
 }
 
 function toJavaClassPath(items: string[]): string {
-  if (require('os').platform() === 'win32') {
+  if (os.platform() === 'win32') {
     return items.join(';')
   }
   return items.join(':')
