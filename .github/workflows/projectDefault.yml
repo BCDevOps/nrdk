@@ -14,4 +14,4 @@ jobs:
           # TODO: use vars, like GitHub repo or environment secrets
           project: Release 0.1.0
           column: Triage
-          repo-token: ${{ secrets.PROJECT_AUTOMATION }}
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
