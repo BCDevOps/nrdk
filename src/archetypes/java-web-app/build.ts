@@ -1,5 +1,5 @@
 import {BasicBuilder} from '../../util/basic-builder'
-const path = require('path')
+import * as path from 'path'
 
 const MyBuilder = class extends BasicBuilder {
   // eslint-disable-next-line no-useless-constructor
