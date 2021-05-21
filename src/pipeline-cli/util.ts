@@ -1,5 +1,6 @@
-/* eslint-disable complexity */
+
 /* eslint-disable no-inner-declarations */
+
 import {spawnSync, SpawnSyncOptionsWithStringEncoding, SpawnSyncReturns} from 'child_process'
 
 export namespace Util {
@@ -8,8 +9,7 @@ export namespace Util {
       // logger.trace([command].concat(args || []).join(' '), ' - ', options, ' > ', ret.status)
       return ret as unknown as SpawnSyncReturns<string>
     }
-
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    /*
     function execSync(command: string, args?: readonly string[], options?: SpawnSyncOptionsWithStringEncoding) {
       const ret = unsafeExecSync(command, args, options)
       if (ret.status !== 0) {
@@ -19,7 +19,8 @@ export namespace Util {
       }
       return ret
     }
-
+    */
+    // eslint-disable-next-line complexity
     export function applyArgumentsDefaults(options: any) {
       options.git = options.git || {}
       const git = options.git
