@@ -97,3 +97,8 @@ export function streamOutput(stdout: Writable, stderr: Writable): (child: ChildP
     })
   }
 }
+
+export function mustBeSuccessful(arg: SpawnSyncReturns<string>) {
+  if (arg.status !== 0) throw new Error(`Processs ${arg.pid} exited with value ${arg.status}\nstdout:${arg.stdout}\nstderr:${arg.stderr}`)
+  return arg
+}

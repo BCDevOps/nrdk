@@ -13,6 +13,12 @@
     ]
   },
   "dependencies": {
+    "@aws-crypto/sha256-js": "^1.1.0",
+    "@aws-sdk/client-elasticsearch-service": "^3.11.0",
+    "@aws-sdk/client-sts": "^3.11.0",
+    "@aws-sdk/credential-provider-node": "^3.11.0",
+    "@aws-sdk/protocol-http": "^3.10.0",
+    "@aws-sdk/signature-v4": "^3.10.0",
     "@bcgov/nr-pipeline-ext": "0.1.0-rc.13",
     "@bcgov/pipeline-cli": "^1.0.1-2",
     "@oclif/command": "^1.8.0",
@@ -25,6 +31,7 @@
     "isomorphic-git": "^1.7.8",
     "jira-connector": "^3.1.0",
     "jira.js": "^1.7.3",
+    "keycloak-admin": "^1.14.10",
     "lodash.merge": "^4.6.2",
     "rsync": "^0.6.1",
     "safe-buffer": "^5.2.1",
@@ -126,6 +133,7 @@
     "@oclif/plugin-help",
     "isomorphic-git",
     "@bcgov/nr-pipeline-ext",
+    "@aws-sdk/client-elasticsearch-service",
     "rsync",
     "tar",
     "winston",
@@ -139,6 +147,12 @@
     "jira-connector",
     "chalk",
     "jira.js",
-    "form-data"
+    "form-data",
+    "keycloak-admin",
+    "@aws-sdk/signature-v4",
+    "@aws-sdk/protocol-http",
+    "@aws-crypto/sha256-js",
+    "@aws-sdk/credential-provider-node",
+    "@aws-sdk/client-sts"
   ]
 }
