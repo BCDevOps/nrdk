@@ -25,7 +25,7 @@ $ npm install -g @bcgov/nrdk
 $ nrdk COMMAND
 running command...
 $ nrdk (-v|--version|version)
-@bcgov/nrdk/0.1.0-rc.91 win32-x64 node-v12.18.3
+@bcgov/nrdk/0.1.0-rc.100 linux-x64 node-v12.22.1
 $ nrdk --help [COMMAND]
 USAGE
   $ nrdk COMMAND
@@ -68,7 +68,7 @@ EXAMPLES
         Updates the existing pull request with the new commit(s).
 ```
 
-_See code: [src\commands\backlog\checkin.ts](./src\commands\backlog\checkin.ts)_
+_See code: [src/commands/backlog/checkin.ts](./src/commands/backlog/checkin.ts)_
 
 ## `nrdk backlog:checkout [ISSUE]`
 
@@ -87,7 +87,7 @@ EXAMPLE
         On branch IRS-200
 ```
 
-_See code: [src\commands\backlog\checkout.ts](./src\commands\backlog\checkout.ts)_
+_See code: [src/commands/backlog/checkout.ts](./src/commands/backlog/checkout.ts)_
 
 ## `nrdk help [COMMAND]`
 
@@ -104,5 +104,5 @@ OPTIONS
   --all  see all commands in CLI
 ```
 
-_See code: [@oclif/plugin-help](https://github.com/oclif/plugin-help/blob/v3.2.0/src\commands\help.ts)_
+_See code: [@oclif/plugin-help](https://github.com/oclif/plugin-help/blob/v3.2.2/src/commands/help.ts)_
 <!-- commandsstop -->
