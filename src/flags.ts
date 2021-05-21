@@ -3,6 +3,7 @@ import GitClient from './git-client'
 import {relative, resolve} from 'path'
 import {GeneralError} from './error'
 import {LoggerFactory} from './util/logger'
+import {Util} from './pipeline-cli'
 
 export enum FlagNames {
   CONFIG_SCRIPT = 'config-script',
@@ -148,7 +149,7 @@ export function parseFlagsAsNestedObject(flags: any) {
 export function loadConfigScript(flags: any) {
   const Config = loadScript(flags, FlagNames.CONFIG_SCRIPT)
   const options = parseFlagsAsNestedObject(flags)
-  require('@bcgov/pipeline-cli').Util.applyArgumentsDefaults(options)
+  Util.applyArgumentsDefaults(options)
   // eslint-disable-next-line no-console
   // console.dir(options, {depth: 4})
   return new Config(options).build()

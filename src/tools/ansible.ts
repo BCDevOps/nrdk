@@ -72,8 +72,22 @@ export class Ansible extends Tool {
     // const homeDirectory = await this.getHomeDirectory('ansible', version)
     const dockerImageTag = `nrdk/ansible:${version}`
     const dockerContainerIdFile  = path.join(os.tmpdir(), `nrdk-ansible-${version}.cid`)
+    const args2: string[] = []
+    const dockerExecArgs: string[] = []
     if (fs.existsSync(dockerContainerIdFile)) fs.unlinkSync(dockerContainerIdFile)
-
+    for (let index = 0; index < args.length; index++) {
+      const arg = args[index]
+      if (arg.startsWith('--env-file')) {
+        if (arg.startsWith('--env-file=')) {
+          dockerExecArgs.push(...['--env-file', arg.split('=')[1]])
+        } else {
+          dockerExecArgs.push(...['--env-file', args[index + 1]])
+          index++
+        }
+      } else {
+        args2.push(arg)
+      }
+    }
     return _spawn2('docker', ['build', '-t', dockerImageTag, '--build-arg', `ANSIBLE_VERSION=${version}`, path.join(__dirname, 'ansible')])
     .then(waitAndBuffer)
     .then(proc => {
@@ -102,7 +116,8 @@ export class Ansible extends Tool {
         .then(waitToExit)
       })
       .then(() => {
-        return _spawn2('docker', ['exec', '-w', '/workdir', containerId, '/opt/ansible/bin/python3', path.posix.join('/opt/ansible/bin', this.ansible_bin_run_command), ...args], options)
+        dockerExecArgs.push(...['-w', '/workdir'])
+        return _spawn2('docker', ['exec', ...dockerExecArgs, containerId, '/opt/ansible/bin/python3', path.posix.join('/opt/ansible/bin', this.ansible_bin_run_command), ...args2], options)
         .then(proc => {
           proc.on('exit', async () => {
             return _spawn2('docker', ['rm', '--force', containerId])
