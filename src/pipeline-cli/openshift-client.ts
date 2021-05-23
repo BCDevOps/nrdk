@@ -57,7 +57,6 @@ export class OpenShiftClient {
       this.options = Object.assign(this.options, options)
       if (options.namespace) this.globalArgs.namespace = options.namespace
       if (options.cwd) this._cwd = options.cwd
-      // TODO:read/override from process.arguments
     }
     this.git = this.options.git
   }
@@ -73,12 +72,6 @@ export class OpenShiftClient {
     return this._cwd
   }
 
-  /**
-   * @param {string} verb
-   * @param {string|Object} verbArgs
-   * @param {Object} userArgs
-   * @param {Object} overrideArgs
-   */
   buildCommonArgs(verb: string, verbArgs: any, userArgs: any, overrideArgs?: any) {
     if (userArgs !== null && !isPlainObject(userArgs)) {
       throw new Error('Expected "userArgs" to be plain object')
@@ -121,13 +114,12 @@ export class OpenShiftClient {
   }
 
   _actionAsync(args: string[], input?: string) {
-    const self = this
     // console.log(`> ${JSON.stringify(args)}`)
     logger.trace('>', ['oc'].concat(args).join(' '))
     // logger.trace('ocSpawn', ['oc'].concat(cmdArgs).join(' '))
     const _options: any = {encoding: 'utf-8'}
-    if (self.cwd()) {
-      _options.cwd = self.cwd()
+    if (this.cwd()) {
+      _options.cwd = this.cwd()
     }
     // const startTime = process.hrtime();
     if (input !== null) {
@@ -147,13 +139,10 @@ export class OpenShiftClient {
   }
 
   _rawAction(args: string[], input?: string) {
-    const self = this
-    // console.log(`> ${JSON.stringify(args)}`)
     logger.trace('>', ['oc'].concat(args).join(' '))
-    // logger.trace('ocSpawn', ['oc'].concat(cmdArgs).join(' '))
     const _options: any = {encoding: 'utf-8'}
-    if (self.cwd()) {
-      _options.cwd = self.cwd()
+    if (this.cwd()) {
+      _options.cwd = this.cwd()
     }
     const startTime = process.hrtime()
     if (input !== null) {
@@ -205,10 +194,6 @@ export class OpenShiftClient {
     return this.objectDefAction('get', object, Object.assign({output: 'json'}, args || {}))
   }
 
-  /**
-   *
-   * @param {string[]} args
-   */
   raw(verb: string, verbArgs: any, userArgs: any) {
     const args = this.buildCommonArgs(verb, verbArgs, userArgs)
     return this._action(args)
@@ -219,10 +204,6 @@ export class OpenShiftClient {
     return this._actionAsync(args)
   }
 
-  /**
-   * Given a list of objects, return their names (namespace/name)
-   * @param {} objects
-   */
   // eslint-disable-next-line class-methods-use-this, no-unused-vars
   names(_objects: any) {
     throw new Error('Not Implemented')
@@ -316,24 +297,11 @@ export class OpenShiftClient {
     }
     throw new Error('Not Implemented')
   }
-  // TODO: toSingleObject(){}
 
-  /**
-   * @returns {OpenShiftResourceSelector}
-   * @param {String|String[]} kind
-   * @param {String|Object} qualifier
-   */
   selector(kind: string|string[], qualifier: string|any) {
     return new OpenShiftResourceSelector(this, 'selector', kind, qualifier)
   }
 
-  /**
-   *
-   * @param {string} template URL (http, https, or file), or template name
-   * @param {Object} args
-   * @returns {OpenShiftResourceSelector}
-   *
-   */
   process(template: string, args: any) {
     if (typeof template !== 'string') throw new Error('Expected string')
     if (util.isUrl(template)) {
@@ -445,7 +413,6 @@ export class OpenShiftClient {
     return this.objectDefAction('cancel-build', object, args)
   }
 
-  // TODO: watch(){}
   create(object: any, args: any) {
     return this.objectDefAction('create', object, args)
   }
@@ -505,18 +472,10 @@ export class OpenShiftClient {
     throw new Error('Not Implemented')
   }
 
-  /**
-   * Create and run a particular image, possibly replicated.
-   * @param {*} args
-   */
   run(args: any) {
     return this.simplePassthrough('run', args)
   }
 
-  /**
-   * Execute a command in a container.
-   * @param {*} args
-   */
   exec(args: any) {
     return this.simplePassthrough('exec', args)
   }
@@ -529,11 +488,6 @@ export class OpenShiftClient {
     return this.simplePassthrough('rsync', args)
   }
 
-  /**
-   *
-   * @param {*} objects  An array where the first one ([0]) is the source tag.
-   * @param {*} args
-   */
   tag(objects: any, args: any) {
     return this.objectDefAction('tag', objects, args)
   }
