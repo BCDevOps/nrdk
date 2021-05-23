@@ -59,7 +59,6 @@ export class OpenShiftResourceSelector {
     return true
   }
 
-  // TODO: shortName: (resource) => { return resource.metadata.name },
   public parseName(name: string, defaultNamespace: string): any {
     const nameRegexPattern = '^(?:([^/]+?)/)?(([^/]+?)/(.*?))$'
     const result: any = new RegExp(nameRegexPattern, 'g').exec(name)
