@@ -4,26 +4,26 @@
 import {spawnSync, SpawnSyncOptionsWithStringEncoding, SpawnSyncReturns} from 'child_process'
 
 export namespace Util {
-    function unsafeExecSync(command: string, args?: ReadonlyArray<string>, options?: SpawnSyncOptionsWithStringEncoding): SpawnSyncReturns<string> {
-      const ret = spawnSync(command, args, options)
-      // logger.trace([command].concat(args || []).join(' '), ' - ', options, ' > ', ret.status)
-      return ret as unknown as SpawnSyncReturns<string>
+  function unsafeExecSync(command: string, args?: ReadonlyArray<string>, options?: SpawnSyncOptionsWithStringEncoding): SpawnSyncReturns<string> {
+    const ret = spawnSync(command, args, options)
+    // logger.trace([command].concat(args || []).join(' '), ' - ', options, ' > ', ret.status)
+    return ret as unknown as SpawnSyncReturns<string>
+  }
+  /*
+  function execSync(command: string, args?: readonly string[], options?: SpawnSyncOptionsWithStringEncoding) {
+    const ret = unsafeExecSync(command, args, options)
+    if (ret.status !== 0) {
+      throw new Error(
+        `Failed running '${command} ${args?.join(' ')}' as it returned ${ret.status}`,
+      )
     }
-    /*
-    function execSync(command: string, args?: readonly string[], options?: SpawnSyncOptionsWithStringEncoding) {
-      const ret = unsafeExecSync(command, args, options)
-      if (ret.status !== 0) {
-        throw new Error(
-          `Failed running '${command} ${args?.join(' ')}' as it returned ${ret.status}`,
-        )
-      }
-      return ret
-    }
-    */
-    // eslint-disable-next-line complexity
-    export function applyArgumentsDefaults(options: any) {
-      options.git = options.git || {}
-      const git = options.git
+    return ret
+  }
+  */
+  // eslint-disable-next-line complexity
+  export function applyArgumentsDefaults(options: any) {
+    options.git = options.git || {}
+    const git = options.git
 
       if (!git.dir) {
         // eslint-disable-next-line prettier/prettier
@@ -35,12 +35,13 @@ export namespace Util {
           console.error(`WARNING: unable to find git top level directory\nstatus:${gitCmd.status}\nstdout:${gitCmd.stdout}\nstderr:${gitCmd.stderr}`)
         }
       }
+    }
 
       if (!options.cwd) {
         options.cwd = git.dir
       }
 
-      git.branch = git.branch || {}
+    git.branch = git.branch || {}
 
       if (!git.branch.name) {
         // eslint-disable-next-line prettier/prettier
@@ -49,25 +50,26 @@ export namespace Util {
           git.branch.name = gitCmd.stdout.trim()
         }
       }
+    }
 
-      if (git.branch.remote === null) {
-        // eslint-disable-next-line prettier/prettier
-        const gitConfigBranchRemote = unsafeExecSync('git', ['config', `branch.${git.branch.name}.remote`], {encoding: 'utf-8'})
-        if (gitConfigBranchRemote.status === 0) {
-          git.branch.remote = gitConfigBranchRemote.stdout.trim()
-        } else {
-        // Default to "origin"
-          git.branch.remote = 'origin'
-        }
+    if (git.branch.remote === null) {
+      // eslint-disable-next-line prettier/prettier
+      const gitConfigBranchRemote = unsafeExecSync('git', ['config', `branch.${git.branch.name}.remote`], {encoding: 'utf-8'})
+      if (gitConfigBranchRemote.status === 0) {
+        git.branch.remote = gitConfigBranchRemote.stdout.trim()
+      } else {
+      // Default to "origin"
+        git.branch.remote = 'origin'
       }
+    }
 
-      if (git.url === null) {
-        // eslint-disable-next-line prettier/prettier
-        const gitCmd = unsafeExecSync('git', ['config', '--get', `remote.${git.branch.remote}.url`], {encoding: 'utf-8'})
-        if (gitCmd.status === 0) {
-          git.url = gitCmd.stdout.trim()
-        }
+    if (git.url === null) {
+      // eslint-disable-next-line prettier/prettier
+      const gitCmd = unsafeExecSync('git', ['config', '--get', `remote.${git.branch.remote}.url`], {encoding: 'utf-8'})
+      if (gitCmd.status === 0) {
+        git.url = gitCmd.stdout.trim()
       }
+    }
 
       git.uri = git.url
       if (!git.http_url && git.url) {
@@ -77,9 +79,9 @@ export namespace Util {
         )
       }
 
-      if (git.http_url?.startsWith('https://github.com') && !git.branch?.merge) {
-        git.branch.merge = `refs/pull/${git.pull_request}/head`
-      }
+    if (git.http_url?.startsWith('https://github.com') && !git.branch?.merge) {
+      git.branch.merge = `refs/pull/${git.pull_request}/head`
+    }
 
       if (!git.branch.merge) {
         // eslint-disable-next-line prettier/prettier
@@ -88,6 +90,7 @@ export namespace Util {
           git.branch.merge = gitCmd.stdout.trim()
         }
       }
+    }
 
       if (!git.owner && git.url) {
         git.owner = git.url.replace(
@@ -102,24 +105,24 @@ export namespace Util {
         )
       }
 
-      if (options.pr) {
-        git.pull_request = options.pr
-      }
-      // when --ref flag is used
-      if (options.ref) {
-        git.ref = options.ref
-      }
-
-      if (!git.ref) {
-        if (git.pull_request) {
-          git.ref = `refs/pull/${git.pull_request}/head`
-        } else if (git.branch.merge) {
-          git.ref = git.branch.merge
-        }
-      }
-      if (!git.ref) {
-        git.branch_ref = git.ref
-      }
-      return options
+    if (options.pr) {
+      git.pull_request = options.pr
     }
+    // when --ref flag is used
+    if (options.ref) {
+      git.ref = options.ref
+    }
+
+    if (!git.ref) {
+      if (git.pull_request) {
+        git.ref = `refs/pull/${git.pull_request}/head`
+      } else if (git.branch.merge) {
+        git.ref = git.branch.merge
+      }
+    }
+    if (!git.ref) {
+      git.branch_ref = git.ref
+    }
+    return options
+  }
 }
