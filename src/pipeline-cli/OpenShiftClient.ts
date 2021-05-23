@@ -1,31 +1,12 @@
-//
-// pipeline-cli
-//
-// Copyright © 2019 Province of British Columbia
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-// http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-//
+import * as path from 'path'
+import {isPlainObject, isString} from 'lodash'
+import {debug} from 'debug'
+import {spawn, spawnSync} from 'child_process'
+import {OpenShiftResourceSelector} from './OpenShiftResourceSelector'
+import {OpenShiftStaticSelector} from './OpenShiftStaticSelector'
+import {Util as util} from './util'
 
 'use strict'
-
-const path = require('path')
-const debug = require('debug')
-const isPlainObject = require('lodash.isplainobject')
-const isString = require('lodash.isstring')
-const {spawn, spawnSync} = require('child_process')
-const OpenShiftResourceSelector = require('./OpenShiftResourceSelector')
-const OpenShiftStaticSelector = require('./OpenShiftStaticSelector')
-import {Util as util} from './util'
 
 const {isArray} = Array
 
@@ -271,7 +252,7 @@ export class OpenShiftClient {
 
     Object.keys(namespaces).forEach(namespace => {
       const names2 = namespaces[namespace]
-      const items = this.objectDefAction(
+      const items: any = this.objectDefAction(
         'get',
         names2,
         Object.assign({output: 'json', namespace}, args || {}), // eslint-disable-line comma-dangle
