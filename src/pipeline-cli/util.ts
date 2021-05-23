@@ -3,7 +3,42 @@
 
 import {spawnSync, SpawnSyncOptionsWithStringEncoding, SpawnSyncReturns} from 'child_process'
 
+function normalizeKind(kind: any): any {
+  if (kind === 'ImageStream') {
+    return 'imagestream.image.openshift.io'
+  }
+  if (kind === 'BuildConfig') {
+    return 'buildconfig.build.openshift.io'
+  }
+  return kind
+}
+
 export namespace Util {
+
+  export function isUrl(string: string): boolean {
+    const isString = require('lodash.isstring')
+    const protocolAndDomainRE = /^(?:\w+)+:\/\/(\S+)$/
+    if (!isString(string)) return false
+    const match = string.match(protocolAndDomainRE)
+    if (!match) return false
+    return true
+  }
+
+  export function name(resource: any): string {
+    if (resource.kind && resource.name) return `${normalizeKind(resource.kind)}/${resource.name}`
+    return `${normalizeKind(resource.kind)}/${resource.metadata.name}`
+  }
+
+  export function parseName(name: string, defaultNamespace?: string) {
+    const nameRegexPattern = '^(?:([^/]+?)/)?(([^/]+?)/(.*?))$'
+    const result: any = new RegExp(nameRegexPattern, 'g').exec(name)
+    return {
+      namespace: result[1] || defaultNamespace,
+      kind: result[3],
+      name: result[4],
+    }
+  }
+
   function unsafeExecSync(command: string, args?: ReadonlyArray<string>, options?: SpawnSyncOptionsWithStringEncoding): SpawnSyncReturns<string> {
     const ret = spawnSync(command, args, options)
     // logger.trace([command].concat(args || []).join(' '), ' - ', options, ' > ', ret.status)
