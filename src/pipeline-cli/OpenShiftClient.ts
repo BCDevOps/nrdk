@@ -25,7 +25,7 @@ const isString = require('lodash.isstring')
 const {spawn, spawnSync} = require('child_process')
 const OpenShiftResourceSelector = require('./OpenShiftResourceSelector')
 const OpenShiftStaticSelector = require('./OpenShiftStaticSelector')
-const util = require('./util')
+import {Util as util} from './util'
 
 const {isArray} = Array
 
@@ -34,7 +34,7 @@ const logger = {
   trace: debug('trace:OpenShiftClient'),
 }
 
-function appendCommandArg(prefix, item, result) {
+function appendCommandArg(prefix: string, item: any, result: string[]) {
   if (Array.isArray(item)) {
     item.forEach(subitem => {
       return appendCommandArg(prefix, subitem, result)
@@ -48,12 +48,27 @@ function appendCommandArg(prefix, item, result) {
   }
 }
 
+export interface OpenShiftListModel {
+  apiVersion: string;
+  kind: string;
+  items: any[];
+  metadata: any;
+}
+
 /**
  * https://github.com/openshift/jenkins-client-plugin/blob/master/src/main/resources/com/openshift/jenkins/plugins/OpenShiftDSL.groovy
  */
 
-module.exports = class OpenShiftClient {
-  constructor(options) {
+export class OpenShiftClient {
+  globalArgs: any
+
+  options: any
+
+  private _cwd: any
+
+  git: any
+
+  constructor(options: any) {
     this.globalArgs = {}
     this.options = {}
 
@@ -66,7 +81,7 @@ module.exports = class OpenShiftClient {
     this.git = this.options.git
   }
 
-  namespace(ns) {
+  namespace(ns?: string) {
     if (typeof ns !== 'undefined' && ns !== null) {
       this.globalArgs.namespace = ns
     }
@@ -83,7 +98,7 @@ module.exports = class OpenShiftClient {
    * @param {Object} userArgs
    * @param {Object} overrideArgs
    */
-  buildCommonArgs(verb, verbArgs, userArgs, overrideArgs) {
+  buildCommonArgs(verb: string, verbArgs: any, userArgs: any, overrideArgs?: any) {
     if (userArgs !== null && !isPlainObject(userArgs)) {
       throw new Error('Expected "userArgs" to be plain object')
     }
@@ -92,7 +107,7 @@ module.exports = class OpenShiftClient {
       throw new Error('Expected "userArgs" to be plain object')
     }
 
-    const _args = {}
+    const _args: any = {}
     Object.assign(_args, this.globalArgs)
     if (userArgs !== null) {
       Object.assign(_args, userArgs)
@@ -124,12 +139,12 @@ module.exports = class OpenShiftClient {
     return args
   }
 
-  _actionAsync(args, input) {
+  _actionAsync(args: string[], input?: string) {
     const self = this
     // console.log(`> ${JSON.stringify(args)}`)
     logger.trace('>', ['oc'].concat(args).join(' '))
     // logger.trace('ocSpawn', ['oc'].concat(cmdArgs).join(' '))
-    const _options = {encoding: 'utf-8'}
+    const _options: any = {encoding: 'utf-8'}
     if (self.cwd()) {
       _options.cwd = self.cwd()
     }
@@ -142,7 +157,7 @@ module.exports = class OpenShiftClient {
     return proc
   }
 
-  _action(args, input) {
+  _action(args: string[], input?: string) {
     const proc = this._rawAction(args, input)
     if (proc.status !== 0) {
       throw new Error(`command: ${['oc'].concat(args).join(' ')}\nstderr:${proc.stderr}`)
@@ -150,12 +165,12 @@ module.exports = class OpenShiftClient {
     return proc
   }
 
-  _rawAction(args, input) {
+  _rawAction(args: string[], input?: string) {
     const self = this
     // console.log(`> ${JSON.stringify(args)}`)
     logger.trace('>', ['oc'].concat(args).join(' '))
     // logger.trace('ocSpawn', ['oc'].concat(cmdArgs).join(' '))
-    const _options = {encoding: 'utf-8'}
+    const _options: any = {encoding: 'utf-8'}
     if (self.cwd()) {
       _options.cwd = self.cwd()
     }
@@ -170,17 +185,16 @@ module.exports = class OpenShiftClient {
     return proc
   }
 
-  splitNamesUsingArgs(string, args) {
-    const namespace = args
+  splitNamesUsingArgs(string: string, args: string[]) {
+    const namespace: string = args
     .find(item => {
       return item.startsWith('--namespace=')
-    })
-    .substr('--namespace='.length)
-    return this.splitNames(string, namespace)
+    }) as string
+    return this.splitNames(string, namespace.substr('--namespace='.length))
   }
 
   // eslint-disable-next-line class-methods-use-this
-  splitNames(string, namespace) {
+  splitNames(string: string, namespace: string) {
     const trimmed = string.trim()
     if (trimmed.length > 0) {
       const names = trimmed.split(/\n/)
@@ -194,19 +208,19 @@ module.exports = class OpenShiftClient {
     return []
   }
 
-  _actionReturningName(args) {
+  _actionReturningName(args: string[]) {
     const proc = this._action(args)
     const names = this.splitNamesUsingArgs(proc.stdout, args)
     return new OpenShiftStaticSelector(this, names)
   }
 
-  _actionReturningName2(args) {
+  _actionReturningName2(args: string[]) {
     const proc = this._rawAction(args)
     const names = this.splitNamesUsingArgs(proc.stdout, args)
     return new OpenShiftStaticSelector(this, names)
   }
 
-  get(object, args) {
+  get(object: any, args: any) {
     return this.objectDefAction('get', object, Object.assign({output: 'json'}, args || {}))
   }
 
@@ -214,12 +228,12 @@ module.exports = class OpenShiftClient {
    *
    * @param {string[]} args
    */
-  raw(verb, verbArgs, userArgs) {
+  raw(verb: string, verbArgs: any, userArgs: any) {
     const args = this.buildCommonArgs(verb, verbArgs, userArgs)
     return this._action(args)
   }
 
-  rawAsync(verb, verbArgs, userArgs) {
+  rawAsync(verb: string, verbArgs: any, userArgs: any) {
     const args = this.buildCommonArgs(verb, verbArgs, userArgs)
     return this._actionAsync(args)
   }
@@ -229,15 +243,15 @@ module.exports = class OpenShiftClient {
    * @param {} objects
    */
   // eslint-disable-next-line class-methods-use-this, no-unused-vars
-  names(_objects) {
+  names(_objects: any) {
     throw new Error('Not Implemented')
   }
 
-  object(name, args) {
+  object(name: string, args: any) {
     return this.objects([name], args)[0]
   }
 
-  objectOrNull(name, args) {
+  objectOrNull(name: string, args: any) {
     const items = this.objects([name], args)
     if (items.length > 0) {
       return items[0]
@@ -245,9 +259,9 @@ module.exports = class OpenShiftClient {
     return null
   }
 
-  objects(names, args) {
-    const result = []
-    const namespaces = {}
+  objects(names: string[], args: any) {
+    const result: any[] = []
+    const namespaces: any = {}
     names.forEach(name => {
       const parsed = util.parseName(name)
       const namespace = parsed.namespace || this.namespace()
@@ -272,7 +286,7 @@ module.exports = class OpenShiftClient {
    * returns (array)
    */
   // eslint-disable-next-line class-methods-use-this
-  unwrapOpenShiftList(object) {
+  unwrapOpenShiftList(object: any) {
     const result = []
     if (isPlainObject(object)) {
       if (object.kind !== 'List') {
@@ -286,7 +300,7 @@ module.exports = class OpenShiftClient {
     return result
   }
 
-  wrapOpenShiftList(object) {
+  wrapOpenShiftList(object: any) {
     const list = this._emptyListModel()
     if (isArray(object)) {
       list.items.push(...object)
@@ -297,11 +311,11 @@ module.exports = class OpenShiftClient {
   }
 
   // eslint-disable-next-line class-methods-use-this
-  serializableMap(jsonString) {
+  serializableMap(jsonString: string) {
     return JSON.parse(jsonString)
   }
 
-  toNamesList(objectOrList) {
+  toNamesList(objectOrList: any): string[] {
     if (isArray(objectOrList)) {
       const names = []
       for (let i = 0; i < objectOrList.length; i += 1) {
@@ -328,7 +342,7 @@ module.exports = class OpenShiftClient {
    * @param {String|String[]} kind
    * @param {String|Object} qualifier
    */
-  selector(kind, qualifier) {
+  selector(kind: string|string[], qualifier: string|any) {
     return new OpenShiftResourceSelector(this, 'selector', kind, qualifier)
   }
 
@@ -339,7 +353,7 @@ module.exports = class OpenShiftClient {
    * @returns {OpenShiftResourceSelector}
    *
    */
-  process(template, args) {
+  process(template: string, args: any) {
     if (typeof template !== 'string') throw new Error('Expected string')
     if (util.isUrl(template)) {
       const proc = this._action(
@@ -353,7 +367,7 @@ module.exports = class OpenShiftClient {
   }
 
   // eslint-disable-next-line complexity
-  objectDefAction(verb, object, userArgs) {
+  objectDefAction(verb: string, object: any, userArgs: any) {
     if (!isString(object) && !isPlainObject(object) && !isArray(object)) {
       throw new Error('Expected string, plain object, or array')
     }
@@ -419,11 +433,11 @@ module.exports = class OpenShiftClient {
     }
   }
 
-  async startBuild(object, args) {
+  async startBuild(object: any, args: any) {
     if (isArray(object)) {
-      const promises = []
+      const promises: any[] = []
       for (let i = 0; i < object.length; i += 1) {
-        const item = object[i]
+        const item: string = object[i]
         promises.push(
           Promise.resolve(item).then(result => {
             return this.startBuild(result, args)
@@ -446,16 +460,16 @@ module.exports = class OpenShiftClient {
     return null
   }
 
-  cancelBuild(object, args) {
+  cancelBuild(object: any, args: any) {
     return this.objectDefAction('cancel-build', object, args)
   }
 
   // TODO: watch(){}
-  create(object, args) {
+  create(object: any, args: any) {
     return this.objectDefAction('create', object, args)
   }
 
-  createIfMissing(object, args) {
+  createIfMissing(object: any, args: any) {
     return this.objectDefAction(
       'create',
       object,
@@ -463,8 +477,8 @@ module.exports = class OpenShiftClient {
     )
   }
 
-  waitForImageStreamTag(tag) {
-    let istag = {}
+  waitForImageStreamTag(tag: string) {
+    let istag: any = {}
     const start = process.hrtime()
 
     while (((istag.image || {}).metadata || {}).name === null) {
@@ -478,11 +492,11 @@ module.exports = class OpenShiftClient {
     }
   }
 
-  apply(object, args) {
+  apply(object: any[], args: any) {
     const result = this.objectDefAction('apply', object, args)
     object.forEach(item => {
       if (item.kind === 'ImageStream') {
-        ((item.spec || {}).tags || []).forEach(tag => {
+        (item.spec?.tags as any[]).forEach(tag => {
           this.waitForImageStreamTag(`${item.metadata.name}:${tag.name}`)
         })
       }
@@ -490,11 +504,11 @@ module.exports = class OpenShiftClient {
     return result
   }
 
-  replace(object, args) {
+  replace(object: any, args: any) {
     return this.objectDefAction('replace', object, args)
   }
 
-  delete(object, args) {
+  delete(object: any, args: any) {
     return this.objectDefAction('delete', object, args)
   }
 
@@ -506,7 +520,7 @@ module.exports = class OpenShiftClient {
    * @param {*} args
    */
   // eslint-disable-next-line class-methods-use-this
-  simplePassthrough() {
+  simplePassthrough(_verb: string, _args: any) {
     throw new Error('Not Implemented')
   }
 
@@ -514,7 +528,7 @@ module.exports = class OpenShiftClient {
    * Create and run a particular image, possibly replicated.
    * @param {*} args
    */
-  run(args) {
+  run(args: any) {
     return this.simplePassthrough('run', args)
   }
 
@@ -522,15 +536,15 @@ module.exports = class OpenShiftClient {
    * Execute a command in a container.
    * @param {*} args
    */
-  exec(args) {
+  exec(args: any) {
     return this.simplePassthrough('exec', args)
   }
 
-  rsh(args) {
+  rsh(args: any) {
     return this.simplePassthrough('rsh', args)
   }
 
-  rsync(args) {
+  rsync(args: any) {
     return this.simplePassthrough('rsync', args)
   }
 
@@ -539,13 +553,13 @@ module.exports = class OpenShiftClient {
    * @param {*} objects  An array where the first one ([0]) is the source tag.
    * @param {*} args
    */
-  tag(objects, args) {
+  tag(objects: any, args: any) {
     return this.objectDefAction('tag', objects, args)
   }
 
   // Utilities
   // eslint-disable-next-line class-methods-use-this
-  toFileUrl(str) {
+  toFileUrl(str: string) {
     if (typeof str !== 'string') {
       throw new TypeError('Expected a string')
     }
@@ -556,7 +570,7 @@ module.exports = class OpenShiftClient {
   }
 
   // eslint-disable-next-line class-methods-use-this
-  toFilePath(string) {
+  toFilePath(string: string) {
     if (string.startsWith('file://')) {
       return string.substr('file://'.length)
     }
@@ -564,9 +578,9 @@ module.exports = class OpenShiftClient {
   }
 
   // eslint-disable-next-line class-methods-use-this
-  toCommandArgsArray(args) {
+  toCommandArgsArray(args: any) {
     if (isArray(args)) return args
-    const result = []
+    const result: string[] = []
     Object.keys(args).forEach(prop => {
       const value = args[prop]
       if (value !== undefined) {
@@ -577,7 +591,7 @@ module.exports = class OpenShiftClient {
   }
 
   // eslint-disable-next-line class-methods-use-this
-  _emptyListModel() {
+  _emptyListModel(): OpenShiftListModel {
     return {
       apiVersion: 'v1',
       kind: 'List',
