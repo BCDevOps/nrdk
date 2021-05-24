@@ -1,7 +1,7 @@
 'use strict'
 
-module.exports = Object.freeze({
-  KINDS: {
+export class CONSTANTS {
+  KINDS: any = {
     LIST: 'List',
     BUILD: 'Build',
     BUILD_CONFIG: 'BuildConfig',
@@ -9,23 +9,27 @@ module.exports = Object.freeze({
     IMAGE_STREAM_TAG: 'ImageStreamTag',
     IMAGE_STREAM_IMAGE: 'ImageStreamImage',
     DEPLOYMENT_CONFIG: 'DeploymentConfig',
-  },
-  ENV: {
+  };
+
+  ENV: any = {
     BUILD_HASH: '_BUILD_HASH',
-  },
-  LABELS: {
+  };
+
+  LABELS: any = {
     TEMPLATE_HASH: 'template-hash',
     SOURCE_HASH: 'source-hash',
-  },
-  ANNOTATIONS: {
+  };
+
+  ANNOTATIONS: any = {
     TEMPLATE_HASH: 'template-hash',
     SOURCE_HASH: 'source-hash',
-  },
-  POD_PHASES: {
+  };
+
+  POD_PHASES: any = {
     PENDING: 'Pending',
     RUNNING: 'Running',
     SUCCEEDED: 'Succeeded',
     FAILED: 'Failed',
     UNKNOWN: 'Unknown',
-  },
-})
+  }
+}
