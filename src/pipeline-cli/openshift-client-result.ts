@@ -1,34 +1,31 @@
 'use strict'
 
-// const OpenShiftClient = require('./OpenShiftClient');
-const isEmpty = require('lodash.isempty')
+import isEmpty from 'lodash.isempty'
 
-module.exports = class OpenShiftClientResult {
-  constructor(client) {
+export class OpenShiftClientResult {
+  client: any
+
+  constructor(client: any) {
     this.client = client
   }
 
-  /**
-   * parses the string output from an oc get object --watch command
-   * this function in particular returns the field names as identified from the initial
-   * output from ocp
-   */
-  static parseGetObjectFields(stdOut) {
-    const [fieldNames] = stdOut.split('\n')
+  // parses the string output from an oc get object --watch command
+  // this function in particular returns the field names as identified from the initial
+  // output from ocp
+  static parseGetObjectFields(stdOut: string): string[] {
+    const [fieldNames]: string[] = stdOut.split('\n')
 
-    const names = fieldNames.replace(/ {2,}/g, '|{}|').split('|{}|')
+    const names: string[] = fieldNames.replace(/ {2,}/g, '|{}|').split('|{}|')
 
     return names.map(n => {
       return n.toLowerCase().replace(/ +/g, '_')
     })
   }
 
-  /**
-   * parses the string output from an oc get object --watch command
-   * this function in particular returns the data values from subsequent returns from ocp
-   */
-  static parseGetObjectValues(stdOut) {
-    const entries = stdOut
+  // parses the string output from an oc get object --watch command
+  // this function in particular returns the data values from subsequent returns from ocp
+  static parseGetObjectValues(stdOut: string): string[] {
+    const entries: string[] = stdOut
     .trim()
     .replace(/ {2,}/g, '|{}|')
     .split('|{}|')
@@ -51,31 +48,29 @@ module.exports = class OpenShiftClientResult {
 
      proc.on('exit', () => do something here)
    */
-  static waitForDeployment(proc) {
-    let deployment = {}
+  static waitForDeployment(proc: any): any {
+    let deployment: any = {}
     // eslint-disable-next-line no-console
     console.log(`WAITING FOR DEPLOYMENT:
       if a deployment fails, it will not throw. 
       Ensure you are setting appropriate timeouts while using this implementation!
     `)
 
-    proc.stdout.on('data', data => {
-      let stdOut = data.toString()
+    proc.stdout.on('data', (data: { toString: () => string }) => {
+      let stdOut: string = data.toString()
       if (isEmpty(deployment)) {
-        const keys = OpenShiftClientResult.parseGetObjectFields(stdOut)
-        deployment = keys.reduce((obj, key) => {
-          // eslint-disable-next-line no-param-reassign
+        const keys: string[] = OpenShiftClientResult.parseGetObjectFields(stdOut)
+        deployment = keys.reduce((obj: any, key: string) => {
           obj[key] = ''
           return obj
         }, {})
 
         // we need reference to keys to assign deployment values later
-        // eslint-disable-next-line no-underscore-dangle
         deployment._keys = keys
 
         // the first stdout instance contains fields and values and so we remove field names now
         // eslint-disable-next-line no-unused-vars
-        const [names, entries] = stdOut.split('\n')
+        const [, entries] = stdOut.split('\n')
         stdOut = entries
       }
 
