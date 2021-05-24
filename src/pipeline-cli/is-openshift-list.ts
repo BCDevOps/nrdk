@@ -1,7 +1,7 @@
 'use strict'
 
-const isPlainObject = require('lodash.isplainobject')
+import isPlainObject from 'lodash.isplainobject'
 
-module.exports = object => {
-  return object != null && isPlainObject(object) && object.kind === 'List'
+export function isPlainObj(object: any): boolean {
+  return object !== null && isPlainObject(object) && object.kind === 'List'
 }
