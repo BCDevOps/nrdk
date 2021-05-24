@@ -1,7 +1,7 @@
 'use strict'
 
-export class CONSTANTS {
-  KINDS: any = {
+export const CONSTANTS = {
+  KINDS: {
     LIST: 'List',
     BUILD: 'Build',
     BUILD_CONFIG: 'BuildConfig',
@@ -9,27 +9,23 @@ export class CONSTANTS {
     IMAGE_STREAM_TAG: 'ImageStreamTag',
     IMAGE_STREAM_IMAGE: 'ImageStreamImage',
     DEPLOYMENT_CONFIG: 'DeploymentConfig',
-  };
-
-  ENV: any = {
+  },
+  ENV: {
     BUILD_HASH: '_BUILD_HASH',
-  };
-
-  LABELS: any = {
+  },
+  LABELS: {
     TEMPLATE_HASH: 'template-hash',
     SOURCE_HASH: 'source-hash',
-  };
-
-  ANNOTATIONS: any = {
+  },
+  ANNOTATIONS: {
     TEMPLATE_HASH: 'template-hash',
     SOURCE_HASH: 'source-hash',
-  };
-
-  POD_PHASES: any = {
+  },
+  POD_PHASES: {
     PENDING: 'Pending',
     RUNNING: 'Running',
     SUCCEEDED: 'Succeeded',
     FAILED: 'Failed',
     UNKNOWN: 'Unknown',
-  }
+  },
 }
