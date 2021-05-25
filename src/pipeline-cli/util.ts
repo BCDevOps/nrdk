@@ -3,18 +3,19 @@
 
 import {spawnSync, SpawnSyncOptionsWithStringEncoding, SpawnSyncReturns} from 'child_process'
 import * as crypto from 'crypto'
-
-function normalizeKind(kind: any): any {
-  if (kind === 'ImageStream') {
-    return 'imagestream.image.openshift.io'
-  }
-  if (kind === 'BuildConfig') {
-    return 'buildconfig.build.openshift.io'
-  }
-  return kind
-}
+import * as fs from 'fs'
+import * as path from 'path'
 
 export namespace Util {
+  export function normalizeKind(kind: any): any {
+    if (kind === 'ImageStream') {
+      return 'imagestream.image.openshift.io'
+    }
+    if (kind === 'BuildConfig') {
+      return 'buildconfig.build.openshift.io'
+    }
+    return kind
+  }
 
   export function isUrl(string: string): boolean {
     const isString = require('lodash.isstring')
@@ -57,7 +58,7 @@ export namespace Util {
   }
   */
 
-  export function hashString(itemAsString: string): string {
+  export function hashString(itemAsString: any): string {
     const shasum = crypto.createHash('sha1')
     // var itemAsString = JSON.stringify(resource)
     shasum.update(`blob ${itemAsString.length + 1}\0${itemAsString}\n`)
@@ -72,6 +73,15 @@ export namespace Util {
     return hashString(itemAsString)
   }
 
+  export function fullName(resource: any): string {
+    if (resource.namespace && resource.kind && resource.name) {
+      return `${resource.namespace}/${normalizeKind(resource.kind)}/${resource.name}`
+    }
+    return `${resource.metadata.namespace}/${normalizeKind(resource.kind)}/${
+      resource.metadata.name
+    }`
+  }
+
   export function execSync(command: string, args: string[], cwd: any) {
     const ret = unsafeExecSync(command, args, cwd)
     if (ret.status !== 0) {
@@ -80,6 +90,49 @@ export namespace Util {
       )
     }
     return ret
+  }
+
+  function _hashDirectory(dir: string) {
+    const result: string[] = []
+    const items: string[] = fs.readdirSync(dir).sort()
+
+    items.forEach(item => {
+      const fullpath = path.join(dir, item)
+      const stat = fs.statSync(fullpath)
+      if (stat.isDirectory()) {
+        result.push(..._hashDirectory(fullpath))
+      } else {
+        result.push(hashString(fs.readFileSync(fullpath)))
+      }
+    })
+    return result
+  }
+
+  export function hashDirectory(dir: string): string {
+    const items: string[] = _hashDirectory(dir)
+    return hashObject(items)
+  }
+
+  function getBuildConfigStrategy(bc: any): any {
+    return bc.spec.strategy.sourceStrategy || bc.spec.strategy.dockerStrategy
+  }
+
+  export function getBuildConfigInputImages(bc: any): any[] {
+    const result = []
+    const buildStrategy = getBuildConfigStrategy(bc)
+
+    if (buildStrategy.from) {
+      result.push(buildStrategy.from)
+    }
+
+    if ((bc.spec.source || {}).images) {
+      const sourceImages: any[] = bc.spec.source.images
+      sourceImages.forEach(sourceImage => {
+        result.push(sourceImage.from)
+      })
+    }
+
+    return result
   }
 
   // eslint-disable-next-line complexity
