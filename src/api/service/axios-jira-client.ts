@@ -148,7 +148,7 @@ export class AxiosJiraClient extends AxiosClient {
       return this.getIssue(params.issueIdOrKey, {fields: 'status'})
     })
     .catch(error => {
-      throw new GeneralError(`Error transitioning issue ${params.issueIdOrKey}: ${JSON.stringify(error.response.data)}`, error)
+      throw new GeneralError(`Error transitioning issue ${params.issueIdOrKey}: ${JSON.stringify(error.response.data)}\n${error.config?.data}`, error)
     })
   }
 

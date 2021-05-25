@@ -1,10 +1,11 @@
 /* eslint-disable complexity */
 // JIRA REST API - https://docs.atlassian.com/software/jira/docs/api/REST/8.5.3/
 import {AxiosFactory} from '../api/service/axios-factory'
+import * as RFDSubtask from './jira-rfd-subtask-workflow-v2.0.2'
 import * as RFD from './jira-rfd-workflow-v2.0.2'
 import * as RFC from './jira-rfc-workflow-v2.0.0'
 import merge from 'lodash.merge'
-import {DeploymentArgument, StartDeploymentArgument, Issue, ProjectReference, PullRequestReference, IssueStatus, NameAndId, StartDeploymentResult, IssueTypeNames} from '../api/model/jira'
+import {DeploymentArgument, StartDeploymentArgument, Issue, ProjectReference, PullRequestReference, IssueStatus, NameAndId, StartDeploymentResult, IssueTypeNames, RfdSubmitTransitionFields, RfdApproveTransitionFields, RfdCloseTransitionFields, CUSTOMFIELD_RFC_COMPLETE, CUSTOMFIELD_SUBTASKS_ADDED, CUSTOMFIELD_RFD_SCHEDULED, CUSTOMFIELD_DEV_TEAM_LEAD, CUSTOMFIELD_SUBTASKS_APPROVED, CUSTOMFIELD_RFC_APPROVED, CUSTOMFIELD_DEPLOYMENT_VERIFIER, CUSTOMFIELD_STAKEHOLDERS_INFORMED, CUSTOMFIELD_STATE_OF_TESTING, CUSTOMFIELD_TARGET_ENV, CUSTOMFIELD_IRS_UPDATED, CUSTOMFIELD_RFD_DEPLOYMENT_STATUS, CUSTOMFIELD_TRANSITION_SIGNEDOFF, CUSTOMFIELD_RFD_SUBTASK_ACKNOWLEDGEMENT, CUSTOMFIELD_DEPLOYMENT_CATEGORY, CUSTOMFIELD_RFD_ACKNOWLEDGEMENT, CUSTOMFIELD_IS_AUTOMATED_PIPELINE} from '../api/model/jira'
 import {AxiosBitBucketClient} from '../api/service/axios-bitbucket-client'
 import {GeneralError} from '../error'
 import {LoggerFactory} from './logger'
@@ -144,7 +145,16 @@ export class RfdHelper {
         // if this is an RFD, and it is trying to approve it, we actually need to approve each individial subtask
         if (issue?.fields?.issuetype?.name === 'RFD' && transition.id === RFD.ACTION_APPROVE.id) {
           // eslint-disable-next-line no-await-in-loop
-          const _issue = (await this._transitionRfdSubtasks(issue, RFD.STATUS_APPROVED))
+          const _issue = (await this._transitionRfdSubtasks(issue, RFDSubtask.STATUS_APPROVED))
+          issue = _issue
+          if (transition.to.id === issue.fields?.status?.id) {
+            continue
+          }
+        }
+        // if this is an RFD, and it is trying to start progress it, we actually need to start each individial subtask
+        if (issue?.fields?.issuetype?.name === 'RFD' && transition.id === RFD.ACTION_START_PROGRESS.id) {
+          // eslint-disable-next-line no-await-in-loop
+          const _issue = (await this._transitionRfdSubtasks(issue, RFDSubtask.STATUS_IN_PROGRESS))
           issue = _issue
           if (transition.to.id === issue.fields?.status?.id) {
             continue
@@ -153,37 +163,40 @@ export class RfdHelper {
         const message = `transitioning issue ${issue.fields?.issuetype?.name}/${issue.key} from state '${issue.fields?.status?.name}' to '${transition?.to?.name}' using '${transition.name}' transition trying to get to ${status.name}`
         this.logger.debug(message)
         const spec: any = {issueIdOrKey: issue.key as string, transition: transition}
-        if (issue?.fields?.issuetype?.name === 'RFD' && transition.name === RFD.ACTION_731.name) {
-          spec.fields = {
-            customfield_13126: {value: "RFC is linked (RFD to RFC) and 'Submitted' (or Approved)"},
-            customfield_13128: {value: 'Confirmed'},
-            customfield_13129: {value: 'Scheduled'},
+        if (issue?.fields?.issuetype?.name === 'RFD' && transition.name === RFD.ACTION_SUBMIT.name) {
+          const fields: RfdSubmitTransitionFields = {
+            [CUSTOMFIELD_RFC_COMPLETE]: {value: "RFC is linked (RFD to RFC) and 'Submitted' (or Approved)"},
+            [CUSTOMFIELD_SUBTASKS_ADDED]: {value: 'Confirmed'},
+            [CUSTOMFIELD_RFD_SCHEDULED]: {value: 'Scheduled'},
             // customfield_13135: {value: 'Technology risks have been identified and managed'},
-            customfield_12425: {name: 'CVARJAO'},
+            [CUSTOMFIELD_DEV_TEAM_LEAD]: {name: 'CVARJAO'},
           }
+          spec.fields = fields
         } else if (issue?.fields?.issuetype?.name === 'RFD' && transition.name === RFD.ACTION_APPROVE.name) {
-          spec.fields = {
-            customfield_13131: {value: 'All RFD-subtasks Approved'},
-            customfield_13127: {value: 'Yes'},
-            customfield_13125: {value: 'UAT is signed off and ready for production'},
-            customfield_13134: {value: 'Communications sent'},
-            customfield_13000: {name: 'CVARJAO'},
+          const fields: RfdApproveTransitionFields =  {
+            [CUSTOMFIELD_SUBTASKS_APPROVED]: {value: 'All RFD-subtasks Approved'},
+            [CUSTOMFIELD_RFC_APPROVED]: {value: 'Yes'},
+            [CUSTOMFIELD_STATE_OF_TESTING]: {value: 'UAT is signed off and ready for production'},
+            [CUSTOMFIELD_STAKEHOLDERS_INFORMED]: {value: 'Communications sent'},
+            [CUSTOMFIELD_DEPLOYMENT_VERIFIER]: {name: 'CVARJAO'},
           }
-          if (issue?.fields?.customfield_10121?.value === 'DLVR') {
-            spec.fields.customfield_13125.value = 'Not applicable'
-          } else if (issue?.fields?.customfield_10121?.value === 'TEST') {
-            spec.fields.customfield_13125.value = 'Testing completed in the lower environment'
+          if (issue?.fields?.[CUSTOMFIELD_TARGET_ENV]?.value === 'DLVR') {
+            fields[CUSTOMFIELD_STATE_OF_TESTING].value = 'Not applicable'
+          } else if (issue?.fields?.[CUSTOMFIELD_TARGET_ENV]?.value === 'TEST') {
+            fields[CUSTOMFIELD_STATE_OF_TESTING].value = 'Testing completed in the lower environment'
           }
+          spec.fields = fields
         } else if (issue?.fields?.issuetype?.name === 'RFD-subtask' && transition.name === RFD.ACTION_RESOLVE.name) {
           spec.update = {
             worklog: [{add: {timeSpent: '1m'}}],
           }
         } else if (issue?.fields?.issuetype?.name === 'RFD' && transition.name === RFD.ACTION_CLOSE_ISSUE.name) {
-          spec.fields = {
-            customfield_13106: {value: 'Verified deployed correctly'}, // RFD Deployment Status
-            customfield_10615: {value: 'Not required'}, // IRS entry updated?
-            customfield_13105: {value: 'Not required'}, // Transition Management Signed off?
+          const fields: RfdCloseTransitionFields =  {
+            [CUSTOMFIELD_RFD_DEPLOYMENT_STATUS]: {value: 'Verified deployed correctly'}, // RFD Deployment Status
+            [CUSTOMFIELD_IRS_UPDATED]: {value: 'Not required'}, // IRS entry updated?
+            [CUSTOMFIELD_TRANSITION_SIGNEDOFF]: {value: 'Not required'}, // Transition Management Signed off?
           }
+          spec.fields = fields
         }
         // eslint-disable-next-line no-await-in-loop
         await jira.transitionIssue(spec)
@@ -228,15 +241,16 @@ export class RfdHelper {
       RFC.ACTION_71,
       RFC.ACTION_81,
     ]
+    this.logger.info(`Transitioning RFC ${issue.key} to status ${JSON.stringify(status)}`)
     return this._transitionForward(issue, status, transitions)
   }
 
   async transitionRFDForward(issue: Issue, status: IssueStatus): Promise<Issue> {
     const transitions = [
       {to: RFD.STATUS_OPEN},
-      RFD.ACTION_731,
-      RFD.ACTION_721,
-      RFD.ACTION_4,
+      RFD.ACTION_SUBMIT,
+      RFD.ACTION_APPROVE,
+      RFD.ACTION_START_PROGRESS,
       RFD.ACTION_RESOLVE,
       RFD.ACTION_CLOSE_ISSUE,
     ]
@@ -244,8 +258,15 @@ export class RfdHelper {
   }
 
   async transitionRFDSubtaskForward(issue: Issue, status: IssueStatus): Promise<Issue> {
-    // for now, it is the same as RFD
-    return this.transitionRFDForward(issue, status)
+    const transitions = [
+      {to: RFDSubtask.STATUS_OPEN},
+      RFDSubtask.ACTION_SUBMIT,
+      RFDSubtask.ACTION_APPROVE,
+      RFDSubtask.ACTION_START_PROGRESS,
+      RFDSubtask.ACTION_RESOLVE,
+      RFDSubtask.ACTION_CLOSE_ISSUE,
+    ]
+    return this._transitionForward(issue, status, transitions)
   }
 
   async _createRFDSubtask(params: {rfd: Issue; pullRequest: PullRequestReference; targetEnv: string; dryrun: boolean}) {
@@ -275,18 +296,28 @@ export class RfdHelper {
             summary: `Deploy ${params.pullRequest.repository.slug}`,
             description: `Deploy ${params.pullRequest.repository.slug}`,
             issuetype: {name: 'RFD-subtask'},
-            fixVersions: params.rfd?.fields?.fixVersions,
-            labels: params.rfd?.fields?.labels,
+            // fixVersions: params.rfd?.fields?.fixVersions,
             components: [component],
-            // customfield_10121: {value: params.targetEnv.toUpperCase()},
-            customfield_12436: [{value: 'I understand and agree'}],
-            customfield_12453: {value: 'Other'},
+            [CUSTOMFIELD_RFD_SUBTASK_ACKNOWLEDGEMENT]: [{value: 'I understand and agree'}],
+            [CUSTOMFIELD_DEPLOYMENT_CATEGORY]: {value: 'Other'},
             timetracking: {originalEstimate: '0'},
           },
         })
+        const updateIssueSpec: any = {
+          fields: {
+            labels: params.rfd?.fields?.labels,
+          },
+        }
         return jira.createIssue(issueSpec)
         .catch(error => {
           throw new GeneralError(`Error creating RFD-subtask:\n${JSON.stringify(issueSpec)}`, error)
+        })
+        .then(issue => {
+          updateIssueSpec.key = issue.key
+          return jira.updateIssue(updateIssueSpec)
+          .then(() => {
+            return issue
+          })
         })
         .then(result => {
           return jira.getIssue(result?.key as string, {fields: 'issuetype,status'})
@@ -325,7 +356,7 @@ export class RfdHelper {
     const jql = `issuetype = "RFD" and status != "Closed" and "Target environment" in (${targetEnvironments.map(v => '"' + v.toUpperCase() + '"').join(',')}) and issue in linkedIssues("${rfc.key}", "RFC link to RFD") and issueFunction in linkedIssuesOfRemote("${pullRequestUrl}")`
     this.logger.debug(`Searching for existing RFDs using jql: ${jql}`)
     await jira.search({
-      fields: 'fixVersions,issuetype,project,status,labels,issuelinks,customfield_10121',
+      fields: `fixVersions,issuetype,project,status,labels,issuelinks,${CUSTOMFIELD_TARGET_ENV}`,
       jql: jql,
     })
     .then(async result => {
@@ -334,7 +365,7 @@ export class RfdHelper {
         issuesPerEnvironment.set(targetEnv.toUpperCase(), null)
       }
       for (const issue of result.issues as Issue[]) {
-        const targetEnv = (issue.fields?.customfield_10121?.value as string).toUpperCase()
+        const targetEnv = (issue.fields?.[CUSTOMFIELD_TARGET_ENV]?.value as string).toUpperCase()
         if (issuesPerEnvironment.get(targetEnv)) throw new Error(`Multiple non-closed RFDs has been found for '${targetEnv}' environment linked to RFC '${rfc.key}'`)
         issuesPerEnvironment.set(targetEnv, issue)
       }
@@ -401,10 +432,10 @@ export class RfdHelper {
                 project: {key: rfc?.fields?.project?.key as string},
                 summary: `Deployment PR-${pullRequest.number} to ${targetEnv}`,
                 description: `Deployment PR-${pullRequest.number} to ${targetEnv}`,
-                customfield_10121: {value: targetEnv.toUpperCase()},
+                [CUSTOMFIELD_TARGET_ENV]: {value: targetEnv.toUpperCase()},
                 fixVersions: rfc.fields?.fixVersions,
-                customfield_12418: [{value: 'I understand and agree'}],
-                customfield_12202: {value: 'Yes'},
+                [CUSTOMFIELD_RFD_ACKNOWLEDGEMENT]: [{value: 'I understand and agree'}],
+                [CUSTOMFIELD_IS_AUTOMATED_PIPELINE]: {value: 'Yes'},
               },
             }
             merge(defaultIssue, issue)
@@ -425,6 +456,7 @@ export class RfdHelper {
               updateIssue.key = issue.key
               return jira.updateIssue(updateIssue)
               .then(() => {
+                Object.assign(issue.fields, updateIssue.fields)
                 return issue
               })
             })

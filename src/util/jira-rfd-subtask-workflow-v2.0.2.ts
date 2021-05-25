@@ -19,8 +19,8 @@ export const ACTION_961 = {name: 'Re-open', id: '961', to: {...STATUS_REOPENED}}
 export const ACTION_RE_OPEN = ACTION_961
 export const ACTION_1011 = {name: 'Revoke', id: '1011', to: {...STATUS_UNDER_REVIEW}}
 export const ACTION_REVOKE = ACTION_1011
-export const ACTION_4 = {name: 'Start progress', id: '4', to: {...STATUS_IN_PROGRESS}}
-export const ACTION_START_PROGRESS = ACTION_4
+export const ACTION_201 = {name: 'Start progress', id: '201', to: {...STATUS_IN_PROGRESS}}
+export const ACTION_START_PROGRESS = ACTION_201
 export const ACTION_1021 = {name: 'Back to Open', id: '1021', to: {...STATUS_OPEN}}
 export const ACTION_BACK_TO_OPEN = ACTION_1021
 export const ACTION_11 = {name: 'Submit', id: '11', to: {...STATUS_UNDER_REVIEW}}
@@ -33,8 +33,8 @@ export const ACTION_911 = {name: 'Info   provided', id: '911', to: {...STATUS_UN
 export const ACTION_INFO_PROVIDED = ACTION_911
 export const ACTION_951 = {name: 'Re-close', id: '951', to: {...STATUS_CLOSED}}
 export const ACTION_RE_CLOSE = ACTION_951
-export const ACTION_21 = {name: 'Approve', id: '21', to: {...STATUS_APPROVED}}
-export const ACTION_APPROVE = ACTION_21
+export const ACTION_191 = {name: 'Approve', id: '191', to: {...STATUS_APPROVED}}
+export const ACTION_APPROVE = ACTION_191
 export const ACTION_701 = {name: 'Close issue', id: '701', to: {...STATUS_CLOSED}}
 export const ACTION_CLOSE_ISSUE = ACTION_701
 export const ACTION_1031 = {name: 'Back to In Progress', id: '1031', to: {...STATUS_IN_PROGRESS}}
@@ -48,7 +48,7 @@ const ACTIONS = {
   [ACTION_971.id]: ACTION_971,
   [ACTION_911.id]: ACTION_911,
   [ACTION_951.id]: ACTION_951,
-  [ACTION_21.id]: ACTION_21,
+  [ACTION_191.id]: ACTION_191,
   [ACTION_701.id]: ACTION_701,
   [ACTION_1031.id]: ACTION_1031,
   [ACTION_1001.id]: ACTION_1001,
@@ -56,7 +56,7 @@ const ACTIONS = {
   [ACTION_801.id]: ACTION_801,
   [ACTION_961.id]: ACTION_961,
   [ACTION_1011.id]: ACTION_1011,
-  [ACTION_4.id]: ACTION_4,
+  [ACTION_201.id]: ACTION_201,
   [ACTION_1021.id]: ACTION_1021,
 }
 const WORKFLOW = {
@@ -84,13 +84,13 @@ const WORKFLOW = {
     ACTION_921, // Cancel
   ],
   [STATUS_UNDER_REVIEW.id]: [
-    ACTION_21, // Approve
+    ACTION_191, // Approve
     ACTION_801, // Request  info
     ACTION_1021, // Back to Open
     ACTION_921, // Cancel
   ],
   [STATUS_APPROVED.id]: [
-    ACTION_4, // Start progress
+    ACTION_201, // Start progress
     ACTION_801, // Request  info
     ACTION_1011, // Revoke
     ACTION_1021, // Back to Open
@@ -117,7 +117,7 @@ export default class RfdWorkflow {
 
     static ACTION_1011 = ACTION_1011
 
-    static ACTION_4 = ACTION_4
+    static ACTION_201 = ACTION_201
 
     static ACTION_1021 = ACTION_1021
 
@@ -131,7 +131,7 @@ export default class RfdWorkflow {
 
     static ACTION_951 = ACTION_951
 
-    static ACTION_21 = ACTION_21
+    static ACTION_191 = ACTION_191
 
     static ACTION_701 = ACTION_701
 

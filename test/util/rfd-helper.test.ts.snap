@@ -296,7 +296,7 @@ Array [
         "name": "RFC",
       },
       "status": Object {
-        "name": "Open",
+        "name": "Approved",
       },
     },
   },
@@ -317,7 +317,7 @@ Array [
                 "name": "Medium",
               },
               "status": Object {
-                "name": "Open",
+                "name": "Approved",
               },
             },
           },
@@ -474,7 +474,7 @@ Array [
         "name": "RFC",
       },
       "status": Object {
-        "name": "Open",
+        "name": "Approved",
       },
     },
   },
@@ -495,7 +495,7 @@ Array [
                 "name": "Medium",
               },
               "status": Object {
-                "name": "Open",
+                "name": "Approved",
               },
             },
           },
@@ -519,9 +519,41 @@ Array [
           "name": "bf00473b394a-A",
         },
       ],
-      "customfield_10121": Object {
-        "value": "DLVR",
+      "customfield_10121": null,
+      "issuelinks": Array [],
+      "issuetype": Object {
+        "name": "RFD-subtask",
       },
+      "status": Object {
+        "name": "Open",
+      },
+    },
+  },
+  Object {
+    "fields": Object {
+      "components": Array [
+        Object {
+          "name": "bf00473b394a-A",
+        },
+      ],
+      "customfield_10121": null,
+      "issuelinks": Array [],
+      "issuetype": Object {
+        "name": "RFD-subtask",
+      },
+      "status": Object {
+        "name": "Open",
+      },
+    },
+  },
+  Object {
+    "fields": Object {
+      "components": Array [
+        Object {
+          "name": "bf00473b394a-A",
+        },
+      ],
+      "customfield_10121": null,
       "issuelinks": Array [],
       "issuetype": Object {
         "name": "RFD-subtask",
