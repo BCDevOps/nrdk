@@ -2,10 +2,14 @@
 
 import debug from 'debug'
 
-export function logger(name: string): any {
-  return {
-    warn: debug(`info:${name}`),
-    info: debug(`info:${name}`),
-    trace: debug(`trace:${name}`),
-  }
+export function warn(string: string): debug.Debugger {
+  return debug(`warn:${string}`)
+}
+
+export function info(string: string): debug.Debugger {
+  return debug(`info:${string}`)
+}
+
+export function trace(string: string): debug.Debugger {
+  return debug(`trace:${string}`)
 }
