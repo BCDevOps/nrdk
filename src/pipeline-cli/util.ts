@@ -2,6 +2,7 @@
 /* eslint-disable no-inner-declarations */
 
 import {spawnSync, SpawnSyncOptionsWithStringEncoding, SpawnSyncReturns} from 'child_process'
+import * as crypto from 'crypto'
 
 function normalizeKind(kind: any): any {
   if (kind === 'ImageStream') {
@@ -55,6 +56,32 @@ export namespace Util {
     return ret
   }
   */
+
+  export function hashString(itemAsString: string): string {
+    const shasum = crypto.createHash('sha1')
+    // var itemAsString = JSON.stringify(resource)
+    shasum.update(`blob ${itemAsString.length + 1}\0${itemAsString}\n`)
+
+    return shasum.digest('hex')
+  }
+
+  export function hashObject(resource: any): string {
+    // var shasum = crypto.createHash('sha1');
+    const itemAsString = JSON.stringify(resource)
+    // shasum.update(`blob ${itemAsString.length + 1}\0${itemAsString}\n`);
+    return hashString(itemAsString)
+  }
+
+  export function execSync(command: string, args: string[], cwd: any) {
+    const ret = unsafeExecSync(command, args, cwd)
+    if (ret.status !== 0) {
+      throw new Error(
+        `Failed running '${args[0]} ${args[1]}' as it returned ${ret.status}`,
+      )
+    }
+    return ret
+  }
+
   // eslint-disable-next-line complexity
   export function applyArgumentsDefaults(options: any) {
     options.git = options.git || {}
