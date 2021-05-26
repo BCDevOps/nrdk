@@ -4,53 +4,60 @@ const {isArray} = Array
 const info = require('debug')('info:OpenShiftClient')
 const trace = require('debug')('trace:OpenShiftClient')
 
-const path = require('path')
-const isPlainObject = require('lodash.isplainobject')
-const fs = require('fs')
-const OpenShiftClient = require('./OpenShiftClient')
-const OpenShiftClientResult = require('./OpenShiftClientResult')
-const OpenShiftStaticSelector = require('./OpenShiftStaticSelector')
-const Transformers = require('./transformers')
-const isOpenShiftList = require('./isOpenShiftList')
-const util = require('./util')
-const CONSTANTS = require('./constants')
+import * as path from 'path'
+import * as fs from 'fs'
+import {Transformers} from './transformers'
+import {isPlainObj as isOpenShiftList} from './is-openshift-list'
+import isPlainObject from 'lodash.isplainobject'
+import {CONSTANTS} from './constants'
+import {OpenShiftClient} from './openshift-client'
+import {OpenShiftClientResult} from './openshift-client-result'
+import {OpenShiftStaticSelector} from './openshift-static-selector'
+import {Util as util} from './util'
 
 const logger = {info, trace}
 
 class OpenShiftClientX extends OpenShiftClient {
-  constructor(options) {
+  cache: any
+
+  constructor(options: any) {
     super(options)
     this.cache = new Map()
   }
 
-  applyBestPractices(resources) {
-    if (resources != null && isArray(resources)) {
+  applyBestPractices(resources: string[]|null|any): any {
+    if (resources !== null && isArray(resources)) {
       return this.applyBestPractices(this.wrapOpenShiftList(resources))
     }
 
-    if (resources != null && !isOpenShiftList(resources)) {
+    if (resources !== null && !isOpenShiftList(resources)) {
       throw new Error('"resources" argument must be an array')
     }
     const transformers = new Transformers(this)
-    resources.items.forEach(resource => {
+    resources.items.forEach((resource: string) => {
+      // eslint-disable-next-line new-cap
       transformers.ENSURE_METADATA(resource)
+      // eslint-disable-next-line new-cap
       transformers.ADD_CHECKSUM_LABEL(resource)
+      // eslint-disable-next-line new-cap
       transformers.ENSURE_METADATA_NAMESPACE(resource, resources)
+      // eslint-disable-next-line new-cap
       transformers.REMOVE_BUILD_CONFIG_TRIGGERS(resource)
+      // eslint-disable-next-line new-cap
       transformers.ADD_SOURCE_HASH(resource)
     })
     return resources
   }
 
   // eslint-disable-next-line class-methods-use-this
-  getLabel(resource, name) {
+  getLabel(resource: any, name: string) {
     resource.metadata = resource.metadata || {} // eslint-disable-line no-param-reassign
     resource.metadata.labels = resource.metadata.labels || {} // eslint-disable-line no-param-reassign,max-len
     return resource.metadata.labels[name]
   }
 
   // eslint-disable-next-line class-methods-use-this
-  setLabel(resource, name, value) {
+  setLabel(resource: any, name: any, value?: string) {
     resource.metadata = resource.metadata || {} // eslint-disable-line no-param-reassign
     resource.metadata.labels = resource.metadata.labels || {} // eslint-disable-line no-param-reassign,max-len
     if (isPlainObject(name)) {
@@ -62,15 +69,14 @@ class OpenShiftClientX extends OpenShiftClient {
   }
 
   // eslint-disable-next-line class-methods-use-this
-  getAnnotation(resource, name) {
+  getAnnotation(resource: any, name: string) {
     resource.metadata = resource.metadata || {} // eslint-disable-line no-param-reassign
     resource.metadata.annotations = resource.metadata.annotations || {} // eslint-disable-line no-param-reassign,max-len
     return resource.metadata.annotations[name]
   }
-  // TODO:
 
   // eslint-disable-next-line class-methods-use-this
-  setAnnotation(resource, name, value) {
+  setAnnotation(resource: any, name: string, value: string) {
     resource.metadata = resource.metadata || {} // eslint-disable-line no-param-reassign
     resource.metadata.annotations = resource.metadata.annotations || {} // eslint-disable-line no-param-reassign, max-len
     if (isPlainObject(name)) {
@@ -80,17 +86,18 @@ class OpenShiftClientX extends OpenShiftClient {
     }
   }
 
-  /**
-   *
-   * @param {array<Object>} resources The resources to be modified
-   * @param {*} appName The name of the app.
-   * @param {*} envName The name of the environment (e.g.: dev, test, prod)
-   * @param {*} envId    The unique name for this environment (e.g.: dev-1, dev-2, test, prod)
-   * @param {*} instance  The name of the instance of the app
-   *                      (defaults to `{appName}-${envName}-${envId})
-   */
-  applyRecommendedLabels(resources, appName, envName, envId, instance) {
-    if (resources != null && !isArray(resources)) {
+  // /**
+  //  *
+  //  * @param {array<Object>} resources The resources to be modified
+  //  * @param {*} appName The name of the app.
+  //  * @param {*} envName The name of the environment (e.g.: dev, test, prod)
+  //  * @param {*} envId    The unique name for this environment (e.g.: dev-1, dev-2, test, prod)
+  //  * @param {*} instance  The name of the instance of the app
+  //  *                      (defaults to `{appName}-${envName}-${envId})
+  //  */
+  // eslint-disable-next-line max-params
+  applyRecommendedLabels(resources: any[], appName: string, envName: string, envId: string, instance: string) {
+    if (resources !== null && !isArray(resources)) {
       throw new Error('"resources" argument must be an array')
     }
 
@@ -107,12 +114,12 @@ class OpenShiftClientX extends OpenShiftClient {
     }
 
     Object.assign(allLabels, commonLabels, envLabels)
-    const mostLabels = Object.assign({}, allLabels)
+    const mostLabels: any = Object.assign({}, allLabels)
     delete mostLabels['env-id']
     // Apply labels to the list itself
     // client.util.label(resources, allLabels)
 
-    resources.forEach(item => {
+    resources.forEach((item: any) => {
       if (this.getLabel(item, 'shared') === 'true') {
         this.setLabel(item, commonLabels)
       } else {
@@ -129,7 +136,7 @@ class OpenShiftClientX extends OpenShiftClient {
         )
         this.setLabel(item.spec.template, {statefulset: item.metadata.name})
         if (item.spec.volumeClaimTemplates) {
-          item.spec.volumeClaimTemplates.forEach(pvc => {
+          item.spec.volumeClaimTemplates.forEach((pvc: any) => {
             // eslint-disable-next-line no-param-reassign
             pvc.metadata.labels = Object.assign({statefulset: item.metadata.name}, mostLabels)
           })
@@ -152,16 +159,16 @@ class OpenShiftClientX extends OpenShiftClient {
   }
 
   // eslint-disable-next-line class-methods-use-this
-  copyRecommendedLabels(source, target) {
+  copyRecommendedLabels(source: any, target: any) {
     ['app', 'app-name', 'env-name', 'env-id', 'github-repo', 'github-owner'].forEach(labelName => {
-      if (source[labelName] != null) {
+      if (source[labelName] !== null) {
         target[labelName] = source[labelName] // eslint-disable-line no-param-reassign
       }
     })
   }
 
-  fetchSecretsAndConfigMaps(resources) {
-    if (resources != null && !isArray(resources)) {
+  fetchSecretsAndConfigMaps(resources: any[]) {
+    if (resources !== null && !isArray(resources)) {
       throw new Error('"resources" argument must be an array')
     }
 
@@ -169,28 +176,29 @@ class OpenShiftClientX extends OpenShiftClient {
       const resource = resources[i]
       if (resource.kind === 'Secret' || resource.kind === 'ConfigMap') {
         const refName = this.getAnnotation(resource, 'as-copy-of')
-        if (refName != null) {
+        if (refName !== null) {
           const refResource = this.object(`${resource.kind}/${refName}`)
           resource.data = refResource.data
           const tmpStringData = resource.stringData || {}
           resource.stringData = {}
-          if (resource.kind === 'Secret' && tmpStringData['metadata.name'] != null) {
+          if (resource.kind === 'Secret' && tmpStringData['metadata.name'] !== null) {
             resource.stringData['metadata.name'] = resource.metadata.name
           }
           const preserveFields = this.getAnnotation(resource, 'as-copy-of/preserve')
           if (resource.kind === 'Secret' && preserveFields) {
             const existingResource = this.object(
               `${resource.kind}/${resource.metadata.name}`,
-              {'ignore-not-found': 'true'} // eslint-disable-line prettier/prettier
+              {'ignore-not-found': 'true'}, // eslint-disable-line prettier/prettier
             )
-            if (existingResource != null) {
+            // eslint-disable-next-line max-depth
+            if (existingResource !== null) {
               resource.data[preserveFields] = existingResource.data[preserveFields]
             }
           }
         }
       } else if (resource.kind === 'Route') {
         const refName = this.getAnnotation(resource, 'tls/secretName')
-        if (refName != null) {
+        if (refName !== null) {
           const refResource = this.object(`${resource.kind}/${refName}`)
           const refData = refResource.data
           Object.keys(refData).forEach(prop => {
@@ -204,7 +212,7 @@ class OpenShiftClientX extends OpenShiftClient {
     return resources
   }
 
-  _setCache(resource) {
+  _setCache(resource: any): any {
     if (isArray(resource)) {
       const entries = []
       for (let i = 0; i < resource.length; i += 1) {
@@ -218,7 +226,7 @@ class OpenShiftClientX extends OpenShiftClient {
     return entry
   }
 
-  _getCache(name) {
+  _getCache(name: string) {
     const _names = [] // eslint-disable-line no-underscore-dangle
     const entries = []
     const missing = []
@@ -235,7 +243,7 @@ class OpenShiftClientX extends OpenShiftClient {
       const _parsed = util.parseName(_name, this.namespace()) // eslint-disable-line no-underscore-dangle,max-len
       const _full = util.fullName(_parsed) // eslint-disable-line no-underscore-dangle
       const entry = this.cache.get(_full)
-      if (entry == null) {
+      if (entry === null) {
         missing.push(_full)
       }
     }
@@ -252,14 +260,14 @@ class OpenShiftClientX extends OpenShiftClient {
       const _parsed = util.parseName(_name, this.namespace()) // eslint-disable-line no-underscore-dangle,max-len
       const _full = util.fullName(_parsed) // eslint-disable-line no-underscore-dangle
       const entry = this.cache.get(_full)
-      if (entry == null) throw new Error(`Missing object:${_name}`)
+      if (entry === null) throw new Error(`Missing object:${_name}`)
       entries.push(entry)
     }
     return entries
   }
 
-  getBuildStatus(buildCacheEntry) {
-    if (!buildCacheEntry || !buildCacheEntry.item) {
+  getBuildStatus(buildCacheEntry: any) {
+    if (!buildCacheEntry?.item) {
       return undefined
     }
     return this.cache.get(util.fullName(buildCacheEntry.item))
@@ -276,14 +284,14 @@ class OpenShiftClientX extends OpenShiftClient {
   }
   */
 
-  /**
-   * @param {*} buildConfig
-   * @returns {string}  the name of the 'Build' object
-   */
-  startBuildIfNeeded(buildConfig) {
+  // /**
+  //  * @param {*} buildConfig
+  //  * @returns {string}  the name of the 'Build' object
+  //  */
+  startBuildIfNeeded(buildConfig: any) {
     const tmpfile = `/tmp/${util.hashObject(buildConfig)}.tar`
-    const args = {wait: 'true'}
-    const hashData = {
+    const args: any = {wait: 'true'}
+    const hashData: any = {
       source: buildConfig.metadata.labels[CONSTANTS.LABELS.SOURCE_HASH],
       images: [],
       buildConfig: buildConfig.metadata.labels[CONSTANTS.LABELS.TEMPLATE_HASH],
@@ -323,15 +331,15 @@ class OpenShiftClientX extends OpenShiftClient {
           output: 'jsonpath={.image.metadata.name}',
         })
         const imageStreamImageName = `${sourceImage.name.split(':')[0]}@${imageName}`
-        logger.info(`Rewriting reference from '${sourceImage.kind}/${sourceImage.name}' to '${CONSTANTS.KINDS.IMAGE_STREAM_IMAGE}/${imageStreamImageName}'`) // eslint-disable-line
-        sourceImage.kind = CONSTANTS.KINDS.IMAGE_STREAM_IMAGE // eslint-disable-line no-param-reassign,max-len
-        sourceImage.name = imageStreamImageName // eslint-disable-line no-param-reassign
+        logger.info(`Rewriting reference from '${sourceImage.kind}/${sourceImage.name}' to '${CONSTANTS.KINDS.IMAGE_STREAM_IMAGE}/${imageStreamImageName}'`)
+        sourceImage.kind = CONSTANTS.KINDS.IMAGE_STREAM_IMAGE
+        sourceImage.name = imageStreamImageName
       }
       hashData.images.push(sourceImage)
     })
 
-    const env = {}
-    const buildHash = util.hashObject(hashData)
+    const env: any = {}
+    const buildHash: string = util.hashObject(hashData)
     env[CONSTANTS.ENV.BUILD_HASH] = buildHash
     logger.trace(`${util.fullName(buildConfig)} > hashData: ${hashData}`)
 
@@ -341,18 +349,18 @@ class OpenShiftClientX extends OpenShiftClient {
     }
     const outputImageStream = this.object(`${CONSTANTS.KINDS.IMAGE_STREAM}/${outputTo.name.split(':')[0]}`) // eslint-disable-line prettier/prettier
     const tags = (outputImageStream.status || {}).tags || []
-    let foundImageStreamImage = null
+    let foundImageStreamImage: any = null
 
     while (tags.length > 0) {
       const tag = tags.shift()
       if (!foundImageStreamImage) {
-        const resources = tag.items.map(image => {
+        const resources = tag.items.map((image: any) => {
           return `${CONSTANTS.KINDS.IMAGE_STREAM_IMAGE}/${outputTo.name.split(':')[0]}@${image.image}` // eslint-disable-line prettier/prettier
         })
         const images = this.objects(resources)
         images.forEach(ocImageStreamImage => { // eslint-disable-line no-loop-func,prettier/prettier,max-len
-          const sourceBuild = {kind: CONSTANTS.KINDS.BUILD, metadata: {}}
-          ocImageStreamImage.image.dockerImageMetadata.Config.Env.forEach(envLine => {
+          const sourceBuild: any = {kind: CONSTANTS.KINDS.BUILD, metadata: {}}
+          ocImageStreamImage.image.dockerImageMetadata.Config.Env.forEach((envLine: string) => {
             if (envLine === `${CONSTANTS.ENV.BUILD_HASH}=${buildHash}`) {
               foundImageStreamImage = ocImageStreamImage
             } else if (envLine.startsWith('OPENSHIFT_BUILD_NAME=')) {
@@ -385,7 +393,7 @@ class OpenShiftClientX extends OpenShiftClient {
     return new OpenShiftStaticSelector(this, [`${util.fullName(foundImageStreamImage)}`])
   }
 
-  importImageStreams(objects, targetImageTag, sourceNamespace, sourceImageTag) {
+  importImageStreams(objects: any, targetImageTag: string, sourceNamespace: string, sourceImageTag: string) {
     for (let i = 0; i < objects.length; i += 1) {
       const item = objects[i]
       if (util.normalizeKind(item.kind) === 'imagestream.image.openshift.io') {
@@ -403,10 +411,10 @@ class OpenShiftClientX extends OpenShiftClient {
     return objects
   }
 
-  async pickNextBuilds(builds, buildConfigs) {
+  async pickNextBuilds(builds: string[], buildConfigs: string[]) {
     // var buildConfigs = _buildConfigs.slice()
     // const maxLoopCount = buildConfigs.length * 2
-    let currentBuildConfigEntry = null
+    let currentBuildConfigEntry: any = null
     // var currentLoopCount = 0
     const promises = []
     let head = undefined // eslint-disable-line no-undef-init
@@ -442,8 +450,7 @@ class OpenShiftClientX extends OpenShiftClient {
       // dependencies have been resolved/satisfied
       if (resolved) {
         logger.trace(`Queuing ${buildConfigFullName}`)
-        const self = this
-        const _startBuild = this.startBuildIfNeeded.bind(self)
+        const _startBuild = this.startBuildIfNeeded.bind(this)
         const _bcCacheEntry = currentBuildConfigEntry
 
         promises.push(
@@ -452,10 +459,10 @@ class OpenShiftClientX extends OpenShiftClient {
             return _startBuild(currentBuildConfig)
           })
           .then(build => {
-            const _names = build.identifiers()
+            const _names = build?.identifiers()
             // eslint-disable-next-line prefer-destructuring
-            _bcCacheEntry.buildEntry = self._setCache(self.objects(_names))[0]
-            if (build != null) {
+            _bcCacheEntry.buildEntry = this._setCache(this.objects(_names))[0]
+            if (build !== null) {
               builds.push(..._names)
             }
           }),
@@ -483,13 +490,13 @@ class OpenShiftClientX extends OpenShiftClient {
     })
   }
 
-  async startBuild(resources) {
+  async startBuild(resources: any) {
     logger.info('>startBuilds')
     // var cache = new Map()
     const buildConfigs = this._setCache(this.objects(resources))
 
     // try{
-    buildConfigs.forEach(entry => {
+    buildConfigs.forEach((entry: any) => {
       const bc = entry.item
       const buildConfigFullName = util.fullName(bc)
       logger.trace(`Analyzing ${buildConfigFullName} - ${bc.metadata.namespace}`)
@@ -507,7 +514,7 @@ class OpenShiftClientX extends OpenShiftClient {
         }
       }
 
-      const dependencies = []
+      const dependencies: string[] = []
 
       util.getBuildConfigInputImages(bc).forEach(sourceImage => {
         if (sourceImage.kind === CONSTANTS.KINDS.IMAGE_STREAM_TAG) {
@@ -523,42 +530,40 @@ class OpenShiftClientX extends OpenShiftClient {
       entry.dependencies = dependencies // eslint-disable-line no-param-reassign
     })
 
-    const builds = []
+    const builds: any[] = []
     return this.pickNextBuilds(builds, buildConfigs).then(() => {
       return builds
     })
   }
 
-  processDeploymentTemplate(template, templateArgs) {
+  processDeploymentTemplate(template: string, templateArgs: string[]) {
     const objects = this.process(template, templateArgs)
     this.applyBestPractices(objects)
     return objects
   }
 
-  processBuidTemplate(template, templateArgs) {
+  processBuidTemplate(template: string, templateArgs: string) {
     const objects = this.process(template, templateArgs)
     this.applyBestPractices(objects)
     return objects
   }
 
-  async applyAndBuild(objects) {
+  async applyAndBuild(objects: any) {
     this.fetchSecretsAndConfigMaps(objects)
-    const applyResult = this.apply(objects)
+    const applyResult = this.apply(objects) || []
 
     return applyResult
     .narrow('bc')
     .startBuild()
-    .catch(e => {
-      console.log(e.stack) // eslint-disable-line no-console
-      process.exit(1)
+    .catch((error: Error) => {
+      console.log(error.stack) // eslint-disable-line no-console
+      // process.exit(1)
+      throw new Error(error.stack)
     })
   }
 
-  async applyAndDeploy(resources, appName) {
+  async applyAndDeploy(resources: any[], appName: string): Promise<string> {
     this.fetchSecretsAndConfigMaps(resources)
-    // TODO: When there is an HorizontalPodAutoscaler,
-    //   we need to update the dc.replicas to match hpa.status.desiredReplicas (existing)
-    //   or hpa.spec.minReplicas (new)
     const existingDC = this.raw('get', ['dc'], {
       selector: `app=${appName}`,
       output: 'template={{range .items}}{{.metadata.name}}{{"\\t"}}{{.spec.replicas}}{{"\\t"}}{{.status.latestVersion}}{{"\\n"}}{{end}}', // eslint-disable-line prettier/prettier
@@ -577,13 +582,13 @@ class OpenShiftClientX extends OpenShiftClient {
     })
 
     return new Promise(resolve => {
-      if (existingDC.stdout !== newDCs.stdout) {
-        OpenShiftClientResult.waitForDeployment(proc)
-      } else {
+      if (existingDC.stdout === newDCs.stdout) {
         proc.kill('SIGTERM')
+      } else {
+        OpenShiftClientResult.waitForDeployment(proc)
       }
       proc.on('exit', () => {
-        return resolve()
+        return resolve('exit')
       })
     })
   }
