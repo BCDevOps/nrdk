@@ -7,7 +7,7 @@ import {
   GitOperation,
   CONST,
 } from '@bcgov/nr-pipeline-ext'
-import {OpenShiftClientX} from '@bcgov/pipeline-cli'
+import {OpenShiftClientX} from './pipeline-cli/openshift-client-x'
 import {OpenShiftClient} from './pipeline-cli/openshift-client'
 import {BasicJavaApplicationDeployer} from './util/basic-java-application-deployer'
 import {SecretManager} from './api/service/secret-manager'
