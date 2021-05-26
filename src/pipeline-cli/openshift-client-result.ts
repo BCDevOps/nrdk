@@ -1,5 +1,3 @@
-'use strict'
-
 import isEmpty from 'lodash.isempty'
 
 export class OpenShiftClientResult {

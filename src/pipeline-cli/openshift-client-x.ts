@@ -1,5 +1,3 @@
-'use strict'
-
 const {isArray} = Array
 const info = require('debug')('info:OpenShiftClient')
 const trace = require('debug')('trace:OpenShiftClient')
@@ -17,7 +15,7 @@ import {Util as util} from './util'
 
 const logger = {info, trace}
 
-class OpenShiftClientX extends OpenShiftClient {
+export class OpenShiftClientX extends OpenShiftClient {
   cache: any
 
   constructor(options: any) {
@@ -550,7 +548,7 @@ class OpenShiftClientX extends OpenShiftClient {
 
   async applyAndBuild(objects: any) {
     this.fetchSecretsAndConfigMaps(objects)
-    const applyResult = this.apply(objects) || []
+    const applyResult: OpenShiftStaticSelector = this.apply(objects)
 
     return applyResult
     .narrow('bc')
@@ -593,5 +591,3 @@ class OpenShiftClientX extends OpenShiftClient {
     })
   }
 }
-
-module.exports = OpenShiftClientX

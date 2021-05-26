@@ -1,5 +1,3 @@
-'use strict'
-
 /**
  * A module that offers a thin wrapper over `oc` command
  * @module oc-helper

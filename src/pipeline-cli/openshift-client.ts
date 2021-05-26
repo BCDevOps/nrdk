@@ -6,8 +6,6 @@ import {OpenShiftResourceSelector} from './openshift-resource-selector'
 import {OpenShiftStaticSelector} from './openshift-static-selector'
 import {Util as util} from './util'
 
-'use strict'
-
 const {isArray} = Array
 
 const logger = {
@@ -178,7 +176,7 @@ export class OpenShiftClient {
     return []
   }
 
-  _actionReturningName(args: string[]) {
+  _actionReturningName(args: string[]): OpenShiftStaticSelector {
     const proc = this._action(args)
     const names = this.splitNamesUsingArgs(proc.stdout, args)
     return new OpenShiftStaticSelector(this, names)
@@ -209,7 +207,7 @@ export class OpenShiftClient {
     throw new Error('Not Implemented')
   }
 
-  object(name: string, args: any) {
+  object(name: string, args?: any) {
     return this.objects([name], args)[0]
   }
 
@@ -221,7 +219,7 @@ export class OpenShiftClient {
     return null
   }
 
-  objects(names: string[], args: any) {
+  objects(names: string[], args?: any) {
     const result: any[] = []
     const namespaces: any = {}
     names.forEach(name => {
@@ -248,7 +246,7 @@ export class OpenShiftClient {
    * returns (array)
    */
   // eslint-disable-next-line class-methods-use-this
-  unwrapOpenShiftList(object: any) {
+  unwrapOpenShiftList(object: any): any[] {
     const result = []
     if (isPlainObject(object)) {
       if (object.kind !== 'List') {
@@ -316,7 +314,7 @@ export class OpenShiftClient {
   }
 
   // eslint-disable-next-line complexity
-  objectDefAction(verb: string, object: any, userArgs: any) {
+  objectDefAction(verb: string, object: any, userArgs: any): any {
     if (!isString(object) && !isPlainObject(object) && !isArray(object)) {
       throw new Error('Expected string, plain object, or array')
     }
@@ -382,7 +380,7 @@ export class OpenShiftClient {
     }
   }
 
-  async startBuild(object: any, args: any) {
+  async startBuild(object: any, args: any): Promise<any> {
     if (isArray(object)) {
       const promises: any[] = []
       for (let i = 0; i < object.length; i += 1) {
@@ -440,7 +438,7 @@ export class OpenShiftClient {
     }
   }
 
-  apply(object: any[], args: any) {
+  apply(object: any[], args?: any): OpenShiftStaticSelector {
     const result = this.objectDefAction('apply', object, args)
     object.forEach(item => {
       if (item.kind === 'ImageStream') {
@@ -488,7 +486,7 @@ export class OpenShiftClient {
     return this.simplePassthrough('rsync', args)
   }
 
-  tag(objects: any, args: any) {
+  tag(objects: any, args?: any) {
     return this.objectDefAction('tag', objects, args)
   }
 

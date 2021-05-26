@@ -1,5 +1,3 @@
-'use strict'
-
 import debug from 'debug'
 
 export function warn(string: string): debug.Debugger {
