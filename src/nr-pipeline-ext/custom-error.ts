@@ -5,7 +5,7 @@ export class BasicCustomError extends Error {
 
   name: string
 
-  constructor(data: string, ...params: string[]) {
+  constructor(data: any, ...params: string[]) {
     // Pass remaining arguments (including vendor specific ones) to parent constructor
     super(...params)
 

@@ -4,7 +4,7 @@ import * as fs from 'fs'
 import * as path from 'path'
 import {BasicCustomError} from './custom-error'
 
-export class GitOp {
+export class GitOperation {
   settings: any
 
   tmpCredStoreFile: string
