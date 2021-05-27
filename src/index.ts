@@ -1,12 +1,8 @@
 import {
-  BasicJavaApplicationBuilder,
-  BasicFunctionalTester,
-  InputDeployerVerify,
-  Liquibase,
-  Jira,
   GitOperation,
   CONST,
 } from '@bcgov/nr-pipeline-ext'
+import {BasicFunctionalTester} from './nr-pipeline-ext/basic-functional-tester'
 import {OpenShiftClientX} from './pipeline-cli/openshift-client-x'
 import {OpenShiftClient} from './pipeline-cli/openshift-client'
 import {BasicJavaApplicationDeployer} from './util/basic-java-application-deployer'
@@ -19,12 +15,8 @@ export {
   OpenShiftClientX,
   BasicBuilder,
   BasicDeployer,
-  BasicJavaApplicationBuilder,
   BasicJavaApplicationDeployer,
   BasicFunctionalTester,
-  InputDeployerVerify,
-  Liquibase,
-  Jira,
   GitOperation,
   CONST,
   SecretManager,
