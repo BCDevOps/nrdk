@@ -7,6 +7,19 @@ import * as fs from 'fs'
 import * as path from 'path'
 
 export namespace Util {
+  export function isArray(value: any): boolean {
+    const {isArray} = Array
+    return isArray(value)
+  }
+
+  export function isPlainObject(value: any): boolean {
+    return require('lodash.isplainobject')(value)
+  }
+
+  export function isString(value: any): boolean {
+    return require('lodash.isstring')(value)
+  }
+
   export function normalizeKind(kind: any): any {
     if (kind === 'ImageStream') {
       return 'imagestream.image.openshift.io'
@@ -239,5 +252,35 @@ export namespace Util {
       git.branch_ref = git.ref
     }
     return options
+  }
+
+  export function parseArgumentsFromArray(...argv: string[]) {
+    const git = {}
+    const options: any = {git}
+
+    argv.forEach(value => {
+      if (value.startsWith('--')) {
+        // eslint-disable-next-line no-param-reassign
+        value = value.substr(2)
+        const sep = value.indexOf('=')
+        const argName = value.substring(0, sep)
+        const argValue = value.substring(sep + 1)
+        if (argName.startsWith('git.')) {
+          const ctxPath = argName.substr(4).split('.')
+          let ctx: any = git
+          ctxPath.forEach((key, index) => {
+            if (index === ctxPath.length - 1) {
+              ctx[key] = argValue
+            } else {
+              ctx[key] = ctx[key] || {}
+              ctx = ctx[key]
+            }
+          })
+        } else {
+          options[argName] = argValue
+        }
+      }
+    })
+    return applyArgumentsDefaults(options)
   }
 }

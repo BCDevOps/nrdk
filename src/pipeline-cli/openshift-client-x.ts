@@ -94,7 +94,7 @@ export class OpenShiftClientX extends OpenShiftClient {
   //  *                      (defaults to `{appName}-${envName}-${envId})
   //  */
   // eslint-disable-next-line max-params
-  applyRecommendedLabels(resources: any[], appName: string, envName: string, envId: string, instance: string) {
+  applyRecommendedLabels(resources: any[], appName: string, envName: string, envId: string, instance?: string) {
     if (resources !== null && !isArray(resources)) {
       throw new Error('"resources" argument must be an array')
     }
@@ -534,13 +534,13 @@ export class OpenShiftClientX extends OpenShiftClient {
     })
   }
 
-  processDeploymentTemplate(template: string, templateArgs: string[]) {
+  processDeploymentTemplate(template: string, templateArgs: any) {
     const objects = this.process(template, templateArgs)
     this.applyBestPractices(objects)
     return objects
   }
 
-  processBuidTemplate(template: string, templateArgs: string) {
+  processBuidTemplate(template: string, templateArgs: any) {
     const objects = this.process(template, templateArgs)
     this.applyBestPractices(objects)
     return objects
