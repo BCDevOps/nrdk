@@ -1,9 +1,10 @@
 import isEmpty from 'lodash.isempty'
+import {OpenShiftClient} from '..'
 
 export class OpenShiftClientResult {
-  client: any
+  client: OpenShiftClient
 
-  constructor(client: any) {
+  constructor(client: OpenShiftClient) {
     this.client = client
   }
 

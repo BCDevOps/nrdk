@@ -71,17 +71,17 @@ export class OpenShiftClient {
   }
 
   buildCommonArgs(verb: string, verbArgs: any, userArgs: any, overrideArgs?: any) {
-    if (userArgs !== null && !isPlainObject(userArgs)) {
+    if (userArgs && !isPlainObject(userArgs)) {
       throw new Error('Expected "userArgs" to be plain object')
     }
 
-    if (overrideArgs !== null && !isPlainObject(overrideArgs)) {
+    if (overrideArgs && !isPlainObject(overrideArgs)) {
       throw new Error('Expected "userArgs" to be plain object')
     }
 
     const _args: any = {}
     Object.assign(_args, this.globalArgs)
-    if (userArgs !== null) {
+    if (userArgs) {
       Object.assign(_args, userArgs)
     }
     if (isPlainObject(verbArgs) && verbArgs.namespace) {
@@ -89,7 +89,7 @@ export class OpenShiftClient {
       delete verbArgs.namespace // eslint-disable-line no-param-reassign
     }
 
-    if (overrideArgs !== null) {
+    if (overrideArgs) {
       Object.assign(_args, overrideArgs)
     }
 
@@ -286,7 +286,7 @@ export class OpenShiftClient {
     }
     if (isPlainObject(objectOrList)) {
       if (objectOrList.kind === 'List') {
-        if (objectOrList.items !== null) {
+        if (objectOrList.items) { // !== null or undefined
           return this.toNamesList(objectOrList.items)
         }
         return []
@@ -296,11 +296,11 @@ export class OpenShiftClient {
     throw new Error('Not Implemented')
   }
 
-  selector(kind: string|string[], qualifier: string|any) {
+  selector(kind: string|string[], qualifier?: string|any) {
     return new OpenShiftResourceSelector(this, 'selector', kind, qualifier)
   }
 
-  process(template: string, args: any) {
+  process(template: any, args: any) {
     if (typeof template !== 'string') throw new Error('Expected string')
     if (util.isUrl(template)) {
       const proc = this._action(
@@ -438,11 +438,11 @@ export class OpenShiftClient {
     }
   }
 
-  apply(object: any[], args?: any): OpenShiftStaticSelector {
+  apply(object: any[], args: any = {}): any {
     const result = this.objectDefAction('apply', object, args)
     object.forEach(item => {
       if (item.kind === 'ImageStream') {
-        (item.spec?.tags as any[]).forEach(tag => {
+        ((item.spec?.tags || []) as any[]).forEach(tag => {
           this.waitForImageStreamTag(`${item.metadata.name}:${tag.name}`)
         })
       }
@@ -491,14 +491,8 @@ export class OpenShiftClient {
   }
 
   // Utilities
-  // eslint-disable-next-line class-methods-use-this
   toFileUrl(str: string) {
-    if (typeof str !== 'string') {
-      throw new TypeError('Expected a string')
-    }
-
     const pathName = path.resolve(str).replace(/\\/g, '/')
-
     return encodeURI(`file://${pathName}`)
   }
 

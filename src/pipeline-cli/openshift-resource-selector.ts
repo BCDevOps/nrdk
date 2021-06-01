@@ -1,5 +1,6 @@
 import isPlainObject from 'lodash.isplainobject'
 import isString from 'lodash.isstring'
+import {OpenShiftClient} from '..'
 import {OpenShiftClientResult} from './openshift-client-result'
 
 const {isArray} = Array
@@ -17,25 +18,23 @@ const {isArray} = Array
 //  * ("dc", { alabel: 'avalue' }) // Selects using label values
 //  */
 export class OpenShiftResourceSelector extends OpenShiftClientResult {
-  ids: string[]
+  ids?: string[]
 
-  kind: string
+  kind?: string
 
-  qualifier: string[]
+  qualifier?: string[]
 
-  labels: string[]
+  labels?: string[]
 
-  constructor(client: any, type: string, kindOrList: string|string[], qualifier?: string[]) {
+  constructor(client: OpenShiftClient, type: string, kindOrList: string|string[], qualifier?: string[]) {
     super(client)
-    this.ids = []
-    this.kind = ''
-    this.qualifier = []
-    this.labels = []
 
     // if it is a list of qualified names
     if (isArray(kindOrList)) {
+      this.ids = []
       this.ids.push(...kindOrList)
     } else if (kindOrList.indexOf('/') >= 0) {
+      this.ids = []
       this.ids.push(kindOrList)
     } else {
       this.kind = kindOrList
@@ -48,7 +47,7 @@ export class OpenShiftResourceSelector extends OpenShiftClientResult {
   }
 
   _isEmptyStatic(): boolean {
-    return this.ids !== null && this.ids.length === 0
+    return (this.ids !== undefined) && this.ids.length === 0
   }
 
   queryIdentifiers(): string[] {
@@ -56,7 +55,7 @@ export class OpenShiftResourceSelector extends OpenShiftClientResult {
       return []
     }
     const args: any[] = [this.kind]
-    if (this.qualifier !== null) {
+    if (this.qualifier) {
       args.push(this.qualifier)
     }
     const selectors: string[] = this.client.toCommandArgsArray({selector: this.labels})
@@ -94,7 +93,7 @@ export class OpenShiftResourceSelector extends OpenShiftClientResult {
     return this.client.delete(this.names(), args)
   }
 
-  async startBuild(args?: string[]): Promise<any> {
+  async startBuild(args?: any): Promise<any> {
     const _names = this.identifiers()
     return this.client.startBuild(_names, args)
   }
