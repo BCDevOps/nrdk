@@ -1,6 +1,14 @@
 import git from 'isomorphic-git'
 import * as fs from 'fs'
 import {spawn} from 'child_process'
+import PropertiesFile from './util/properties-file'
+import {Secret} from './api/service/secret-manager'
+
+const env = Object.assign({}, process.env)
+export interface GitCredential {
+    username: string;
+    password: Secret;
+}
 
 export default class GitClient {
   private static instance: GitClient
@@ -14,6 +22,17 @@ export default class GitClient {
       GitClient.instance = new GitClient()
     }
     return GitClient.instance
+  }
+
+  static async getCachedCredential(url: string): Promise<GitCredential | undefined> {
+    const child = spawn('git', ['credential', 'fill'], {env})
+    child.stdin.end(`url=${url}`, 'utf-8')
+    const properties = await PropertiesFile.read(child.stdout)
+    const username = properties.get('username')
+    const password = properties.get('password')
+    if (username && password) {
+      return {username: username, password: new Secret(password)}
+    }
   }
 
   public async getLocalBranchName(): Promise<string> {

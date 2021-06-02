@@ -1,5 +1,3 @@
-
-
 import {RepositoryReference} from '../service/axios-bitbucket-client'
 
 const CUSTOMFIELD_TARGET_ENV_PROD = 'customfield_10121' // Target environment
@@ -20,40 +18,25 @@ const CUSTOMFIELD_DEPLOYMENT_CATEGORY_PROD = 'customfield_12721' // Deployment C
 const CUSTOMFIELD_RFD_ACKNOWLEDGEMENT_PROD = 'customfield_12531' // RFD Instructions
 const CUSTOMFIELD_IS_AUTOMATED_PIPELINE_PROD = 'customfield_12202' // Automated Pipeline?
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+/*
 const CUSTOMFIELD_TARGET_ENV_TEST = CUSTOMFIELD_TARGET_ENV_PROD // Target environment
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const CUSTOMFIELD_RFC_COMPLETE_TEST = 'customfield_13126' // RFC complete, linked and submitted?
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const CUSTOMFIELD_SUBTASKS_ADDED_TEST = 'customfield_13128' // All RFD-subtasks added?
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const CUSTOMFIELD_RFD_SCHEDULED_TEST = 'customfield_13129' // RFD Scheduled in the calendar?
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const CUSTOMFIELD_DEV_TEAM_LEAD_TEST = 'customfield_12425' // Development Team Lead
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const CUSTOMFIELD_SUBTASKS_APPROVED_TEST = 'customfield_13131' // RFD-subtasks Approved?
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const CUSTOMFIELD_RFC_APPROVED_TEST = 'customfield_13127' // RFC Approved?
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const CUSTOMFIELD_STATE_OF_TESTING_TEST = 'customfield_13125' // State of testing?
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const CUSTOMFIELD_STAKEHOLDERS_INFORMED_TEST = 'customfield_13134' // Have the stakeholders been informed?
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const CUSTOMFIELD_DEPLOYMENT_VERIFIER_TEST = 'customfield_13000' // Who will verify this deployment?
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const CUSTOMFIELD_RFD_DEPLOYMENT_STATUS_TEST = 'customfield_13106' // RFD Deployment Status
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const CUSTOMFIELD_IRS_UPDATED_TEST = 'customfield_10615' // IRS entry updated?
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const CUSTOMFIELD_TRANSITION_SIGNEDOFF_TEST = 'customfield_13105' // Transition Management Signed off?
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const CUSTOMFIELD_RFD_SUBTASK_ACKNOWLEDGEMENT_TEST = 'customfield_12436' // RFD-subtask Instructions
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const CUSTOMFIELD_DEPLOYMENT_CATEGORY_TEST = 'customfield_12436' // Deployment Category
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const CUSTOMFIELD_RFD_ACKNOWLEDGEMENT_TEST = 'customfield_12418' // RFD Instructions
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const CUSTOMFIELD_IS_AUTOMATED_PIPELINE_TEST = CUSTOMFIELD_IS_AUTOMATED_PIPELINE_PROD // Automated Pipeline?
+*/
 
 export const CUSTOMFIELD_RFC_COMPLETE = CUSTOMFIELD_RFC_COMPLETE_PROD
 export const CUSTOMFIELD_SUBTASKS_ADDED = CUSTOMFIELD_SUBTASKS_ADDED_PROD

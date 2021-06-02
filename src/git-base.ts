@@ -44,6 +44,10 @@ export abstract class GitBaseCommand extends Command {
   }
 
   async createBranch(issue: any, repository: RepositoryReference, branchName: string, startPoint = 'master') {
+    if (repository.url?.startsWith('https://github.com/')) {
+      const githubClient =  await AxiosFactory.gitHub(repository.url)
+      return githubClient.createBranchIfMissing(repository, branchName, startPoint)
+    }
     const devDetails = (await this.jira().getBranches(issue.id))
     const branches = devDetails.branches.filter((item: { name: string }) => item.name === branchName)
     // this.log('branches:', branches)

@@ -106,7 +106,7 @@ export class AxiosJiraClient extends AxiosClient {
     try {
       return await AxiosBitBucketClient.parseUrl(component.description)
     } catch (error) {
-      throw new GeneralError(`Unable to parse component description for ${component.name}`, error)
+      throw new GeneralError(`Unable to parse git URL from component ${component.name} with description "${component.description}"`, error)
     }
   }
 
