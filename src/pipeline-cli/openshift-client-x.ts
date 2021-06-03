@@ -24,11 +24,11 @@ export class OpenShiftClientX extends OpenShiftClient {
   }
 
   applyBestPractices(resources: string[]|null|any): any {
-    if (resources !== null && isArray(resources)) {
+    if (resources && isArray(resources)) {
       return this.applyBestPractices(this.wrapOpenShiftList(resources))
     }
 
-    if (resources !== null && !isOpenShiftList(resources)) {
+    if (resources && !isOpenShiftList(resources)) {
       throw new Error('"resources" argument must be an array')
     }
     const transformers = new Transformers(this)
@@ -95,7 +95,7 @@ export class OpenShiftClientX extends OpenShiftClient {
   //  */
   // eslint-disable-next-line max-params
   applyRecommendedLabels(resources: any[], appName: string, envName: string, envId: string, instance?: string) {
-    if (resources !== null && !isArray(resources)) {
+    if (resources && !isArray(resources)) {
       throw new Error('"resources" argument must be an array')
     }
 
@@ -159,14 +159,14 @@ export class OpenShiftClientX extends OpenShiftClient {
   // eslint-disable-next-line class-methods-use-this
   copyRecommendedLabels(source: any, target: any) {
     ['app', 'app-name', 'env-name', 'env-id', 'github-repo', 'github-owner'].forEach(labelName => {
-      if (source[labelName] !== null) {
+      if (source[labelName]) {
         target[labelName] = source[labelName] // eslint-disable-line no-param-reassign
       }
     })
   }
 
   fetchSecretsAndConfigMaps(resources: any[]) {
-    if (resources !== null && !isArray(resources)) {
+    if (resources && !isArray(resources)) {
       throw new Error('"resources" argument must be an array')
     }
 
@@ -174,12 +174,12 @@ export class OpenShiftClientX extends OpenShiftClient {
       const resource = resources[i]
       if (resource.kind === 'Secret' || resource.kind === 'ConfigMap') {
         const refName = this.getAnnotation(resource, 'as-copy-of')
-        if (refName !== null) {
+        if (refName) {
           const refResource = this.object(`${resource.kind}/${refName}`)
           resource.data = refResource.data
           const tmpStringData = resource.stringData || {}
           resource.stringData = {}
-          if (resource.kind === 'Secret' && tmpStringData['metadata.name'] !== null) {
+          if (resource.kind === 'Secret' && tmpStringData['metadata.name']) {
             resource.stringData['metadata.name'] = resource.metadata.name
           }
           const preserveFields = this.getAnnotation(resource, 'as-copy-of/preserve')
@@ -189,14 +189,14 @@ export class OpenShiftClientX extends OpenShiftClient {
               {'ignore-not-found': 'true'}, // eslint-disable-line prettier/prettier
             )
             // eslint-disable-next-line max-depth
-            if (existingResource !== null) {
+            if (existingResource) {
               resource.data[preserveFields] = existingResource.data[preserveFields]
             }
           }
         }
       } else if (resource.kind === 'Route') {
         const refName = this.getAnnotation(resource, 'tls/secretName')
-        if (refName !== null) {
+        if (refName) {
           const refResource = this.object(`${resource.kind}/${refName}`)
           const refData = refResource.data
           Object.keys(refData).forEach(prop => {
@@ -241,7 +241,7 @@ export class OpenShiftClientX extends OpenShiftClient {
       const _parsed = util.parseName(_name, this.namespace()) // eslint-disable-line no-underscore-dangle,max-len
       const _full = util.fullName(_parsed) // eslint-disable-line no-underscore-dangle
       const entry = this.cache.get(_full)
-      if (entry === null) {
+      if (!entry) {
         missing.push(_full)
       }
     }
@@ -258,7 +258,7 @@ export class OpenShiftClientX extends OpenShiftClient {
       const _parsed = util.parseName(_name, this.namespace()) // eslint-disable-line no-underscore-dangle,max-len
       const _full = util.fullName(_parsed) // eslint-disable-line no-underscore-dangle
       const entry = this.cache.get(_full)
-      if (entry === null) throw new Error(`Missing object:${_name}`)
+      if (!entry) throw new Error(`Missing object:${_name}`)
       entries.push(entry)
     }
     return entries
@@ -270,17 +270,6 @@ export class OpenShiftClientX extends OpenShiftClient {
     }
     return this.cache.get(util.fullName(buildCacheEntry.item))
   }
-
-  // Deprecated in favour of processBuidTemplate()
-  /*
-  processForBuild(template, args, name, envId) {
-    const objects = this.process(template, args);
-    this.applyBestPractices(objects);
-    this.applyRecommendedLabels(objects, name, 'build', envId);
-
-    return objects;
-  }
-  */
 
   // /**
   //  * @param {*} buildConfig
@@ -460,7 +449,7 @@ export class OpenShiftClientX extends OpenShiftClient {
             const _names = build?.identifiers()
             // eslint-disable-next-line prefer-destructuring
             _bcCacheEntry.buildEntry = this._setCache(this.objects(_names))[0]
-            if (build !== null) {
+            if (build) {
               builds.push(..._names)
             }
           }),
@@ -490,10 +479,8 @@ export class OpenShiftClientX extends OpenShiftClient {
 
   async startBuild(resources: any) {
     logger.info('>startBuilds')
-    // var cache = new Map()
     const buildConfigs = this._setCache(this.objects(resources))
 
-    // try{
     buildConfigs.forEach((entry: any) => {
       const bc = entry.item
       const buildConfigFullName = util.fullName(bc)
