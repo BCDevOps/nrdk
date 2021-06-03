@@ -12,6 +12,7 @@ export class LibTest {
       if (!params[p.name] && p.value !== undefined) params[p.name] = p.value
     })
 
+    // Complete template - variable substitution
     Object.keys(params).forEach(prop => {
       const value = params[prop]
       if (value !== null) {

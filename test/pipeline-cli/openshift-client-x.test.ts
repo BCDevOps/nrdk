@@ -366,7 +366,7 @@ describe('OpenShiftClientX', function() {
   }) // end it
 
   // eslint-disable-next-line func-names,space-before-function-paren,prefer-arrow-callback
-  it.only('build', async function() {
+  it('build', async function() {
     const params = {NAME: 'my-test-app'}
     const stubAction = sandbox.stub(oc, '_action')
     const stubExecSync = sandbox.stub(Util, 'execSync')
