@@ -1,380 +1,10 @@
-'use strict'
-const expect = require('expect')
-const sandbox = require('sinon').createSandbox()
-const {ENV} = require('../lib/constants')
-const {OpenShiftClientX} = require('@bcgov/pipeline-cli')
-const BasicJavaApplicationClean = require('../lib/BasicJavaApplicationClean')
+import expect from 'expect'
+import sinon from 'sinon'
+const sandbox = sinon.createSandbox()
 
-describe('BasicJavaApplicationClean:', function () {
-  this.timeout(50000)
-
-  let cleaner
-  const defaultSettings = getDefaultSettings() // do not modify this settings.
-  let ocGetStub
-  let ocDeleteStub
-  let ocRawStub
-
-  this.beforeEach(function () {
-    cleaner = new BasicJavaApplicationClean(defaultSettings)
-    ocGetStub = sandbox.stub(OpenShiftClientX.prototype, 'get')
-    ocDeleteStub = sandbox.stub(OpenShiftClientX.prototype, 'delete')
-    ocRawStub = sandbox.stub(OpenShiftClientX.prototype, 'raw')
-  })
-
-  this.afterEach(function () {
-    sandbox.restore()
-  })
-
-  context('Obtaining target phase(s)', function () {
-    it("Argument for env='all', it should include targets for: 'build' and 'dev' as current target phases.", function () {
-      const targetPhases = cleaner.getTargetPhases('all')
-      expect(targetPhases).toContain(ENV.BUILD)
-      expect(targetPhases).toContain(ENV.DEV)
-      expect(targetPhases).not.toContain(ENV.DLVR)
-      expect(targetPhases).not.toContain(ENV.TEST)
-      expect(targetPhases).not.toContain(ENV.PROD)
-    })
-
-    it("Argument for env='transient', it should include targets for: 'build' and 'dev' as current target phases.", function () {
-      const targetPhases = cleaner.getTargetPhases('transient')
-      expect(targetPhases).toContain(ENV.BUILD)
-      expect(targetPhases).toContain(ENV.DEV)
-      expect(targetPhases).not.toContain(ENV.DLVR)
-      expect(targetPhases).not.toContain(ENV.TEST)
-      expect(targetPhases).not.toContain(ENV.PROD)
-    })
-
-    it("Argument for env='test', it should only have 'test' as target phase.", function () {
-      const targetPhases = cleaner.getTargetPhases('test')
-      expect(targetPhases).not.toContain(ENV.BUILD)
-      expect(targetPhases).not.toContain(ENV.DEV)
-      expect(targetPhases).not.toContain(ENV.DLVR)
-      expect(targetPhases).toContain(ENV.TEST)
-      expect(targetPhases).not.toContain(ENV.PROD)
-    })
-  })
-
-  context('Call clean to delete objects for a target phase', function () {
-    it("When no 'bc/dc' can be found based on settings, no deletion on bc/dc will be called.", async function () {
-      // Arrange
-      const settingCopy = Object.assign(defaultSettings)
-      settingCopy.options.env = 'dlvr'
-      ocGetStub.withArgs(sandbox.match('bc')).returns(undefined)
-      ocGetStub.withArgs(sandbox.match('dc')).returns(undefined)
-
-      // Act
-      cleaner = new BasicJavaApplicationClean(settingCopy)
-      await cleaner.clean()
-
-      // Verify
-      sandbox.assert.calledTwice(ocGetStub)
-      sandbox.assert.notCalled(ocDeleteStub)
-      sandbox.assert.called(ocRawStub)
-    })
-
-    it('When there is a target phase, it will call oc to delete all objects in the environment.', async function () {
-      // Arrange
-      const settingCopy = Object.assign(defaultSettings)
-      settingCopy.options.env = 'dlvr' // set this to prepare first for the rest.
-
-      const phase = settingCopy.phases[settingCopy.options.env]
-      const options = settingCopy.options
-
-      const bcCopies = getRandomBcOrDc(3, 'bc')
-      const numBcCopies = bcCopies.length
-      ocGetStub.withArgs(sandbox.match('bc')).returns(bcCopies)
-      const dcCopies = getRandomBcOrDc(4, 'dc')
-      const numDcCopies = dcCopies.length
-      ocGetStub.withArgs(sandbox.match('dc')).returns(dcCopies)
-
-      // Act
-      cleaner = new BasicJavaApplicationClean(settingCopy)
-      cleaner.clean()
-
-      // Verify
-      sandbox.assert.called(ocGetStub)
-      sandbox.assert.called(ocDeleteStub)
-      for (let i = 0; i < numBcCopies; i++) {
-        sandbox.assert.calledWith(ocDeleteStub, [`ImageStreamTag/${bcCopies[i].spec.output.to.name}`], {
-          'ignore-not-found': 'true',
-          wait: 'true',
-          namespace: phase.namespace,
-        })
-      }
-      for (let i = 0; i < numDcCopies; i++) {
-        sandbox.assert.calledWith(
-          ocDeleteStub,
-          [`ImageStreamTag/${dcCopies[i].spec.triggers[0].imageChangeParams.from.name}`],
-          {'ignore-not-found': 'true', wait: 'true', namespace: phase.namespace},
-        )
-      }
-      sandbox.assert.called(ocRawStub)
-      sandbox.assert.calledWith(ocRawStub, 'delete', ['all'], {
-        selector: `app=${phase.instance},env-id=${phase.changeId},!shared,github-repo=${options.git.repository},github-owner=${options.git.owner}`,
-        wait: 'true',
-        namespace: phase.namespace,
-      })
-      sandbox.assert.calledWith(
-        ocRawStub,
-        'delete',
-        ['pvc,Secret,configmap,endpoints,RoleBinding,role,ServiceAccount,Endpoints'],
-        {
-          selector: `app=${phase.instance},env-id=${phase.changeId},!shared,github-repo=${options.git.repository},github-owner=${options.git.owner}`,
-          wait: 'true',
-          namespace: phase.namespace,
-        },
-      )
-    })
-  })
-
-  context('Call clean to delete objects for transient target when user spcify env=all/transient', function () {
-    it("When no 'bc/dc' can be found based on settings, no deletion on bc/dc will be called.", async function () {
-      // Arrange
-      const settingCopy = Object.assign(defaultSettings)
-      settingCopy.options.env = 'all'
-      ocGetStub.withArgs(sandbox.match('bc')).returns(undefined)
-      ocGetStub.withArgs(sandbox.match('dc')).returns(undefined)
-      cleaner = new BasicJavaApplicationClean(settingCopy)
-      const resolvedTargetphases = ['build', 'dev']
-      sandbox
-      .mock(cleaner)
-      .expects('getTargetPhases')
-      .withArgs(settingCopy.options.env)
-      .returns(resolvedTargetphases)
-      // Act
-      await cleaner.clean()
-
-      // Verify
-      sandbox.assert.callCount(ocGetStub, resolvedTargetphases.length * 2)
-      sandbox.assert.notCalled(ocDeleteStub)
-      sandbox.assert.called(ocRawStub)
-    })
-
-    it("When 'bc/dc' found, will do clean objects on each of the target phases", async function () {
-      // Arrange
-      const settingCopy = Object.assign(defaultSettings)
-      settingCopy.options.env = 'transient' // set this to prepare first for the rest.
-
-      const options = settingCopy.options
-      const resolvedTargetphases = ['build', 'dev']
-      sandbox
-      .mock(cleaner)
-      .expects('getTargetPhases')
-      .withArgs(settingCopy.options.env)
-      .returns(resolvedTargetphases)
-      const bcCopies = getRandomBcOrDc(2, 'bc')
-      const numBcCopies = bcCopies.length
-      ocGetStub.withArgs(sandbox.match('bc')).returns(bcCopies)
-      const dcCopies = getRandomBcOrDc(3, 'dc')
-      const numDcCopies = dcCopies.length
-      ocGetStub.withArgs(sandbox.match('dc')).returns(dcCopies)
-
-      // Act
-      cleaner = new BasicJavaApplicationClean(settingCopy)
-      cleaner.clean()
-
-      // Verify
-      sandbox.assert.callCount(ocGetStub, resolvedTargetphases.length * 2)
-      sandbox.assert.callCount(ocRawStub, resolvedTargetphases.length * 2)
-      for (let i = 0; i < resolvedTargetphases.length; i++) {
-        const targetPhase = resolvedTargetphases[i]
-        const phase = settingCopy.phases[targetPhase]
-        sandbox.assert.calledWith(ocGetStub, 'bc', {
-          selector: `app=${phase.instance},env-id=${phase.changeId},!shared,github-repo=${options.git.repository},github-owner=${options.git.owner}`,
-          namespace: phase.namespace,
-        })
-        sandbox.assert.calledWith(ocGetStub, 'dc', {
-          selector: `app=${phase.instance},env-id=${phase.changeId},env-name=${targetPhase},!shared,github-repo=${options.git.repository},github-owner=${options.git.owner}`,
-          namespace: phase.namespace,
-        })
-
-        for (let i = 0; i < numBcCopies; i++) {
-          sandbox.assert.calledWith(ocDeleteStub, [`ImageStreamTag/${bcCopies[i].spec.output.to.name}`], {
-            'ignore-not-found': 'true',
-            wait: 'true',
-            namespace: phase.namespace,
-          })
-        }
-        for (let i = 0; i < numDcCopies; i++) {
-          sandbox.assert.calledWith(
-            ocDeleteStub,
-            [`ImageStreamTag/${dcCopies[i].spec.triggers[0].imageChangeParams.from.name}`],
-            {'ignore-not-found': 'true', wait: 'true', namespace: phase.namespace},
-          )
-        }
-
-        sandbox.assert.calledWith(ocRawStub, 'delete', ['all'], {
-          selector: `app=${phase.instance},env-id=${phase.changeId},!shared,github-repo=${options.git.repository},github-owner=${options.git.owner}`,
-          wait: 'true',
-          namespace: phase.namespace,
-        })
-        sandbox.assert.calledWith(
-          ocRawStub,
-          'delete',
-          ['pvc,Secret,configmap,endpoints,RoleBinding,role,ServiceAccount,Endpoints'],
-          {
-            selector: `app=${phase.instance},env-id=${phase.changeId},!shared,github-repo=${options.git.repository},github-owner=${options.git.owner}`,
-            wait: 'true',
-            namespace: phase.namespace,
-          },
-        )
-      }
-    })
-  })
-}) // end BasicJavaApplicationDeployer unit tests.
-
-/**
- * This function randomly return array of buildConfig (from sameple one); which
- * bc copies: only has '.spec.output.to.name' difference for now.
- * dc copies: only has '.spec.triggers[n].imageChangeParams.from.name' difference for now.
- * @param max max number of copies
- * @param template bc/dc
- */
-function getRandomBcOrDc(max, template) {
-  // bcTestCopy
-  const num = Math.floor(Math.random() * max) + 1 // num between 1..n
-  const testCopies = []
-  for (let i = 0; i < num; i++) {
-    let testCopy
-    if (template === 'bc') {
-      testCopy = Object.assign(bcTestCopy)
-      testCopy.spec.output.to.name = Math.random()
-      .toString(36)
-      .slice(2)
-    } else if (template === 'dc') {
-      testCopy = Object.assign(dcTestCopy)
-      testCopy.spec.triggers[0].imageChangeParams.from.name =
-                'myapp:dev-1.0-' +
-                Math.random()
-                .toString(36)
-                .slice(2, 4)
-    }
-
-    testCopies.push(testCopy)
-  }
-
-  return testCopies
-} // end getRandomBc()
-
-function getDefaultSettings() {
-  const defaultSettings = {
-    phases: {
-      build: {
-        namespace: 'wp9gel-tools',
-        name: 'siwe',
-        phase: 'build',
-        changeId: '99',
-        suffix: '-build-99',
-        tag: 'build-1.0-99',
-        instance: 'siwe-build-99',
-        transient: true,
-        host: '',
-        credentials: {
-          idir: {
-            user: 'fake@gov.bc.ca',
-            pass: 'fakePass',
-          },
-        },
-      },
-      dev: {
-        namespace: 'wp9gel-dev',
-        name: 'siwe',
-        phase: 'dev',
-        changeId: '99',
-        suffix: '-dev-99',
-        tag: 'dev-1.0-99',
-        instance: 'siwe-dev-99',
-        transient: true,
-        host: 'siwe-dev-99-wp9gel-dev.pathfinder.bcgov',
-        credentials: {
-          idir: {
-            user: 'fake@gov.bc.ca',
-            pass: 'fakePass',
-          },
-        },
-      },
-      dlvr: {
-        namespace: 'wp9gel-dev',
-        name: 'siwe',
-        phase: 'dev',
-        changeId: '99',
-        suffix: '-dlvr',
-        tag: 'dlvr-1.0',
-        instance: 'siwe-dlvr',
-        transient: false,
-        host: 'siwe-dlvr-wp9gel-dev.pathfinder.bcgov',
-        credentials: {
-          idir: {
-            user: 'fake@gov.bc.ca',
-            pass: 'fakePass',
-          },
-        },
-      },
-      test: {
-        namespace: 'wp9gel-test',
-        name: 'siwe',
-        phase: 'test',
-        changeId: '99',
-        suffix: '-test',
-        tag: 'test-1.0',
-        instance: 'siwe-test',
-        transient: false,
-        host: 'siwe-test-wp9gel-test.pathfinder.bcgov',
-        credentials: {
-          idir: {
-            user: 'fake@gov.bc.ca',
-            pass: 'fakePass',
-          },
-        },
-      },
-      prod: {
-        namespace: 'wp9gel-prod',
-        name: 'siwe',
-        phase: 'prod',
-        changeId: '99',
-        suffix: '-prod',
-        tag: 'prod-1.0',
-        instance: 'siwe-prod-99',
-        transient: false,
-        host: 'siwe-prod-wp9gel-prod.pathfinder.bcgov',
-        credentials: {
-          idir: {
-            user: 'fake@gov.bc.ca',
-            pass: 'fakePass',
-          },
-        },
-      },
-    },
-    options: {
-      git: {
-        branch: {
-          name: 'feature/ZERO-1103-add-ha-capability',
-          merge: 'feature/ZERO-1103-add-ha-capability',
-          remote: 'feature/ZERO-1103-add-ha-capability',
-        },
-        url: 'https://bwa.nrs.gov.bc.ca/int/stash/scm/siwe/siwe-siwe-ear.git',
-        change: {
-          target: 'SIWE-73-test-siwe-pipeline-deployment',
-        },
-        dir: '/Users/someUser/Workspace/Repo/spi/spi-siwe-ear',
-        uri: 'https://bwa.nrs.gov.bc.ca/int/stash/scm/siwe/siwe-siwe-ear.git',
-        http_url: 'https://bwa.nrs.gov.bc.ca/int/stash/scm/siwe/siwe-siwe-ear.git',
-        owner: 'SIWE',
-        repository: 'siwe-siwe-ear',
-        pull_request: '99',
-        ref: 'refs/pull/99/head',
-        branch_ref: 'refs/pull/99/head',
-      },
-      env: 'build',
-      pr: '99',
-      cwd: '/Users/someUser/Workspace/Repo/spi/spi-siwe-ear',
-    },
-    jiraUrl: 'bwa.nrs.gov.bc.ca/int/jira',
-    bitbucketUrl: 'https://bwa.nrs.gov.bc.ca/int/stash',
-    phase: 'build',
-  }
-  return defaultSettings
-} // end getDefaultSettings()
+import {ENV} from '../../src/nr-pipeline-ext/constants'
+import {OpenShiftClientX} from '../../src/pipeline-cli/openshift-client-x'
+import {BasicJavaApplicationClean} from '../../src/nr-pipeline-ext/basic-java-application-clean'
 
 const bcTestCopy = {
   apiVersion: 'build.openshift.io/v1',
@@ -789,3 +419,374 @@ const dcTestCopy = {
     updatedReplicas: 2,
   },
 }
+
+// /**
+//  * This function randomly return array of buildConfig (from sameple one); which
+//  * bc copies: only has '.spec.output.to.name' difference for now.
+//  * dc copies: only has '.spec.triggers[n].imageChangeParams.from.name' difference for now.
+//  * @param max max number of copies
+//  * @param template bc/dc
+//  */
+function getRandomBcOrDc(max: number, template: string) {
+  // bcTestCopy
+  const num = Math.floor(Math.random() * max) + 1 // num between 1..n
+  const testCopies = []
+  for (let i = 0; i < num; i++) {
+    let testCopy
+    if (template === 'bc') {
+      testCopy = Object.assign(bcTestCopy)
+      testCopy.spec.output.to.name = Math.random()
+      .toString(36)
+      .slice(2)
+    } else if (template === 'dc') {
+      testCopy = Object.assign(dcTestCopy)
+      testCopy.spec.triggers[0].imageChangeParams.from.name =
+                'myapp:dev-1.0-' +
+                Math.random()
+                .toString(36)
+                .slice(2, 4)
+    }
+
+    testCopies.push(testCopy)
+  }
+
+  return testCopies
+} // end getRandomBc()
+
+function getDefaultSettings() {
+  const defaultSettings = {
+    phases: {
+      build: {
+        namespace: 'wp9gel-tools',
+        name: 'siwe',
+        phase: 'build',
+        changeId: '99',
+        suffix: '-build-99',
+        tag: 'build-1.0-99',
+        instance: 'siwe-build-99',
+        transient: true,
+        host: '',
+        credentials: {
+          idir: {
+            user: 'fake@gov.bc.ca',
+            pass: 'fakePass',
+          },
+        },
+      },
+      dev: {
+        namespace: 'wp9gel-dev',
+        name: 'siwe',
+        phase: 'dev',
+        changeId: '99',
+        suffix: '-dev-99',
+        tag: 'dev-1.0-99',
+        instance: 'siwe-dev-99',
+        transient: true,
+        host: 'siwe-dev-99-wp9gel-dev.pathfinder.bcgov',
+        credentials: {
+          idir: {
+            user: 'fake@gov.bc.ca',
+            pass: 'fakePass',
+          },
+        },
+      },
+      dlvr: {
+        namespace: 'wp9gel-dev',
+        name: 'siwe',
+        phase: 'dev',
+        changeId: '99',
+        suffix: '-dlvr',
+        tag: 'dlvr-1.0',
+        instance: 'siwe-dlvr',
+        transient: false,
+        host: 'siwe-dlvr-wp9gel-dev.pathfinder.bcgov',
+        credentials: {
+          idir: {
+            user: 'fake@gov.bc.ca',
+            pass: 'fakePass',
+          },
+        },
+      },
+      test: {
+        namespace: 'wp9gel-test',
+        name: 'siwe',
+        phase: 'test',
+        changeId: '99',
+        suffix: '-test',
+        tag: 'test-1.0',
+        instance: 'siwe-test',
+        transient: false,
+        host: 'siwe-test-wp9gel-test.pathfinder.bcgov',
+        credentials: {
+          idir: {
+            user: 'fake@gov.bc.ca',
+            pass: 'fakePass',
+          },
+        },
+      },
+      prod: {
+        namespace: 'wp9gel-prod',
+        name: 'siwe',
+        phase: 'prod',
+        changeId: '99',
+        suffix: '-prod',
+        tag: 'prod-1.0',
+        instance: 'siwe-prod-99',
+        transient: false,
+        host: 'siwe-prod-wp9gel-prod.pathfinder.bcgov',
+        credentials: {
+          idir: {
+            user: 'fake@gov.bc.ca',
+            pass: 'fakePass',
+          },
+        },
+      },
+    },
+    options: {
+      git: {
+        branch: {
+          name: 'feature/ZERO-1103-add-ha-capability',
+          merge: 'feature/ZERO-1103-add-ha-capability',
+          remote: 'feature/ZERO-1103-add-ha-capability',
+        },
+        url: 'https://bwa.nrs.gov.bc.ca/int/stash/scm/siwe/siwe-siwe-ear.git',
+        change: {
+          target: 'SIWE-73-test-siwe-pipeline-deployment',
+        },
+        dir: '/Users/someUser/Workspace/Repo/spi/spi-siwe-ear',
+        uri: 'https://bwa.nrs.gov.bc.ca/int/stash/scm/siwe/siwe-siwe-ear.git',
+        http_url: 'https://bwa.nrs.gov.bc.ca/int/stash/scm/siwe/siwe-siwe-ear.git',
+        owner: 'SIWE',
+        repository: 'siwe-siwe-ear',
+        pull_request: '99',
+        ref: 'refs/pull/99/head',
+        branch_ref: 'refs/pull/99/head',
+      },
+      env: 'build',
+      pr: '99',
+      cwd: '/Users/someUser/Workspace/Repo/spi/spi-siwe-ear',
+    },
+    jiraUrl: 'bwa.nrs.gov.bc.ca/int/jira',
+    bitbucketUrl: 'https://bwa.nrs.gov.bc.ca/int/stash',
+    phase: 'build',
+  }
+  return defaultSettings
+} // end getDefaultSettings()
+
+describe('BasicJavaApplicationClean:', function () {
+  this.timeout(50000)
+
+  let cleaner: BasicJavaApplicationClean
+  const defaultSettings = getDefaultSettings() // do not modify this settings.
+  let ocGetStub: any
+  let ocDeleteStub: any
+  let ocRawStub: any
+
+  this.beforeEach(function () {
+    cleaner = new BasicJavaApplicationClean(defaultSettings)
+    ocGetStub = sandbox.stub(OpenShiftClientX.prototype, 'get')
+    ocDeleteStub = sandbox.stub(OpenShiftClientX.prototype, 'delete')
+    ocRawStub = sandbox.stub(OpenShiftClientX.prototype, 'raw')
+  })
+
+  this.afterEach(function () {
+    sandbox.restore()
+  })
+
+  context('Obtaining target phase(s)', function () {
+    it("Argument for env='all', it should include targets for: 'build' and 'dev' as current target phases.", function () {
+      const targetPhases = cleaner.getTargetPhases('all')
+      expect(targetPhases).toContain(ENV.BUILD)
+      expect(targetPhases).toContain(ENV.DEV)
+      expect(targetPhases).not.toContain(ENV.DLVR)
+      expect(targetPhases).not.toContain(ENV.TEST)
+      expect(targetPhases).not.toContain(ENV.PROD)
+    })
+
+    it("Argument for env='transient', it should include targets for: 'build' and 'dev' as current target phases.", function () {
+      const targetPhases = cleaner.getTargetPhases('transient')
+      expect(targetPhases).toContain(ENV.BUILD)
+      expect(targetPhases).toContain(ENV.DEV)
+      expect(targetPhases).not.toContain(ENV.DLVR)
+      expect(targetPhases).not.toContain(ENV.TEST)
+      expect(targetPhases).not.toContain(ENV.PROD)
+    })
+
+    it("Argument for env='test', it should only have 'test' as target phase.", function () {
+      const targetPhases = cleaner.getTargetPhases('test')
+      expect(targetPhases).not.toContain(ENV.BUILD)
+      expect(targetPhases).not.toContain(ENV.DEV)
+      expect(targetPhases).not.toContain(ENV.DLVR)
+      expect(targetPhases).toContain(ENV.TEST)
+      expect(targetPhases).not.toContain(ENV.PROD)
+    })
+  })
+
+  context('Call clean to delete objects for a target phase', function () {
+    it("When no 'bc/dc' can be found based on settings, no deletion on bc/dc will be called.", async function () {
+      // Arrange
+      const settingCopy = Object.assign(defaultSettings)
+      settingCopy.options.env = 'dlvr'
+      ocGetStub.withArgs(sandbox.match('bc')).returns(undefined)
+      ocGetStub.withArgs(sandbox.match('dc')).returns(undefined)
+
+      // Act
+      cleaner = new BasicJavaApplicationClean(settingCopy)
+      await cleaner.clean()
+
+      // Verify
+      sandbox.assert.calledTwice(ocGetStub)
+      sandbox.assert.notCalled(ocDeleteStub)
+      sandbox.assert.called(ocRawStub)
+    })
+
+    it('When there is a target phase, it will call oc to delete all objects in the environment.', async function () {
+      // Arrange
+      const settingCopy = Object.assign(defaultSettings)
+      settingCopy.options.env = 'dlvr' // set this to prepare first for the rest.
+
+      const phase = settingCopy.phases[settingCopy.options.env]
+      const options = settingCopy.options
+
+      const bcCopies = getRandomBcOrDc(3, 'bc')
+      const numBcCopies = bcCopies.length
+      ocGetStub.withArgs(sandbox.match('bc')).returns(bcCopies)
+      const dcCopies = getRandomBcOrDc(4, 'dc')
+      const numDcCopies = dcCopies.length
+      ocGetStub.withArgs(sandbox.match('dc')).returns(dcCopies)
+
+      // Act
+      cleaner = new BasicJavaApplicationClean(settingCopy)
+      cleaner.clean()
+
+      // Verify
+      sandbox.assert.called(ocGetStub)
+      sandbox.assert.called(ocDeleteStub)
+      for (let i = 0; i < numBcCopies; i++) {
+        sandbox.assert.calledWith(ocDeleteStub, [`ImageStreamTag/${bcCopies[i].spec.output.to.name}`], {
+          'ignore-not-found': 'true',
+          wait: 'true',
+          namespace: phase.namespace,
+        })
+      }
+      for (let i = 0; i < numDcCopies; i++) {
+        sandbox.assert.calledWith(
+          ocDeleteStub,
+          [`ImageStreamTag/${dcCopies[i].spec.triggers[0].imageChangeParams.from.name}`],
+          {'ignore-not-found': 'true', wait: 'true', namespace: phase.namespace},
+        )
+      }
+      sandbox.assert.called(ocRawStub)
+      sandbox.assert.calledWith(ocRawStub, 'delete', ['all'], {
+        selector: `app=${phase.instance},env-id=${phase.changeId},!shared,github-repo=${options.git.repository},github-owner=${options.git.owner}`,
+        wait: 'true',
+        namespace: phase.namespace,
+      })
+      sandbox.assert.calledWith(
+        ocRawStub,
+        'delete',
+        ['pvc,Secret,configmap,endpoints,RoleBinding,role,ServiceAccount,Endpoints'],
+        {
+          selector: `app=${phase.instance},env-id=${phase.changeId},!shared,github-repo=${options.git.repository},github-owner=${options.git.owner}`,
+          wait: 'true',
+          namespace: phase.namespace,
+        },
+      )
+    })
+  })
+
+  context('Call clean to delete objects for transient target when user spcify env=all/transient', function () {
+    it("When no 'bc/dc' can be found based on settings, no deletion on bc/dc will be called.", async function () {
+      // Arrange
+      const settingCopy = Object.assign(defaultSettings)
+      settingCopy.options.env = 'all'
+      ocGetStub.withArgs(sandbox.match('bc')).returns(undefined)
+      ocGetStub.withArgs(sandbox.match('dc')).returns(undefined)
+      cleaner = new BasicJavaApplicationClean(settingCopy)
+      const resolvedTargetphases = ['build', 'dev']
+      sandbox
+      .mock(cleaner)
+      .expects('getTargetPhases')
+      .withArgs(settingCopy.options.env)
+      .returns(resolvedTargetphases)
+      // Act
+      await cleaner.clean()
+
+      // Verify
+      sandbox.assert.callCount(ocGetStub, resolvedTargetphases.length * 2)
+      sandbox.assert.notCalled(ocDeleteStub)
+      sandbox.assert.called(ocRawStub)
+    })
+
+    it("When 'bc/dc' found, will do clean objects on each of the target phases", async function () {
+      // Arrange
+      const settingCopy = Object.assign(defaultSettings)
+      settingCopy.options.env = 'transient' // set this to prepare first for the rest.
+
+      const options = settingCopy.options
+      const resolvedTargetphases = ['build', 'dev']
+      sandbox
+      .mock(cleaner)
+      .expects('getTargetPhases')
+      .withArgs(settingCopy.options.env)
+      .returns(resolvedTargetphases)
+      const bcCopies = getRandomBcOrDc(2, 'bc')
+      const numBcCopies = bcCopies.length
+      ocGetStub.withArgs(sandbox.match('bc')).returns(bcCopies)
+      const dcCopies = getRandomBcOrDc(3, 'dc')
+      const numDcCopies = dcCopies.length
+      ocGetStub.withArgs(sandbox.match('dc')).returns(dcCopies)
+
+      // Act
+      cleaner = new BasicJavaApplicationClean(settingCopy)
+      cleaner.clean()
+
+      // Verify
+      sandbox.assert.callCount(ocGetStub, resolvedTargetphases.length * 2)
+      sandbox.assert.callCount(ocRawStub, resolvedTargetphases.length * 2)
+      for (let i = 0; i < resolvedTargetphases.length; i++) {
+        const targetPhase = resolvedTargetphases[i]
+        const phase = settingCopy.phases[targetPhase]
+        sandbox.assert.calledWith(ocGetStub, 'bc', {
+          selector: `app=${phase.instance},env-id=${phase.changeId},!shared,github-repo=${options.git.repository},github-owner=${options.git.owner}`,
+          namespace: phase.namespace,
+        })
+        sandbox.assert.calledWith(ocGetStub, 'dc', {
+          selector: `app=${phase.instance},env-id=${phase.changeId},env-name=${targetPhase},!shared,github-repo=${options.git.repository},github-owner=${options.git.owner}`,
+          namespace: phase.namespace,
+        })
+
+        for (let i = 0; i < numBcCopies; i++) {
+          sandbox.assert.calledWith(ocDeleteStub, [`ImageStreamTag/${bcCopies[i].spec.output.to.name}`], {
+            'ignore-not-found': 'true',
+            wait: 'true',
+            namespace: phase.namespace,
+          })
+        }
+        for (let i = 0; i < numDcCopies; i++) {
+          sandbox.assert.calledWith(
+            ocDeleteStub,
+            [`ImageStreamTag/${dcCopies[i].spec.triggers[0].imageChangeParams.from.name}`],
+            {'ignore-not-found': 'true', wait: 'true', namespace: phase.namespace},
+          )
+        }
+
+        sandbox.assert.calledWith(ocRawStub, 'delete', ['all'], {
+          selector: `app=${phase.instance},env-id=${phase.changeId},!shared,github-repo=${options.git.repository},github-owner=${options.git.owner}`,
+          wait: 'true',
+          namespace: phase.namespace,
+        })
+        sandbox.assert.calledWith(
+          ocRawStub,
+          'delete',
+          ['pvc,Secret,configmap,endpoints,RoleBinding,role,ServiceAccount,Endpoints'],
+          {
+            selector: `app=${phase.instance},env-id=${phase.changeId},!shared,github-repo=${options.git.repository},github-owner=${options.git.owner}`,
+            wait: 'true',
+            namespace: phase.namespace,
+          },
+        )
+      }
+    })
+  })
+}) // end BasicJavaApplicationDeployer unit tests.
