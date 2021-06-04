@@ -2,7 +2,7 @@ import {childProcess} from './util-functions'
 import {spawn} from 'child_process'
 import * as fs from 'fs'
 import * as path from 'path'
-import {BasicCustomError} from './custom-error'
+import {GeneralError} from './../error'
 
 export class GitOperation {
   settings: any
@@ -31,7 +31,7 @@ export class GitOperation {
           resolve({stdout, stderr, exitCode})
         } else {
           reject(
-            new BasicCustomError({stdout, stderr, exitCode, cwd: this.settings.dir})
+            new GeneralError({stdout, stderr, exitCode, cwd: this.settings.dir}.toString())
           )
         }
       })

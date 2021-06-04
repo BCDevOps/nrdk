@@ -1,7 +1,7 @@
 'use strict'
 import {ENV} from './constants'
 import {spawn, SpawnOptions} from 'child_process'
-import {BasicCustomError} from './custom-error'
+import {GeneralError} from './../error'
 
 export function previousEnv(env: string) {
   const stage: any = {
@@ -33,15 +33,14 @@ export async function childProcess(...args: [string, string[], SpawnOptions]) {
       if (exitCode === 0) {
         resolve({stdout, stderr, exitCode})
       } else {
-        // console.error("ChildProcess: " + args + ".\nOn close with non-zero exist code: " + exitCode);
-        reject(new BasicCustomError({stdout, stderr, exitCode}, `Error encountered for command! (${args})`))
+        reject(new GeneralError({stdout, stderr, exitCode, error: `Error encountered for command! (${args})`}.toString()))
       }
     })
     cp.on('exit', exitCode => {
       if (exitCode === 0) {
         return resolve({stdout, stderr, exitCode})
       }
-      reject(new BasicCustomError({stdout, stderr, exitCode}, `Error encountered for command! (${args})`))
+      reject(new GeneralError({stdout, stderr, exitCode, error: `Error encountered for command! (${args})`}.toString()))
     })
     cp?.stderr?.on('data', data => {
       stderr += data
