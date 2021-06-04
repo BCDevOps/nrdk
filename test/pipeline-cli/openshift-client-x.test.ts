@@ -5,15 +5,10 @@ const expect = require('expect')
 const sinon = require('sinon')
 const fs = require('fs')
 const path = require('path')
-import {LibTest} from './lib.test'
 import {Util} from '../../src/pipeline-cli/util'
 import {OpenShiftClientX} from '../../src/pipeline-cli/openshift-client-x'
 import {OpenShiftResourceSelector} from '../../src/pipeline-cli/openshift-resource-selector'
 
-// const useCase0BuildTemplate = fs.readFileSync(`${__dirname}/resources/bc.template.json`, {encoding: 'utf8'})
-// const useCase0DeployTemplate = fs.readFileSync(`${__dirname}/resources/dc.template.json`, {encoding: 'utf8'})
-// import useCase0BuildTemplate from './resources/bc.template.json'
-// import useCase0DeployTemplate from './resources/dc.template.json'
 const useCase0BuildTemplate = require('./resources/bc.template.json')
 const useCase0DeployTemplate = require('./resources/dc.template.json')
 
@@ -42,6 +37,37 @@ const process = (item: any, template: any, parameters: any) => {
     }
   })
   return item
+}
+
+// Process template, params from args and template
+function testProcess(filePath: string, args: any) {
+  let template = fs.readFileSync(filePath, {encoding: 'utf-8'})
+  const templateAsJson = JSON.parse(template)
+  const params = Object.assign({}, args.param || {})
+  // Pick up additional params from template.parameters
+  templateAsJson.parameters.forEach((p: any) => {
+    // If param not already present, then add it
+    if (!params[p.name] && p.value !== undefined) params[p.name] = p.value
+  })
+
+  // Complete template - variable substitution
+  Object.keys(params).forEach(prop => {
+    const value = params[prop]
+    if (value !== null) {
+      const regex = new RegExp(`(?<!\\\\)\\$\\{${prop}\\}`, 'gm')
+      template = template.replace(regex, value)
+    }
+  })
+
+  const items = JSON.parse(template).objects
+  items.forEach((item: any) => {
+    if (item.kind === 'BuildConfig') {
+      item.kind = 'buildconfig.build.openshift.io'
+    } else if (item.kind === 'ImageStream') {
+      item.kind = 'imagestream.image.openshift.io'
+    }
+  })
+  return items
 }
 
 // eslint-disable-next-line func-names,space-before-function-paren
@@ -84,7 +110,7 @@ describe('OpenShiftClientX', function() {
     })
 
     const filePath = `${__dirname}/resources/bc.template.json`
-    const processResult = LibTest.process(filePath, {param: params})
+    const processResult = testProcess(filePath, {param: params})
 
     stubAction
     .withArgs([
