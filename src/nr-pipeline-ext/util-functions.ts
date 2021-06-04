@@ -18,8 +18,8 @@ export function previousEnv(env: string) {
   return stage[env].before
 }
 
-export async function childProcess(cmd: string, [...args]: string[], object?: any) {
-  const cp = spawn(cmd, [...args], object)
+export async function childProcess(cmd: string, args?: string[], object?: any) {
+  const cp = spawn(cmd, args, object)
   return new Promise((resolve, reject) => {
     cp.on('error', (error: string) => {
       reject(error)

@@ -1,7 +1,6 @@
-'use strict'
-const expect = require('expect')
-const {previousEnv, childProcess} = require('../lib/util-functions')
-const {ENV} = require('../lib/constants')
+import expect from 'expect'
+import {previousEnv, childProcess} from '../../src/nr-pipeline-ext/util-functions'
+import {ENV} from '../../src/nr-pipeline-ext/constants'
 
 describe('previousEnv:', function () {
   it('Get previous stage based on env', function () {
