@@ -1,6 +1,5 @@
-const expect = require('expect')
+import expect from 'expect'
 const sinon = require('sinon')
-
 const sandbox = sinon.createSandbox()
 
 import * as path from 'path'
