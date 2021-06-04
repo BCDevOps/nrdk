@@ -1,4 +1,4 @@
-import {childProcess} from './util-functions'
+import {childProcess} from '../util/util-functions'
 import {spawn} from 'child_process'
 import * as fs from 'fs'
 import * as path from 'path'
