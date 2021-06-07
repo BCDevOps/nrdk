@@ -1,3 +1,5 @@
+/* eslint-disable complexity */
+
 import * as path from 'path'
 import {isPlainObject, isString} from 'lodash'
 import {debug} from 'debug'
@@ -60,7 +62,7 @@ export class OpenShiftClient {
   }
 
   namespace(ns?: string) {
-    if (typeof ns !== 'undefined' && ns !== null) {
+    if (ns) {
       this.globalArgs.namespace = ns
     }
     return this.globalArgs.namespace
@@ -84,9 +86,9 @@ export class OpenShiftClient {
     if (userArgs) {
       Object.assign(_args, userArgs)
     }
-    if (isPlainObject(verbArgs) && verbArgs.namespace) {
+    if (isPlainObject(verbArgs) && verbArgs?.namespace) {
       _args.namespace = verbArgs.namespace
-      delete verbArgs.namespace // eslint-disable-line no-param-reassign
+      delete verbArgs.namespace
     }
 
     if (overrideArgs) {
@@ -112,15 +114,12 @@ export class OpenShiftClient {
   }
 
   _actionAsync(args: string[], input?: string) {
-    // console.log(`> ${JSON.stringify(args)}`)
     logger.trace('>', ['oc'].concat(args).join(' '))
-    // logger.trace('ocSpawn', ['oc'].concat(cmdArgs).join(' '))
     const _options: any = {encoding: 'utf-8'}
     if (this.cwd()) {
       _options.cwd = this.cwd()
     }
-    // const startTime = process.hrtime();
-    if (input !== null) {
+    if (input) {
       _options.input = input
     }
     const proc = spawn('oc', args, _options)
@@ -143,7 +142,7 @@ export class OpenShiftClient {
       _options.cwd = this.cwd()
     }
     const startTime = process.hrtime()
-    if (input !== null) {
+    if (input) {
       _options.input = input
     }
     const proc = spawnSync('oc', args, _options)
@@ -161,12 +160,11 @@ export class OpenShiftClient {
     return this.splitNames(string, namespace.substr('--namespace='.length))
   }
 
-  // eslint-disable-next-line class-methods-use-this
   splitNames(string: string, namespace: string) {
     const trimmed = string.trim()
     if (trimmed.length > 0) {
       const names = trimmed.split(/\n/)
-      if (names.length > 0 && namespace !== null) {
+      if (names.length > 0 && namespace) {
         for (let i = 0; i < names.length; i += 1) {
           names[i] = `${namespace}/${names[i]}`
         }
@@ -202,7 +200,6 @@ export class OpenShiftClient {
     return this._actionAsync(args)
   }
 
-  // eslint-disable-next-line class-methods-use-this, no-unused-vars
   names(_objects: any) {
     throw new Error('Not Implemented')
   }
@@ -234,7 +231,7 @@ export class OpenShiftClient {
       const items: any = this.objectDefAction(
         'get',
         names2,
-        Object.assign({output: 'json', namespace}, args || {}), // eslint-disable-line comma-dangle
+        Object.assign({output: 'json', namespace}, args || {}),
       )
       result.push(...items)
     })
@@ -242,10 +239,9 @@ export class OpenShiftClient {
     return result
   }
 
-  /**
-   * returns (array)
-   */
-  // eslint-disable-next-line class-methods-use-this
+  // /**
+  //  * returns (array)
+  //  */
   unwrapOpenShiftList(object: any): any[] {
     const result = []
     if (isPlainObject(object)) {
@@ -270,7 +266,6 @@ export class OpenShiftClient {
     return list
   }
 
-  // eslint-disable-next-line class-methods-use-this
   serializableMap(jsonString: string) {
     return JSON.parse(jsonString)
   }
@@ -286,7 +281,7 @@ export class OpenShiftClient {
     }
     if (isPlainObject(objectOrList)) {
       if (objectOrList.kind === 'List') {
-        if (objectOrList.items) { // !== null or undefined
+        if (objectOrList.items) {
           return this.toNamesList(objectOrList.items)
         }
         return []
@@ -306,49 +301,52 @@ export class OpenShiftClient {
       const proc = this._action(
         this.buildCommonArgs('process', ['-f', this.toFilePath(template)], args, {
           output: 'json',
-        }), // eslint-disable-line comma-dangle
+        }),
       )
       return this.unwrapOpenShiftList(this.serializableMap(proc.stdout))
     }
     throw new Error('Not Implemented')
   }
 
-  // eslint-disable-next-line complexity
   objectDefAction(verb: string, object: any, userArgs: any): any {
     if (!isString(object) && !isPlainObject(object) && !isArray(object)) {
       throw new Error('Expected string, plain object, or array')
     }
-    if (verb === 'get' && userArgs !== null && userArgs.output === 'json') {
+    if (verb === 'get' && userArgs?.output === 'json') {
       const list = this._emptyListModel()
       list.items = object
       const args = this.buildCommonArgs(verb, object, userArgs, {})
       const proc = this._action(args)
       proc.stdout = proc.stdout.trim()
-      if (proc.stdout === null || proc.stdout.length === 0) {
+      if (!proc.stdout?.length) {
         return this.unwrapOpenShiftList(this._emptyListModel())
       }
       return this.unwrapOpenShiftList(JSON.parse(proc.stdout))
-    } else if ( // eslint-disable-line no-else-return,prettier/prettier
-      verb === 'get' && userArgs !== null && userArgs.output !== null && userArgs.output.startsWith('jsonpath') // eslint-disable-line prettier/prettier
+    }
+    if (
+      verb === 'get' && userArgs?.output?.startsWith('jsonpath')
     ) {
       const args = this.buildCommonArgs(verb, object, userArgs, {})
       const proc = this._action(args)
       return proc.stdout.trim().split('\n')
-    } else if (verb === 'start-build') { // eslint-disable-line no-else-return,prettier/prettier
+    }
+    if (verb === 'start-build') {
       const args = this.buildCommonArgs(verb, object, userArgs, {output: 'name'})
       logger.info(`Starting new build: ${args.join(' ')}`)
       return this._actionReturningName(args)
-    } else if (verb === 'get' || verb === 'delete' || verb === 'start-build' || verb === 'process') { // eslint-disable-line no-else-return,prettier/prettier
+    }
+    if (verb === 'get' || verb === 'delete' || verb === 'start-build' || verb === 'process') {
       return this._actionReturningName(
-        this.buildCommonArgs(verb, object, userArgs, {output: 'name'}), // eslint-disable-line comma-dangle
+        this.buildCommonArgs(verb, object, userArgs, {output: 'name'}),
       )
-    } else if ((verb === 'apply' || verb === 'create') && isArray(object)) {
+    }
+    if ((verb === 'apply' || verb === 'create') && isArray(object)) {
       const list = this._emptyListModel()
       list.items = object
       let ignoreExitStatus = false
-      if (userArgs && userArgs['ignore-exit-status'] !== null) {
+      if (userArgs?.['ignore-exit-status']) {
         ignoreExitStatus = userArgs['ignore-exit-status']
-        delete userArgs['ignore-exit-status'] // eslint-disable-line no-param-reassign
+        delete userArgs['ignore-exit-status']
       }
       const args = this.buildCommonArgs(verb, ['-f', '-'], userArgs, {output: 'name'})
       let proc = null
@@ -359,25 +357,26 @@ export class OpenShiftClient {
       }
       const names = this.splitNamesUsingArgs(proc.stdout, args)
       return new OpenShiftStaticSelector(this, names)
-    } else if (verb === 'tag' && isArray(object)) {
-      // [0] is the source
-      // [1+] is the targets
+    }
+    if (verb === 'tag' && isArray(object)) {
+      // [0] is the source, [1+] are the targets
       const args = this.buildCommonArgs(verb, object, userArgs, {})
       this._action(args)
       return null
-    } else if ((verb === 'create' || verb === 'replace') && isString(object) && util.isUrl(object)) { // eslint-disable-line prettier/prettier
+    }
+    if ((verb === 'create' || verb === 'replace') && isString(object) && util.isUrl(object)) {
       if (userArgs['ignore-exit-status'] === true) {
-        delete userArgs['ignore-exit-status'] // eslint-disable-line no-param-reassign
+        delete userArgs['ignore-exit-status']
         return this._actionReturningName2(
-          this.buildCommonArgs(verb, {filename: this.toFilePath(object)}, userArgs, {output: 'name'}) // eslint-disable-line prettier/prettier, comma-dangle
+          this.buildCommonArgs(verb, {filename: this.toFilePath(object)}, userArgs, {output: 'name'})
         )
       }
-      return this._actionReturningName(this.buildCommonArgs(verb, {filename: this.toFilePath(object)}, userArgs, {output: 'name'})) // eslint-disable-line prettier/prettier
-    } else if (verb === 'cancel-build') {
-      return this._actionReturningName(this.buildCommonArgs(verb, object, userArgs))
-    } else {
-      throw new Error('Not Implemented')
+      return this._actionReturningName(this.buildCommonArgs(verb, {filename: this.toFilePath(object)}, userArgs, {output: 'name'}))
     }
+    if (verb === 'cancel-build') {
+      return this._actionReturningName(this.buildCommonArgs(verb, object, userArgs))
+    }
+    throw new Error('Not Implemented')
   }
 
   async startBuild(object: any, args: any): Promise<any> {
@@ -388,20 +387,22 @@ export class OpenShiftClient {
         promises.push(
           Promise.resolve(item).then(result => {
             return this.startBuild(result, args)
-          }), // eslint-disable-line comma-dangle
+          }),
         )
       }
       const results = await Promise.all(promises)
       return results
-    } else if (isPlainObject(object)) { // eslint-disable-line no-else-return,prettier/prettier
+    }
+    if (isPlainObject(object)) {
       const _args = Object.assign({namespace: object.metadata.namespace}, args)
       return this.objectDefAction('start-build', util.name(object), _args)
-    } else if (isString(object)) {
+    }
+    if (isString(object)) {
       const parsed = util.parseName(object)
       return this.objectDefAction(
         'start-build',
         util.name(parsed),
-        Object.assign({namespace: parsed.namespace || this.namespace()}, args), // eslint-disable-line comma-dangle, max-len
+        Object.assign({namespace: parsed.namespace || this.namespace()}, args),
       )
     }
     return null
@@ -427,10 +428,10 @@ export class OpenShiftClient {
     let istag: any = {}
     const start = process.hrtime()
 
-    while (((istag.image || {}).metadata || {}).name === null) {
+    while (!istag.image?.metadata?.name) {
       const istags = this.objects([`ImageStreamTag/${tag}`], {'ignore-not-found': 'true'})
       if (istags.length > 0) {
-        istag = istags[0] // eslint-disable-line prefer-destructuring
+        istag = istags[0]
       }
       if (process.hrtime(start)[0] > 60) {
         throw new Error(`Timeout waiting for ImageStreamTag/${tag} to become available`)
@@ -458,14 +459,11 @@ export class OpenShiftClient {
     return this.objectDefAction('delete', object, args)
   }
 
-  // patch(){}
-
-  /**
-   *
-   * @param {*} verb
-   * @param {*} args
-   */
-  // eslint-disable-next-line class-methods-use-this
+  // /**
+  //  *
+  //  * @param {*} verb
+  //  * @param {*} args
+  //  */
   simplePassthrough(_verb: string, _args: any) {
     throw new Error('Not Implemented')
   }
@@ -496,7 +494,6 @@ export class OpenShiftClient {
     return encodeURI(`file://${pathName}`)
   }
 
-  // eslint-disable-next-line class-methods-use-this
   toFilePath(string: string) {
     if (string.startsWith('file://')) {
       return string.substr('file://'.length)
@@ -504,20 +501,18 @@ export class OpenShiftClient {
     return string
   }
 
-  // eslint-disable-next-line class-methods-use-this
   toCommandArgsArray(args: any) {
     if (isArray(args)) return args
     const result: string[] = []
     Object.keys(args).forEach(prop => {
       const value = args[prop]
-      if (value !== undefined) {
+      if (value) {
         appendCommandArg(`--${prop}`, value, result)
       }
     })
     return result
   }
 
-  // eslint-disable-next-line class-methods-use-this
   _emptyListModel(): OpenShiftListModel {
     return {
       apiVersion: 'v1',
