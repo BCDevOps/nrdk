@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import isEmpty from 'lodash.isempty'
 import {OpenShiftClient} from '..'
 
@@ -49,7 +50,6 @@ export class OpenShiftClientResult {
    */
   static waitForDeployment(proc: any): any {
     let deployment: any = {}
-    // eslint-disable-next-line no-console
     console.log(`WAITING FOR DEPLOYMENT:
       if a deployment fails, it will not throw. 
       Ensure you are setting appropriate timeouts while using this implementation!
@@ -68,18 +68,16 @@ export class OpenShiftClientResult {
         deployment._keys = keys
 
         // the first stdout instance contains fields and values and so we remove field names now
-        // eslint-disable-next-line no-unused-vars
-        const [, entries] = stdOut.split('\n')
+        const [entries] = stdOut.split('\n')
         stdOut = entries
       }
 
       const deployData = OpenShiftClientResult.parseGetObjectValues(stdOut)
       deployData.forEach((d, index) => {
-        // eslint-disable-next-line no-underscore-dangle
         deployment[deployment._keys[index]] = d
       })
 
-      if (deployment.desired === deployment.current && deployment.desired !== '') {
+      if (deployment.desired && deployment.desired === deployment.current) {
         proc.kill('SIGTERM')
       }
     })
