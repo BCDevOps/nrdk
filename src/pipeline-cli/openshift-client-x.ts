@@ -109,9 +109,8 @@ export class OpenShiftClientX extends OpenShiftClient {
     Object.assign(allLabels, commonLabels, envLabels)
     const mostLabels: any = Object.assign({}, allLabels)
     delete mostLabels['env-id']
-    // Apply labels to the list itself
-    // client.util.label(resources, allLabels)
 
+    // Apply labels to the list itself
     resources.forEach((item: any) => {
       if (this.getLabel(item, 'shared') === 'true') {
         this.setLabel(item, commonLabels)
@@ -385,15 +384,12 @@ export class OpenShiftClientX extends OpenShiftClient {
   }
 
   async pickNextBuilds(builds: string[], buildConfigs: string[]) {
-    // var buildConfigs = _buildConfigs.slice()
-    // const maxLoopCount = buildConfigs.length * 2
     let currentBuildConfigEntry: any = null
-    // var currentLoopCount = 0
     const promises = []
     let head
     logger.trace(`>pickNextBuilds from ${buildConfigs.length} buildConfigs`)
     while ((currentBuildConfigEntry = buildConfigs.shift()) !== undefined) {
-      if (head === undefined) {
+      if (!head) {
         head = currentBuildConfigEntry
       } else if (head === currentBuildConfigEntry) {
         buildConfigs.push(currentBuildConfigEntry)
@@ -403,7 +399,6 @@ export class OpenShiftClientX extends OpenShiftClient {
       const buildConfigFullName = util.fullName(currentBuildConfig)
       const dependencies = currentBuildConfigEntry.dependencies
       let resolved = true
-      // logger.trace(`Trying to queue ${buildConfigFullName}`)
       for (let i = 0; i < dependencies.length; i += 1) {
         const parentBuildConfigEntry = dependencies[i].buildConfigEntry
         logger.trace(`${buildConfigFullName}  needs ${util.fullName(dependencies[i].item)}`)
@@ -413,7 +408,7 @@ export class OpenShiftClientX extends OpenShiftClient {
           if (!parentBuildConfigEntry.imageStreamImageEntry) {
             const parentBuildEntry = parentBuildConfigEntry.buildEntry
             const buildStatus = this.getBuildStatus(parentBuildEntry)
-            if (buildStatus === undefined) {
+            if (!buildStatus) {
               resolved = false
               break
             }
@@ -445,12 +440,10 @@ export class OpenShiftClientX extends OpenShiftClient {
       } else {
         buildConfigs.push(currentBuildConfigEntry)
         logger.trace(`Delaying ${buildConfigFullName}`)
-        // logger.trace(`buildConfigs.length =  ${buildConfigs.length}`)
       }
     } // end while
 
     let p = Promise.all(promises)
-    // logger.trace(`buildConfigs.length =  ${buildConfigs.length}`)
     if (buildConfigs.length > 0) {
       const pickNextBuilds = this.pickNextBuilds.bind(this)
       p = p.then(() => {
