@@ -1,3 +1,4 @@
+/* eslint-disable no-useless-escape */
 import * as fs from 'fs'
 import * as path from 'path'
 import expect from 'expect'
@@ -13,7 +14,7 @@ const useCase0BuildTemplate = require('./resources/bc.template.json')
 const useCase0DeployTemplate = require('./resources/dc.template.json')
 
 const PROJECT_TOOLS = 'csnr-devops-lab-tools'
-const BASEDIR = path.resolve(__dirname, '..')
+const BASEDIR = path.resolve(__dirname, '../..')
 
 const process = (item: any, template: any, parameters: any) => {
   Object.keys(item).forEach(key => {
@@ -91,7 +92,7 @@ describe('OpenShiftClientX', function () {
     expect(setLabel1.metadata.labels).toEqual({test: '123'})
   })
 
-  it.skip('startBuild - @fast', async function () {
+  it('startBuild - @fast', async function () {
     const params = {NAME: 'my-test-app'}
 
     const stubAction = sandbox.stub(oc, '_action')
@@ -383,7 +384,7 @@ describe('OpenShiftClientX', function () {
     await bc.startBuild({wait: 'true'})
   }) // end it
 
-  it.skip('build', async function () {
+  it('build', async function () {
     const params = {NAME: 'my-test-app'}
     const stubAction = sandbox.stub(oc, '_action')
     const stubExecSync = sandbox.stub(Util, 'execSync')
@@ -409,7 +410,7 @@ describe('OpenShiftClientX', function () {
       '--namespace=csnr-devops-lab-tools',
       'process',
       '-f',
-      `${BASEDIR}/test/resources/bc.template.json`,
+      `${BASEDIR}/test/pipeline-cli/resources/bc.template.json`,
       `--param=NAME=${params.NAME}`,
       '--output=json',
     ],
@@ -470,7 +471,7 @@ describe('OpenShiftClientX', function () {
     expect(recommendedLabels).toEqual({
       app: 'my-test-app-0',
       'app-name': 'my-test-app',
-      'env-id': 0,
+      'env-id': '0',
       'env-name': 'build',
       'github-owner': 'bcdevops',
       'github-repo': 'pipeline-cli',
@@ -489,7 +490,7 @@ describe('OpenShiftClientX', function () {
     await oc.applyAndBuild(objects)
   })
 
-  it.skip('deploy - @this', async function () {
+  it('deploy - @this', async function () {
     const params = {NAME: 'my-test-app'}
     const stubAction = sandbox.stub(oc, '_action')
     const stubExecSync = sandbox.stub(Util, 'execSync')
@@ -521,7 +522,7 @@ describe('OpenShiftClientX', function () {
       '--namespace=csnr-devops-lab-tools',
       'process',
       '-f',
-      `${BASEDIR}/test/resources/dc.template.json`,
+      `${BASEDIR}/test/pipeline-cli/resources/dc.template.json`,
       '--param=NAME=my-test-app',
       '--output=json',
     ],
@@ -536,7 +537,7 @@ describe('OpenShiftClientX', function () {
     expect(recommendedLabels).toEqual({
       app: 'my-test-app-0',
       'app-name': 'my-test-app',
-      'env-id': 0,
+      'env-id': '0',
       'env-name': 'dev',
       'github-owner': 'bcdevops',
       'github-repo': 'pipeline-cli',
@@ -568,8 +569,7 @@ describe('OpenShiftClientX', function () {
       'dc',
       '--selector=app=my-test-app-0',
       '--output=template={{range .items}}{{.metadata.name}}{{"\\t"}}{{.spec.replicas}}{{"\\t"}}{{.status.latestVersion}}{{"\\n"}}{{end}}',
-    ],
-    )
+    ])
     .onFirstCall()
     .returns({status: 0, stdout: 'my-test-app-0\t1\t1'})
     .returns({status: 0, stdout: 'my-test-app-0\t1\t2'})
@@ -596,7 +596,6 @@ describe('OpenShiftClientX', function () {
       stdout: JSON.stringify({metadata: {}, data: {config1: 'username', config2: 'password'}}),
     })
 
-    // oc.createIfMissing(objects);
     oc.waitForImageStreamTag('abc:123')
 
     stubAction.withArgs([
@@ -709,6 +708,6 @@ describe('OpenShiftClientX', function () {
     ],
     ).returns({status: 0, stdout: 'my-test-app-0\t1\t1\t1\t4\n'})
 
-    await oc.applyAndDeploy(objects, 'thing')
+    await oc.applyAndDeploy(objects, 'my-test-app-0')
   })
 }) // end describe
