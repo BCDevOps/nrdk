@@ -416,7 +416,7 @@ export class OpenShiftClient {
     return this.objectDefAction('create', object, args)
   }
 
-  createIfMissing(object: any, args: any) {
+  createIfMissing(object: any, args?: any) {
     return this.objectDefAction(
       'create',
       object,
