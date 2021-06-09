@@ -106,7 +106,7 @@ export class AxiosJiraClient extends AxiosClient {
     try {
       return await AxiosBitBucketClient.parseUrl(component.description)
     } catch (error) {
-      throw new GeneralError(`Unable to parse component description for ${component.name}`, error)
+      throw new GeneralError(`Unable to parse git URL from component ${component.name} with description "${component.description}"`, error)
     }
   }
 
@@ -115,10 +115,22 @@ export class AxiosJiraClient extends AxiosClient {
     .then(response => {
       const merged = merge({}, response.data, issue)
       this.logger.info(`Issue ${merged.key} (${issue?.fields?.issuetype?.name}) has been created`)
-      return response.data as IssueReference
+      return merged as IssueReference
     })
     .catch(error => {
       throw new GeneralError(`Error creating issue: ${JSON.stringify(error.response.data)}`, error)
+    })
+  }
+
+  public async updateIssue(issue: any) {
+    return this.client.put(`rest/api/2/issue/${issue.key}`, issue)
+    .then(response => {
+      const merged = merge({}, issue)
+      this.logger.info(`Issue ${merged.key} (${issue?.fields?.issuetype?.name}) has been updated`)
+      return response.data as IssueReference
+    })
+    .catch(error => {
+      throw new GeneralError(`Error Updating issue ${issue.key}: ${JSON.stringify(error.response.data)}`, error)
     })
   }
 
@@ -136,7 +148,7 @@ export class AxiosJiraClient extends AxiosClient {
       return this.getIssue(params.issueIdOrKey, {fields: 'status'})
     })
     .catch(error => {
-      throw new GeneralError('Error tranistioning issue', error)
+      throw new GeneralError(`Error transitioning issue ${params.issueIdOrKey}: ${JSON.stringify(error.response.data)}\n${error.config?.data}`, error)
     })
   }
 

@@ -67,7 +67,7 @@ export namespace Util {
       }
 
       git.uri = git.url
-      if (git.http_url === null && !git.url) {
+      if (!git.http_url && git.url) {
         git.http_url = git.url.replace(
           /((https:\/\/github\.com\/)|(git@github.com:))([^/]+)\/(.*)/,
           'https://github.com/$4/$5', // eslint-disable-line comma-dangle
@@ -78,7 +78,7 @@ export namespace Util {
         git.branch.merge = `refs/pull/${git.pull_request}/head`
       }
 
-      if (git.branch.merge === null) {
+      if (!git.branch.merge) {
         // eslint-disable-next-line prettier/prettier
         const gitCmd = unsafeExecSync('git', ['config', `branch.${git.branch.name}.merge`], {encoding: 'utf-8'})
         if (gitCmd.status === 0) {
@@ -86,13 +86,13 @@ export namespace Util {
         }
       }
 
-      if (git.owner === null && git.url) {
+      if (!git.owner && git.url) {
         git.owner = git.url.replace(
           /((https:\/\/github\.com\/)|(git@github.com:))([^/]+)\/(.*)/,
           '$4', // eslint-disable-line comma-dangle
         )
       }
-      if (git.repository === null && git.url) {
+      if (!git.repository && git.url) {
         git.repository = git.url.replace(
           /((https:\/\/github\.com\/)|(git@github.com:))([^/]+)\/([^\.]+)\.git/, // eslint-disable-line no-useless-escape
           '$5', // eslint-disable-line comma-dangle

@@ -2,14 +2,13 @@ import * as fs from 'fs'
 import {homedir} from 'os'
 import * as inquirer from 'inquirer'
 import {LoggerFactory} from '../../util/logger'
-import {spawn} from 'child_process'
-import PropertiesFile from '../../util/properties-file'
 import {spawnSync} from 'child_process'
+import GitClient from '../../git-client'
 
 const prompt = inquirer.createPromptModule()
 declare let __SecretManager: any | undefined | null
 
-class Secret {
+export class Secret {
   private _value: string
 
   constructor(value: string) {
@@ -150,14 +149,12 @@ export class SecretManager {
       const gitCredentialHelper = spawnSync('git', ['config', 'credential.helper'], {encoding: 'utf-8'}).stdout.trim()
       if (gitCredentialHelper === 'osxkeychain' || gitCredentialHelper === 'manager' || gitCredentialHelper === 'manager-core') {
         SecretManager.logger.info(`Retrieving credentials from git credentential helper (${gitCredentialHelper}) for '${spec.url}'`)
-        const child = spawn('git', ['credential', 'fill'], {env})
-        child.stdin.end(`url=${spec.url}`, 'utf-8')
-        const properties = await PropertiesFile.read(child.stdout)
+        const cred = await GitClient.getCachedCredential(spec.url)
         for (const prompt of creds) {
           if (prompt.type === 'username') {
-            answers[prompt.name] = properties.get('username')
+            answers[prompt.name] = cred?.username
           } else if (prompt.type === 'password') {
-            answers[prompt.name] = properties.get('password')
+            answers[prompt.name] = cred?.password
           }
         }
         // Missing credential validation. How can we verify as early as possible?

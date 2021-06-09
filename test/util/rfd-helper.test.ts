@@ -49,18 +49,17 @@ function sanitize(issue: any) {
   // eslint-disable-next-line guard-for-in
   for (const field in issue.fields) {
     const value = issue.fields[field]
+    if (value) {
+      delete value.self
+      delete value.id
+    }
     if (field === 'components') {
       for (const item of value) {
         delete item.self
         delete item.id
         delete item.description
       }
-    } else if (field === 'customfield_10121') {
-      delete value.self
-      delete value.id
     } else if (field === 'issuetype' || field === 'status' || field === 'priority') {
-      delete value.self
-      delete value.id
       delete value.description
       delete value.subtask
       delete value.iconUrl
@@ -175,6 +174,7 @@ describe('jira:workflow @type=system', () => {
           targetEnvironment: 'dlvr',
         })
       }
+      await helper.transitionRFCForward(rfc, RFCwkf.STATUS_APPROVED)
       await jira.search({jql: `labels = "${TEST_SUITE_ID}" AND labels = "${TEST_CASE_ID}" ORDER BY created ASC`, fields: 'status,issuetype,components,customfield_10121,issuelinks'})
       .then(result => {
         const issues: Issue[] = result.issues
@@ -182,7 +182,7 @@ describe('jira:workflow @type=system', () => {
         jest_expect(issues.map(issue => sanitize(issue))).toMatchSnapshot(this as any, '7b1f94cb7dfcdb5ed2d1e9775766c8c6')
       })
     })
-    for (const rfdStatus of [RFDwkf.STATUS_APPROVED, RFDwkf.STATUS_SCHEDULED]) {
+    for (const rfdStatus of [RFDwkf.STATUS_APPROVED]) {
       it(`Transition RFD from Open to ${rfdStatus.name}`, async function (this: Context) {
         pullRequestNumber++
         const TEST_CASE_ID = `run-3634379f-${rfdStatus.id}`
@@ -216,6 +216,7 @@ describe('jira:workflow @type=system', () => {
         .catch(error => {
           throw new GeneralError('Error searching for issue', error)
         })
+        await helper.transitionRFCForward(rfc, RFCwkf.STATUS_APPROVED)
         expect(issues).to.have.lengthOf(3)
         for (const issue of issues) {
           if (issue?.fields?.issuetype?.name === IssueTypeNames.RFD) {
@@ -242,7 +243,7 @@ describe('jira:workflow @type=system', () => {
       })
     }
 
-    for (const rfcState of [RFCwkf.STATUS_OPEN, RFCwkf.STATUS_APPROVED]) {
+    for (const rfcState of [RFCwkf.STATUS_APPROVED]) { // RFCwkf.STATUS_OPEN,
       for (const targetEnvironment of ['dlvr', 'test', 'prod']) {
         for (const rfdState of [RFDwkf.STATUS_OPEN, RFDwkf.STATUS_APPROVED]) {
           it(`start - rfc=${rfcState.name},env=${targetEnvironment},rfd=${rfdState.name} - should ${shouldPassOrFail(rfcState, rfdState)}`, async () => {
@@ -261,7 +262,7 @@ describe('jira:workflow @type=system', () => {
                 fixVersions: [version],
               },
             })
-
+            // await helper.transitionRFCForward(rfc, RFCwkf.STATUS_APPROVED)
             const stubCreateRFD = sandbox.stub(helper, '_createRFD').callsFake((params: CreateRfdParameters) => {
               merge(params.issue, {fields: {labels: [TEST_SUITE_ID, TEST_CASE_ID], fixVersions: [version]}})
               return stubCreateRFD.wrappedMethod.bind(helper)(params)

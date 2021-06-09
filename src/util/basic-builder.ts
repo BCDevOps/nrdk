@@ -21,9 +21,9 @@ export class BasicBuilder {
       const settings = this.settings
       const phases = settings.phases
       const env = 'build'
-      const username = settings.phases[env].credentials.idir.user
-      const password = settings.phases[env].credentials.idir.pass
-      Object.assign(settings.options.git, {credentials: {username: username, password: password}})
+      // const username = settings.phases[env].credentials.idir.user
+      // const password = settings.phases[env].credentials.idir.pass
+      // Object.assign(settings.options.git, {credentials: {username: username, password: password}})
       const sourceBranch = settings.options.git.branch.merge
       // const EMPTY = ''
       const targetBranch = (settings?.options?.git?.change?.target || '').trim()

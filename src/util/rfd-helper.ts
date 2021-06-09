@@ -1,12 +1,17 @@
+/* eslint-disable complexity */
 // JIRA REST API - https://docs.atlassian.com/software/jira/docs/api/REST/8.5.3/
 import {AxiosFactory} from '../api/service/axios-factory'
-import * as RFD from './jira-rfd-workflow-v1.2.2'
+import * as RFDSubtask from './jira-rfd-subtask-workflow-v2.0.2'
+import * as RFD from './jira-rfd-workflow-v2.0.2'
 import * as RFC from './jira-rfc-workflow-v2.0.0'
 import merge from 'lodash.merge'
-import {DeploymentArgument, StartDeploymentArgument, Issue, ProjectReference, PullRequestReference, IssueStatus, NameAndId, StartDeploymentResult, IssueTypeNames} from '../api/model/jira'
+import {DeploymentArgument, StartDeploymentArgument, Issue, ProjectReference, PullRequestReference, IssueStatus, NameAndId, StartDeploymentResult, IssueTypeNames, RfdSubmitTransitionFields, RfdApproveTransitionFields, RfdCloseTransitionFields, CUSTOMFIELD_RFC_COMPLETE, CUSTOMFIELD_SUBTASKS_ADDED, CUSTOMFIELD_RFD_SCHEDULED, CUSTOMFIELD_DEV_TEAM_LEAD, CUSTOMFIELD_SUBTASKS_APPROVED, CUSTOMFIELD_RFC_APPROVED, CUSTOMFIELD_DEPLOYMENT_VERIFIER, CUSTOMFIELD_STAKEHOLDERS_INFORMED, CUSTOMFIELD_STATE_OF_TESTING, CUSTOMFIELD_TARGET_ENV, CUSTOMFIELD_IRS_UPDATED, CUSTOMFIELD_RFD_DEPLOYMENT_STATUS, CUSTOMFIELD_TRANSITION_SIGNEDOFF, CUSTOMFIELD_RFD_SUBTASK_ACKNOWLEDGEMENT, CUSTOMFIELD_DEPLOYMENT_CATEGORY, CUSTOMFIELD_RFD_ACKNOWLEDGEMENT, CUSTOMFIELD_IS_AUTOMATED_PIPELINE} from '../api/model/jira'
 import {AxiosBitBucketClient} from '../api/service/axios-bitbucket-client'
 import {GeneralError} from '../error'
 import {LoggerFactory} from './logger'
+
+export const RFDwkf = RFD
+export const RFCwkf = RFC
 
 export interface CreateRfdParameters {
   rfc: Issue;
@@ -53,11 +58,10 @@ export class RfdHelper {
   }
 
   async closeRFD(issue: Issue) {
-    const jira = await this.createJiraClient()
     if (issue?.fields?.status?.id === RFD.STATUS_RESOLVED.id) {
-      await jira.transitionIssue({issueIdOrKey: issue.key as string, transition: {id: RFD.ACTION_701.id}})
+      await this.transitionRFDForward(issue, RFD.STATUS_CLOSED)
     } else {
-      await jira.transitionIssue({issueIdOrKey: issue.key as string, transition: {id: RFD.ACTION_921.id}})
+      await this.transitionRFDForward(issue, RFD.STATUS_CLOSED)
     }
   }
 
@@ -130,7 +134,7 @@ export class RfdHelper {
       }
       if (found === true) {
         // if this is an RFD, and it is trying to resolve it, we actually need to resolve each individial subtask
-        if (issue?.fields?.issuetype?.name === 'RFD' && transition.id === RFD.ACTION_781.id) {
+        if (issue?.fields?.issuetype?.name === 'RFD' && transition.id === RFD.ACTION_RESOLVE.id) {
           // eslint-disable-next-line no-await-in-loop
           const _issue = (await this._transitionRfdSubtasks(issue, RFD.STATUS_RESOLVED))
           issue = _issue
@@ -138,11 +142,64 @@ export class RfdHelper {
             continue
           }
         }
+        // if this is an RFD, and it is trying to approve it, we actually need to approve each individial subtask
+        if (issue?.fields?.issuetype?.name === 'RFD' && transition.id === RFD.ACTION_APPROVE.id) {
+          // eslint-disable-next-line no-await-in-loop
+          const _issue = (await this._transitionRfdSubtasks(issue, RFDSubtask.STATUS_APPROVED))
+          issue = _issue
+          if (transition.to.id === issue.fields?.status?.id) {
+            continue
+          }
+        }
+        // if this is an RFD, and it is trying to start progress it, we actually need to start each individial subtask
+        if (issue?.fields?.issuetype?.name === 'RFD' && transition.id === RFD.ACTION_START_PROGRESS.id) {
+          // eslint-disable-next-line no-await-in-loop
+          const _issue = (await this._transitionRfdSubtasks(issue, RFDSubtask.STATUS_IN_PROGRESS))
+          issue = _issue
+          if (transition.to.id === issue.fields?.status?.id) {
+            continue
+          }
+        }
         const message = `transitioning issue ${issue.fields?.issuetype?.name}/${issue.key} from state '${issue.fields?.status?.name}' to '${transition?.to?.name}' using '${transition.name}' transition trying to get to ${status.name}`
         this.logger.debug(message)
-
+        const spec: any = {issueIdOrKey: issue.key as string, transition: transition}
+        if (issue?.fields?.issuetype?.name === 'RFD' && transition.name === RFD.ACTION_SUBMIT.name) {
+          const fields: RfdSubmitTransitionFields = {
+            [CUSTOMFIELD_RFC_COMPLETE]: {value: "RFC is linked (RFD to RFC) and 'Submitted' (or Approved)"},
+            [CUSTOMFIELD_SUBTASKS_ADDED]: {value: 'Confirmed'},
+            [CUSTOMFIELD_RFD_SCHEDULED]: {value: 'Scheduled'},
+            // customfield_13135: {value: 'Technology risks have been identified and managed'},
+            [CUSTOMFIELD_DEV_TEAM_LEAD]: {name: 'CVARJAO'},
+          }
+          spec.fields = fields
+        } else if (issue?.fields?.issuetype?.name === 'RFD' && transition.name === RFD.ACTION_APPROVE.name) {
+          const fields: RfdApproveTransitionFields =  {
+            [CUSTOMFIELD_SUBTASKS_APPROVED]: {value: 'All RFD-subtasks Approved'},
+            [CUSTOMFIELD_RFC_APPROVED]: {value: 'Yes'},
+            [CUSTOMFIELD_STATE_OF_TESTING]: {value: 'UAT is signed off and ready for production'},
+            [CUSTOMFIELD_STAKEHOLDERS_INFORMED]: {value: 'Communications sent'},
+            [CUSTOMFIELD_DEPLOYMENT_VERIFIER]: {name: 'CVARJAO'},
+          }
+          if (issue?.fields?.[CUSTOMFIELD_TARGET_ENV]?.value === 'DLVR') {
+            fields[CUSTOMFIELD_STATE_OF_TESTING].value = 'Not applicable'
+          } else if (issue?.fields?.[CUSTOMFIELD_TARGET_ENV]?.value === 'TEST') {
+            fields[CUSTOMFIELD_STATE_OF_TESTING].value = 'Testing completed in the lower environment'
+          }
+          spec.fields = fields
+        } else if (issue?.fields?.issuetype?.name === 'RFD-subtask' && transition.name === RFD.ACTION_RESOLVE.name) {
+          spec.update = {
+            worklog: [{add: {timeSpent: '1m'}}],
+          }
+        } else if (issue?.fields?.issuetype?.name === 'RFD' && transition.name === RFD.ACTION_CLOSE_ISSUE.name) {
+          const fields: RfdCloseTransitionFields =  {
+            [CUSTOMFIELD_RFD_DEPLOYMENT_STATUS]: {value: 'Verified deployed correctly'}, // RFD Deployment Status
+            [CUSTOMFIELD_IRS_UPDATED]: {value: 'Not required'}, // IRS entry updated?
+            [CUSTOMFIELD_TRANSITION_SIGNEDOFF]: {value: 'Not required'}, // Transition Management Signed off?
+          }
+          spec.fields = fields
+        }
         // eslint-disable-next-line no-await-in-loop
-        await jira.transitionIssue({issueIdOrKey: issue.key as string, transition: transition})
+        await jira.transitionIssue(spec)
         .then(result => {
           if (issue?.fields?.status) {
             // update status
@@ -165,32 +222,6 @@ export class RfdHelper {
         if (issue?.fields?.status?.name === status.name) {
           break
         }
-        if (_fifo.length > 0 && issue.fields?.issuetype?.name === 'RFD' && transition.id === RFD.ACTION_881.id) {
-          // if this is an RFD that got to 'START REVIEW', and there is more actions left, we need to advance RFD-subtaks before continuing
-          const jql = `issuetype = "RFD-subtask" AND status != "Closed" AND parent = "${issue.key}"`
-          // eslint-disable-next-line no-await-in-loop
-          await jira.search({
-            fields: 'fixVersions,issuetype,project,status,labels',
-            jql: jql,
-          })
-          .then(async result => {
-            for (const issue of result.issues) {
-              // eslint-disable-next-line no-await-in-loop
-              await this.transitionRFDSubtaskForward(issue, _fifo[0].to)
-            }
-            await jira.getIssue(issue.key as string, {fields: 'status'})
-            .then(updatedIssue => {
-              merge(issue.fields, updatedIssue.fields)
-              // if the subtasks caused the parent task to get to the next state, skip to next
-              if (_fifo[0].to.name === updatedIssue.fields.status.name) {
-                _fifo.shift()
-              }
-            })
-          })
-          .catch(error => {
-            throw new GeneralError('Error fetching RFD-subtasks', error)
-          })
-        }
         // yes, check again because transioning sub-tasks may have update the parent task
         if (issue?.fields?.status?.name === status.name) {
           break
@@ -210,26 +241,32 @@ export class RfdHelper {
       RFC.ACTION_71,
       RFC.ACTION_81,
     ]
+    this.logger.info(`Transitioning RFC ${issue.key} to status ${JSON.stringify(status)}`)
     return this._transitionForward(issue, status, transitions)
   }
 
   async transitionRFDForward(issue: Issue, status: IssueStatus): Promise<Issue> {
     const transitions = [
       {to: RFD.STATUS_OPEN},
-      RFD.ACTION_731,
-      RFD.ACTION_881,
-      RFD.ACTION_721,
-      RFD.ACTION_711,
-      RFD.ACTION_4,
-      RFD.ACTION_781,
-      RFD.ACTION_701,
+      RFD.ACTION_SUBMIT,
+      RFD.ACTION_APPROVE,
+      RFD.ACTION_START_PROGRESS,
+      RFD.ACTION_RESOLVE,
+      RFD.ACTION_CLOSE_ISSUE,
     ]
     return this._transitionForward(issue, status, transitions)
   }
 
   async transitionRFDSubtaskForward(issue: Issue, status: IssueStatus): Promise<Issue> {
-    // for now, it is the same as RFD
-    return this.transitionRFDForward(issue, status)
+    const transitions = [
+      {to: RFDSubtask.STATUS_OPEN},
+      RFDSubtask.ACTION_SUBMIT,
+      RFDSubtask.ACTION_APPROVE,
+      RFDSubtask.ACTION_START_PROGRESS,
+      RFDSubtask.ACTION_RESOLVE,
+      RFDSubtask.ACTION_CLOSE_ISSUE,
+    ]
+    return this._transitionForward(issue, status, transitions)
   }
 
   async _createRFDSubtask(params: {rfd: Issue; pullRequest: PullRequestReference; targetEnv: string; dryrun: boolean}) {
@@ -242,7 +279,7 @@ export class RfdHelper {
     })
     .then(async result => {
       for (const issue of result.issues as Issue[]) {
-        if (params.dryrun === true || (issue.fields?.status?.id === RFD.STATUS_OPEN.id || issue.fields?.status?.id === RFD.STATUS_APPROVED.id || issue.fields?.status?.id === RFD.STATUS_SCHEDULED.id || issue.fields?.status?.id === RFD.STATUS_IN_PROGRESS.id)) {
+        if (params.dryrun === true || (issue.fields?.status?.id === RFD.STATUS_OPEN.id || issue.fields?.status?.id === RFD.STATUS_APPROVED.id || issue.fields?.status?.id === RFD.STATUS_IN_PROGRESS.id)) {
           return issue
         }
         // eslint-disable-next-line no-await-in-loop
@@ -257,16 +294,30 @@ export class RfdHelper {
             parent: {key: params.rfd.key},
             project: params.rfd?.fields?.project,
             summary: `Deploy ${params.pullRequest.repository.slug}`,
+            description: `Deploy ${params.pullRequest.repository.slug}`,
             issuetype: {name: 'RFD-subtask'},
-            fixVersions: params.rfd?.fields?.fixVersions,
-            labels: params.rfd?.fields?.labels,
+            // fixVersions: params.rfd?.fields?.fixVersions,
             components: [component],
-            customfield_10121: {value: params.targetEnv.toUpperCase()},
+            [CUSTOMFIELD_RFD_SUBTASK_ACKNOWLEDGEMENT]: [{value: 'I understand and agree'}],
+            [CUSTOMFIELD_DEPLOYMENT_CATEGORY]: {value: 'Other'},
+            timetracking: {originalEstimate: '0'},
           },
         })
+        const updateIssueSpec: any = {
+          fields: {
+            labels: params.rfd?.fields?.labels,
+          },
+        }
         return jira.createIssue(issueSpec)
         .catch(error => {
           throw new GeneralError(`Error creating RFD-subtask:\n${JSON.stringify(issueSpec)}`, error)
+        })
+        .then(issue => {
+          updateIssueSpec.key = issue.key
+          return jira.updateIssue(updateIssueSpec)
+          .then(() => {
+            return issue
+          })
         })
         .then(result => {
           return jira.getIssue(result?.key as string, {fields: 'issuetype,status'})
@@ -275,7 +326,7 @@ export class RfdHelper {
       return result
     })
     .catch(error => {
-      throw new GeneralError(`Error creating RFD-subtask:\n ${JSON.stringify(error.response.data)}`, error)
+      throw new GeneralError(`Error creating RFD-subtas: ${error.message}`, error)
     })
   }
 
@@ -305,7 +356,7 @@ export class RfdHelper {
     const jql = `issuetype = "RFD" and status != "Closed" and "Target environment" in (${targetEnvironments.map(v => '"' + v.toUpperCase() + '"').join(',')}) and issue in linkedIssues("${rfc.key}", "RFC link to RFD") and issueFunction in linkedIssuesOfRemote("${pullRequestUrl}")`
     this.logger.debug(`Searching for existing RFDs using jql: ${jql}`)
     await jira.search({
-      fields: 'fixVersions,issuetype,project,status,labels,issuelinks,customfield_10121',
+      fields: `fixVersions,issuetype,project,status,labels,issuelinks,${CUSTOMFIELD_TARGET_ENV}`,
       jql: jql,
     })
     .then(async result => {
@@ -314,7 +365,7 @@ export class RfdHelper {
         issuesPerEnvironment.set(targetEnv.toUpperCase(), null)
       }
       for (const issue of result.issues as Issue[]) {
-        const targetEnv = (issue.fields?.customfield_10121?.value as string).toUpperCase()
+        const targetEnv = (issue.fields?.[CUSTOMFIELD_TARGET_ENV]?.value as string).toUpperCase()
         if (issuesPerEnvironment.get(targetEnv)) throw new Error(`Multiple non-closed RFDs has been found for '${targetEnv}' environment linked to RFC '${rfc.key}'`)
         issuesPerEnvironment.set(targetEnv, issue)
       }
@@ -343,7 +394,7 @@ export class RfdHelper {
         .then((issue: Issue | null) => {
           if (dryrun === true) return issue
           if (issue === null) return null
-          if (issue.fields?.status?.id === RFD.STATUS_OPEN.id || issue.fields?.status?.id === RFD.STATUS_APPROVED.id || issue.fields?.status?.id === RFD.STATUS_SCHEDULED.id || issue.fields?.status?.id === RFD.STATUS_IN_PROGRESS.id) {
+          if (issue.fields?.status?.id === RFD.STATUS_OPEN.id || issue.fields?.status?.id === RFD.STATUS_APPROVED.id || issue.fields?.status?.id === RFD.STATUS_IN_PROGRESS.id) {
             return issue
           }
           if (issue?.fields?.issuelinks) {
@@ -381,16 +432,33 @@ export class RfdHelper {
                 project: {key: rfc?.fields?.project?.key as string},
                 summary: `Deployment PR-${pullRequest.number} to ${targetEnv}`,
                 description: `Deployment PR-${pullRequest.number} to ${targetEnv}`,
-                customfield_10121: {value: targetEnv.toUpperCase()},
+                [CUSTOMFIELD_TARGET_ENV]: {value: targetEnv.toUpperCase()},
                 fixVersions: rfc.fields?.fixVersions,
+                [CUSTOMFIELD_RFD_ACKNOWLEDGEMENT]: [{value: 'I understand and agree'}],
+                [CUSTOMFIELD_IS_AUTOMATED_PIPELINE]: {value: 'Yes'},
               },
             }
             merge(defaultIssue, issue)
+            const updateIssue: any = {fields: {
+              fixVersions: defaultIssue.fields?.fixVersions,
+              labels: defaultIssue.fields?.labels,
+              issuetype: defaultIssue.fields?.issuetype,
+            }}
+            delete defaultIssue.fields?.fixVersions
+            delete defaultIssue.fields?.labels
             return jira.createIssue(defaultIssue)
             .then(response => {
               const issue = merge(response, defaultIssue, {fields: {status: RFD.STATUS_OPEN}}) as Issue
               isNewRFD = true
               return issue
+            })
+            .then(issue => {
+              updateIssue.key = issue.key
+              return jira.updateIssue(updateIssue)
+              .then(() => {
+                Object.assign(issue.fields, updateIssue.fields)
+                return issue
+              })
             })
             .catch(error => {
               throw new GeneralError('Error creating RFD', error)
@@ -511,8 +579,8 @@ export class RfdHelper {
     param.dryrun = param.dryrun || false
     for (const issue of issues) {
       if (issue.fields?.issuetype?.name === IssueTypeNames.RFD || issue.fields?.issuetype?.name === IssueTypeNames.RFDSubtask) {
-        if (!(issue.fields?.status?.id === RFD.STATUS_APPROVED.id || issue.fields?.status?.id === RFD.STATUS_SCHEDULED.id || issue.fields?.status?.id === RFD.STATUS_IN_PROGRESS.id)) {
-          errors.push({cause: `${issue.fields?.issuetype?.name} '${issue.key}' is currently in '${issue.fields?.status?.name}' state but expected to be in '${RFD.STATUS_APPROVED.name}', '${RFD.STATUS_SCHEDULED.name}', or '${RFD.STATUS_IN_PROGRESS.name}'`})
+        if (!(issue.fields?.status?.id === RFD.STATUS_APPROVED.id || issue.fields?.status?.id === RFD.STATUS_IN_PROGRESS.id)) {
+          errors.push({cause: `${issue.fields?.issuetype?.name} '${issue.key}' is currently in '${issue.fields?.status?.name}' state but expected to be in '${RFD.STATUS_APPROVED.name}', or '${RFD.STATUS_IN_PROGRESS.name}'`})
         }
         rfds.push(issue.key as string)
       } else if (issue.fields?.issuetype?.name === 'RFC') {

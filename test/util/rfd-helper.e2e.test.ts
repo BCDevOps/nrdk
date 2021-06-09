@@ -1,13 +1,18 @@
+/**
+ * How to run:
+ *   TEST environmnet:
+ *      ```
+ *      $ JIRA_URL=https://testbwa.nrs.gov.bc.ca/int/jira NOCK_BACK_MODE=wild SNAPSHOT_UPDATE=true npm run mocha -- test/util/rfd-helper.e2e.test.ts
+ *      ```
+ */
 import * as MochaNockBack from './mocha-nock-back'
-import {CreateRfdParameters, RfdHelper} from '../../src/util/rfd-helper'
+import {CreateRfdParameters, RfdHelper, RFCwkf, RFDwkf} from '../../src/util/rfd-helper'
 import {SecretManager} from '../../src/api/service/secret-manager'
 import {createRFC, cleanUpTestCase} from './jira-util'
 import Sinon from 'sinon'
 import merge from 'lodash.merge'
 import {expect} from 'chai'
 import {AxiosBitBucketClient} from '../../src/api/service/axios-bitbucket-client'
-import * as RFCwkf from '../../src/util/jira-rfc-workflow-v2.0.0'
-import * as RFDwkf from '../../src/util/jira-rfd-workflow-v1.2.2'
 import {Issue, IssueTypeNames} from '../../src/api/model/jira'
 
 import {extend as jest_extend} from 'expect'

@@ -1,3 +1,4 @@
+import {GitProvider} from '../model/git'
 import {AxiosClient} from './axios-client'
 
 export const FIELDS = Object.freeze({
@@ -20,25 +21,36 @@ export interface CreatePullRequestOptions {
   toRef: {id: string; repository: RepositoryReference};
 }
 
-export class AxiosBitBucketClient extends AxiosClient {
+export class AxiosBitBucketClient extends AxiosClient implements GitProvider {
   static createPullRequestUrl(repo: RepositoryReference, pullRequestNumber: string): string {
     return `https://apps.nrs.gov.bc.ca/int/stash/projects/${repo.project.key}/repos/${repo.slug}/pull-requests/${pullRequestNumber}/overview`
   }
 
   static parseUrl(url: string): RepositoryReference {
-    if (url.match(/https:\/\/(apps|bwa)\.nrs\.gov\.bc\.ca\/int\/stash\/scm\//m)) {
-      // eslint-disable-next-line no-useless-escape
-      const m = url.match(/https:\/\/(apps|bwa)\.nrs\.gov\.bc\.ca\/int\/stash\/scm\/(?<project>[^/]+)\/(?<repository>[^\s\.]+)(\.git)?/m)
-      if (!m) throw new Error(`Unable to parse BitBucket Url from ${url}`)
-      return {url: m[0], slug: m.groups?.repository as string, project: {key: m.groups?.project as string}}
+    const GITHUB_REGEX = /(?<url>https:\/\/github.com\/(?<owner>[^/]+)\/(?<repository>[^.]+)(\.git)?)/i
+    const gitHubMatch =  url.match(GITHUB_REGEX)
+    if (gitHubMatch) {
+      return {url: `https://github.com/${gitHubMatch.groups?.owner}/${gitHubMatch.groups?.repository}.git`, slug: gitHubMatch.groups?.repository as string, project: {key: gitHubMatch.groups?.owner as string}}
     }
-    const m = url.match(/https:\/\/(apps|bwa)\.nrs\.gov\.bc\.ca\/int\/stash\/projects\/(?<project>[^/]+)\/repos\/(?<repository>[^/\s]+)/m)
-    if (!m) throw new Error(`Unable to parse BitBucket Url from ${url}`)
-    return {url: m[0] as string, slug: m.groups?.repository as string, project: {key: m.groups?.project as string}}
+    const BITBUCKET = [
+      /https:\/\/(apps|bwa)\.nrs\.gov\.bc\.ca\/int\/stash\/projects\/(?<project>[^/]+)\/repos\/(?<repository>[\w-]+)(\.git)?/i,
+      /https:\/\/(apps|bwa)\.nrs\.gov\.bc\.ca\/int\/stash\/scm\/(?<project>[^/]+)\/(?<repository>[\w-]+)(\.git)?/i,
+    ]
+    for (const regex of BITBUCKET) {
+      const m = url.match(regex)
+      if (m) {
+        return {url: `https://bwa.nrs.gov.bc.ca/int/stash/scm/${m.groups?.project}/${m.groups?.repository}.git`, slug: m.groups?.repository as string, project: {key: m.groups?.repository as string}}
+      }
+    }
+    throw new Error(`Unable to parse BitBucket Url from ${url}`)
   }
 
   constructor(idirAuthorizationHeader: string) {
     super(process.env.BITBUCKET_URL || 'https://bwa.nrs.gov.bc.ca/int/stash', idirAuthorizationHeader)
+  }
+
+  async createBranchIfMissing(_repository: RepositoryReference, _branchName: string, _startPoint: string): Promise<BranchReference> {
+    throw new Error('Method not implemented.')
   }
 
   public createBranch(projectKey: string, repositorySlug: string, name: string, startPoint: string) {

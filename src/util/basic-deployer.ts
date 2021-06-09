@@ -32,7 +32,17 @@ export class BasicDeployer {
     const changeId = phases[phase].changeId
     const oc = new OpenShiftClientX(Object.assign({namespace: phases[phase].namespace}, options))
     const objects = this.processTemplates(oc)
-
+    for (const resource of objects) {
+      if (resource.kind === 'Secret') {
+        if (resource?.metadata?.annotations['as-copy-of'] && resource.metadata?.annotations?.['create-template'] === 'true') {
+          const template = JSON.parse(JSON.stringify(resource))
+          template.metadata.name = resource.metadata.annotations['as-copy-of']
+          template.metadata.annotations = {}
+          template.metadata.labels = {template: 'true', generated: 'true'}
+          oc.createIfMissing([template])
+        }
+      }
+    }
     oc.applyRecommendedLabels(objects, phases[phase].name, phase, `${changeId}`, phases[phase].instance)
     oc.importImageStreams(objects, phases[phase].tag, phases.build.namespace, phases.build.tag)
     return oc.applyAndDeploy(objects, phases[phase].instance)

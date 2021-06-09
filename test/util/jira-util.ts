@@ -35,6 +35,7 @@ export async function cleanUpTestCase(jira: AxiosJiraClient, testCaseId: string,
     }
   })
 }
+
 export async function createRFC(jira: AxiosJiraClient, issue: any) {
   if (!issue?.fields?.project?.key) throw new Error('Missing issue "fields.project.key" field')
   if (!issue?.fields?.labels) throw new Error('Missing issue "fields.labels" field')
@@ -57,4 +58,7 @@ export async function createRFC(jira: AxiosJiraClient, issue: any) {
   }
   merge(defaultIssue, issue)
   return jira.createIssue(defaultIssue)
+  .then(newIssue => {
+    return jira.getIssue(newIssue.key as string)
+  })
 }

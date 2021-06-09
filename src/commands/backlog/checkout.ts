@@ -47,13 +47,13 @@ export default class GitCheckout extends GitBaseCommand {
   }
 
   async gitCloneRepository(branchInfo: BranchReference) {
-    const expectedGitRemoteOriginUrl = `https://bwa.nrs.gov.bc.ca/int/stash/scm/${branchInfo.repository.project.key}/${branchInfo.repository.slug}.git`
+    const expectedGitRemoteOriginUrl: string = branchInfo.repository.url as string
     const gitTopLevel = await this._spawn('git', ['rev-parse', '--show-toplevel'])
     let expectedRepoCwd = await this.cwd()
     if (gitTopLevel.status !== 0) {
       this.log(`Current directory (${expectedRepoCwd}) is not the root of a git repository.`)
       const prompt = inquirer.createPromptModule()
-      let answer = await prompt([{type: 'confirm', name: 'clone', message: `Would you like to clone ${expectedGitRemoteOriginUrl}?`}])
+      let answer: any = await prompt([{type: 'confirm', name: 'clone', message: `Would you like to clone ${expectedGitRemoteOriginUrl}?`}])
       if (answer.clone !== true) {
         return this.exit(1)
       }
@@ -125,9 +125,7 @@ export default class GitCheckout extends GitBaseCommand {
         return this.error(`Expected at least 1 component set for issue '${issue.key}', but found '${issue.fields.components.length}'`)
       }
       const component = issue.fields.components[0]
-      const repositoryReference = await this.jira().getComponentRepositoryInfo(component)
-      flags.repository = repositoryReference.slug
-      flags.project = repositoryReference.project.key
+      return this.jira().getComponentRepositoryInfo(component)
     }
     return {slug: flags.repository, project: {key: flags.project as string}}
   }
