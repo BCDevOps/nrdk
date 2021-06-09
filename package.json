@@ -19,8 +19,6 @@
     "@aws-sdk/credential-provider-node": "^3.11.0",
     "@aws-sdk/protocol-http": "^3.10.0",
     "@aws-sdk/signature-v4": "^3.10.0",
-    "@bcgov/nr-pipeline-ext": "0.1.0-rc.13",
-    "@bcgov/pipeline-cli": "^1.0.1-2",
     "@oclif/command": "^1.8.0",
     "@oclif/plugin-help": "^3.2.0",
     "@types/lodash.isplainobject": "^4.0.6",
@@ -133,7 +131,6 @@
     "mocha": "mocha --timeout 9999999",
     "version": "oclif-dev readme && git add README.md",
     "oclif": "oclif",
-    "link": "npm link @bcgov/nr-pipeline-ext && npm link @bcgov/pipeline-cli",
     "publish:latest": "npm --no-git-tag-version version prerelease && npm publish --tag latest",
     "publish:alpha": "npm --no-git-tag-version version prerelease && npm publish --tag alpha"
   },
