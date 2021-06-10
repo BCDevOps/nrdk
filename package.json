@@ -136,7 +136,6 @@
     "*.ts": "eslint --cache --fix"
   },
   "simple-git-hooks": {
-    "pre-commit": "./node_modules/.bin/lint-staged",
-    "pre-push": "npm test"
+    "pre-commit": "./node_modules/.bin/lint-staged"
   }
 }
