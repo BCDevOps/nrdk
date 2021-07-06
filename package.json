@@ -38,6 +38,7 @@
     "lodash.merge": "^4.6.2",
     "rsync": "^0.6.1",
     "safe-buffer": "^5.2.1",
+    "set-getter": "^0.1.1",
     "shelljs": "^0.8.4",
     "simple-git-hooks": "^2.4.1",
     "tar": "^6.0.5",
