@@ -148,32 +148,6 @@ export namespace Util {
     options.git = options.git || {}
     const git = options.git
 
-<<<<<<< HEAD
-      if (!git.dir) {
-        // eslint-disable-next-line prettier/prettier
-        const gitCmd = unsafeExecSync('git', ['rev-parse', '--show-toplevel'], {encoding: 'utf-8'})
-        if (gitCmd.status === 0) {
-          git.dir = gitCmd.stdout.trim()
-        } else {
-          // eslint-disable-next-line no-console
-          console.error(`WARNING: unable to find git top level directory\nstatus:${gitCmd.status}\nstdout:${gitCmd.stdout}\nstderr:${gitCmd.stderr}`)
-        }
-      }
-    }
-
-      if (!options.cwd) {
-        options.cwd = git.dir
-      }
-
-    git.branch = git.branch || {}
-
-      if (!git.branch.name) {
-        // eslint-disable-next-line prettier/prettier
-        const gitCmd = unsafeExecSync('git', ['rev-parse', '--abbrev-ref', 'HEAD'], {encoding: 'utf-8'})
-        if (gitCmd.status === 0) {
-          git.branch.name = gitCmd.stdout.trim()
-        }
-=======
     if (!git.dir) {
       const gitCmd = unsafeExecSync('git', ['rev-parse', '--show-toplevel'], {encoding: 'utf-8'})
       if (gitCmd.status === 0) {
@@ -191,7 +165,6 @@ export namespace Util {
       const gitCmd = unsafeExecSync('git', ['rev-parse', '--abbrev-ref', 'HEAD'], {encoding: 'utf-8'})
       if (gitCmd.status === 0) {
         git.branch.name = gitCmd.stdout.trim()
->>>>>>> ad2a2dc (src/pipeline-cli/util.ts - clean up after js-ts conversion)
       }
     }
 
