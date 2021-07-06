@@ -95,9 +95,11 @@ export class JiraEventHandler {
       const targetEnvironment = issue.fields.customfield_10121?.value
       const expectedInputId = `Jira-${targetEnvironment}`.toUpperCase()
       // if there are no errors, send approval to Jenkins
+      // eslint-disable-next-line no-console
+      console.log(`Listing Pending Inputs from Jenkins: getPendingInput('${bitBucketRepository.project.key}', '${bitBucketRepository.slug}', '${pullRequestNumber}')`)
       const waitingInputId = (await this.getPendingInput(bitBucketRepository.project.key, bitBucketRepository.slug, pullRequestNumber)).toUpperCase()
       // eslint-disable-next-line no-console
-      console.log(`waitingInputId:${waitingInputId}`)
+      console.log(` expectedInputId:'${expectedInputId}', waitingInputId: '${waitingInputId}'`)
       if (waitingInputId !== expectedInputId) {
         // fallback to look for RFD for the specific waiting input
         // It may have reveived events out of order, e.g.: Close RFD to DLVR after approving RFD to TEST
