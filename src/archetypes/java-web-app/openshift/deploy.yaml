@@ -193,7 +193,7 @@ objects:
                   fieldRef:
                     fieldPath: metadata.namespace
               - name: CATALINA_OPTS
-                value: "-Djava.security.egd=file:/dev/./urandom"
+                value: "-Djava.security.egd=file:/dev/./urandom -Doracle.jdbc.autoCommitSpecCompliant=false"
             livenessProbe:
               failureThreshold: 4
               httpGet:
