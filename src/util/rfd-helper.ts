@@ -93,9 +93,21 @@ export class RfdHelper {
     })
   }
 
+  async _currentJiraUserName(): Promise<string> {
+    const jira = await this.createJiraClient()
+    return jira.client.get('rest/api/2/myself')
+    .then(response => {
+      return response.data.name
+    })
+    .catch(error => {
+      throw new GeneralError('Error getting current JIRA user name', error)
+    })
+  }
+
   async _transitionRfdSubtasks(rfd: Issue, status: IssueStatus): Promise<Issue> {
     const jira = await this.createJiraClient()
     const jql = `issuetype = "RFD-subtask" AND status != "Closed" AND parent = "${rfd.key}"`
+    this.logger.info(`Transition RfdSubtask/${rfd.key} to ${JSON.stringify(status)}`)
     // eslint-disable-next-line no-await-in-loop
     return jira.search({
       fields: 'fixVersions,issuetype,project,status,labels',
@@ -123,6 +135,7 @@ export class RfdHelper {
     let found = false
     const jira = await this.createJiraClient()
     const _fifo = [...transitions]
+    const currentJiraUserName = await this._currentJiraUserName()
     // Iterate over ordered list of transitions
     // When in notfound mode found and current transition is the one that would take to current status, flip to `found` mode
     // When in found mode, do transition for each remaining transition in the ordered list
@@ -136,7 +149,7 @@ export class RfdHelper {
         // if this is an RFD, and it is trying to resolve it, we actually need to resolve each individial subtask
         if (issue?.fields?.issuetype?.name === 'RFD' && transition.id === RFD.ACTION_RESOLVE.id) {
           // eslint-disable-next-line no-await-in-loop
-          const _issue = (await this._transitionRfdSubtasks(issue, RFD.STATUS_RESOLVED))
+          const _issue = (await this._transitionRfdSubtasks(issue, RFDSubtask.STATUS_RESOLVED))
           issue = _issue
           if (transition.to.id === issue.fields?.status?.id) {
             continue
@@ -186,7 +199,7 @@ export class RfdHelper {
             fields[CUSTOMFIELD_STATE_OF_TESTING].value = 'Testing completed in the lower environment'
           }
           spec.fields = fields
-        } else if (issue?.fields?.issuetype?.name === 'RFD-subtask' && transition.name === RFD.ACTION_RESOLVE.name) {
+        } else if (issue?.fields?.issuetype?.name === 'RFD-subtask' && transition.name === RFDSubtask.ACTION_RESOLVE.name) {
           spec.update = {
             worklog: [{add: {timeSpent: '1m'}}],
           }
@@ -197,6 +210,20 @@ export class RfdHelper {
             [CUSTOMFIELD_TRANSITION_SIGNEDOFF]: {value: 'Not required'}, // Transition Management Signed off?
           }
           spec.fields = fields
+        }
+        // requires issue to be assigned back to automation service account
+        if (spec.transition.name === RFD.ACTION_START_PROGRESS.name || spec.transition.name === RFDSubtask.ACTION_START_PROGRESS.name) {
+          this.logger.info(`Assigning issue ${spec.issueIdOrKey} to myself (${currentJiraUserName})`)
+          // eslint-disable-next-line no-await-in-loop
+          await jira.client.put(`rest/api/2/issue/${spec.issueIdOrKey}/assignee`, {name: currentJiraUserName})
+          // after re-assignment, the workflow resets to "UNDER REVIEW", therefore, we need to re-approve
+          const approveSpec: any = {issueIdOrKey: issue.key as string, transition: RFD.ACTION_APPROVE}
+          if (issue?.fields?.issuetype?.name === 'RFD-subtask') {
+            approveSpec.transition = RFDSubtask.ACTION_APPROVE
+          }
+          this.logger.info('Re-approving ticket, just because')
+          // eslint-disable-next-line no-await-in-loop
+          await jira.transitionIssue(approveSpec)
         }
         // eslint-disable-next-line no-await-in-loop
         await jira.transitionIssue(spec)
@@ -264,7 +291,7 @@ export class RfdHelper {
       RFDSubtask.ACTION_APPROVE,
       RFDSubtask.ACTION_START_PROGRESS,
       RFDSubtask.ACTION_RESOLVE,
-      RFDSubtask.ACTION_CLOSE_ISSUE,
+      RFDSubtask.ACTION_CLOSE,
     ]
     return this._transitionForward(issue, status, transitions)
   }
@@ -655,7 +682,7 @@ export class RfdHelper {
     for (const issue of issues) {
       if (issue.fields?.issuetype?.name === IssueTypeNames.RFDSubtask) {
         // eslint-disable-next-line no-await-in-loop
-        await this.transitionRFDForward(issue, RFD.STATUS_RESOLVED)
+        await this.transitionRFDSubtaskForward(issue, RFDSubtask.STATUS_RESOLVED)
       }
     }
     // re-fetch issues. Transitions may have updated status

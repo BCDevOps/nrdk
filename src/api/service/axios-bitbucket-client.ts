@@ -39,7 +39,7 @@ export class AxiosBitBucketClient extends AxiosClient implements GitProvider {
     for (const regex of BITBUCKET) {
       const m = url.match(regex)
       if (m) {
-        return {url: `https://bwa.nrs.gov.bc.ca/int/stash/scm/${m.groups?.project}/${m.groups?.repository}.git`, slug: m.groups?.repository as string, project: {key: m.groups?.repository as string}}
+        return {url: `https://bwa.nrs.gov.bc.ca/int/stash/scm/${m.groups?.project}/${m.groups?.repository}.git`, slug: m.groups?.repository as string, project: {key: m.groups?.project as string}}
       }
     }
     throw new Error(`Unable to parse BitBucket Url from ${url}`)

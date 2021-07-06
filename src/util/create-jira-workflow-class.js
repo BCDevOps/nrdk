@@ -120,7 +120,9 @@ for (const step of STEPS.values()) {
           flag: 'a',
         }
       )
-      fs.appendFileSync(outputFile, `export const ${acname(action.name)} = ${acname(action.id)}\n`, {flag: 'a'})
+      if (action.name.toUpperCase() !== 'REQUEST INFO') {
+        fs.appendFileSync(outputFile, `export const ${acname(action.name)} = ${acname(action.id)}\n`, {flag: 'a'})
+      }
     }
   }
 }
