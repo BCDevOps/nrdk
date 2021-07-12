@@ -1,0 +1,29 @@
+# workflow based on https://www.geekytidbits.com/github-actions-version-and-release-to-npm/
+
+name: Publish to npm Registry
+
+on:
+  workflow_dispatch: 
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v2
+        
+      - name: Install Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: 12
+      
+      - name: clean install
+        run: npm ci
+      
+      - name: version and publish
+        run: |
+          npm set //registry.npmjs.org/:_authToken $NODE_AUTH_TOKEN
+          npm publish --access public
+        env:
+          CI: true
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
