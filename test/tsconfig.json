@@ -4,8 +4,5 @@
     "noEmit": true,
     "composite": true,
     "esModuleInterop": true
-  },
-  "references": [
-    {"path": ".."}
-  ]
+  }
 }

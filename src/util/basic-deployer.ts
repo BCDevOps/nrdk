@@ -1,7 +1,7 @@
 /* eslint-disable valid-jsdoc */
 import {FlagNames} from '../flags'
 
-const {OpenShiftClientX} = require('@bcgov/pipeline-cli')
+import {OpenShiftClientX} from '../pipeline-cli/openshift-client-x'
 
 export class BasicDeployer {
   settings: any
