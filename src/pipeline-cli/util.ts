@@ -91,11 +91,11 @@ export namespace Util {
     return `${resource.metadata.namespace}/${normalizeKind(resource.kind)}/${resource.metadata.name}`
   }
 
-  export function execSync(command: string, args: string[], cwd: any) {
-    const ret = unsafeExecSync(command, args, cwd)
+  export function execSync(command: string, args: string[], options: any) {
+    const ret = unsafeExecSync(command, args, options)
     if (ret.status !== 0) {
       throw new Error(
-        `Failed running '${args[0]} ${args[1]}' as it returned ${ret.status}`,
+        `Failed running '${command} ${args.join(' ')}' (${options.cwd}) as it returned ${ret.status}`,
       )
     }
     return ret
@@ -186,7 +186,7 @@ export namespace Util {
     }
 
     git.uri = git.url
-    if (!git.http_url && !git.url) {
+    if (!git.http_url) {
       git.http_url = git.url.replace(
         /((https:\/\/github\.com\/)|(git@github.com:))([^/]+)\/(.*)/,
         'https://github.com/$4/$5',
@@ -266,4 +266,19 @@ export namespace Util {
     })
     return applyArgumentsDefaults(options)
   }
+
+  export function normalizeName(name: string) {
+    if (name.startsWith('ImageStream/')) {
+      return `imagestream.image.openshift.io/${name.substr('ImageStream/'.length)}`
+    }
+    if (name.startsWith('BuildConfig/')) {
+      return `buildconfig.build.openshift.io/${name.substr('BuildConfig/'.length)}`
+    }
+    return name
+  }
+
+  export function parseArguments() {
+    return parseArgumentsFromArray(...process.argv.slice(2))
+  }
 }
+
