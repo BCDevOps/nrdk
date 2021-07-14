@@ -8,6 +8,7 @@ import {GitOperation} from './nr-pipeline-ext/git-operation'
 import {OpenShiftClientX} from './pipeline-cli/openshift-client-x'
 import {OpenShiftClient} from './pipeline-cli/openshift-client'
 import {SecretManager} from './api/service/secret-manager'
+import {Util} from './pipeline-cli/util'
 export {
   OpenShiftClient,
   OpenShiftClientX,
@@ -19,6 +20,7 @@ export {
   CONST,
   SecretManager,
   GenericError,
+  Util,
 }
 
 export {run} from '@oclif/command'
