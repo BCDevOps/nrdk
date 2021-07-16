@@ -25,11 +25,11 @@ This one is also related to node_modules.
 npm ci
 ```
 
-### stderr:error: the server doesn't have a resource type "secret"
+### stderr:error: the server doesn't have a resource type "..."
 
 Login to OpenShift.  Tokens are available behind a login from the [web console](https://oauth-openshift.apps.silver.devops.gov.bc.ca/oauth/token/request).
 
 
 ### Error: EPERM: operation not permitted, rename '...' -> '...'
 
-Several type definitions, like `@types/rsync` will cause this error when used as prod dependencies.  Review `package.json` dependencies and run `npm i`.  Please be aware this will replace `package-lock.json`!.
+Several type definitions, like `@types/rsync`, will cause this error when used as prod dependencies.  Review `package.json` dependencies and run `npm i`.  Please be aware this will replace `package-lock.json`!.

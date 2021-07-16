@@ -81,7 +81,7 @@ This is useful to starting quickly, but not very practical, since nrdk is typica
 
 ### Start
 
-1. Run nrdk interactively in a container
+1. Run nrdk interactively in a container.
 
    ```
    cd dev
@@ -94,7 +94,7 @@ This is useful to starting quickly, but not very practical, since nrdk is typica
    [container]$ oc login https://console.pathfinder.gov.bc.ca:8443 --token=<REDACTED>
    ```
 
-3. Run nrdk (local build)
+3. Run nrdk.
 
    ```
    [container]$ nrdk [COMMANDS] [-FLAGS]
