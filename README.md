@@ -107,16 +107,15 @@ OPTIONS
 ```
 
 _See code: [@oclif/plugin-help](https://github.com/oclif/plugin-help/blob/v3.2.2/src/commands/help.ts)_
-<!-- commandsstop -->
 
 # Troubleshooting
 
-Please see [TROUBLESHOOTING.md](./TROUBLESHOOTING.md)
+Please see [TROUBLESHOOTING.md](./dev/TROUBLESHOOTING.md)
 
 # Development
 
-Please see [DEVELOPER.md](./DEVELOPER.md)
+Please see [DEVELOPER.md](./dev/DEVELOPER.md)
 
 # Conduct
 
-Please see [CONDUCT.md](./CONDUCT.md)
+Please see [CONDUCT.md](./dev/CONDUCT.md)
