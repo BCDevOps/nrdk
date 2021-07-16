@@ -1,17 +1,19 @@
 Troubleshooting
 ====
 
-
-
 <!-- toc -->
-* [Prerequisites](#prerequisites)
-* [Usage](#usage)
-* [Commands](#commands)
-<!-- tocstop -->
+* [Setup](#setup)
+* [Common Errors](#common-errors)
 
-# Prerequisites
+# Setup
 
-To get started install node_modules and build the *.js files in ./lib/.  Link may require sudo.
+Make sure nrdk is setup correctly.
+
+Prerequisites:
+* [Node.js 14 (LTS) and npm 6](https://nodejs.org/en/download/)
+* [OpenShift Origin CLI 3.11.0](https://github.com/openshift/origin/releases)
+
+Install node_modules and build the *.js files in ./lib/.  Link may require sudo.
 
 ```
 npm ci
@@ -19,22 +21,42 @@ npm run build
 npm link
 ```
 
-# Usage
-
 Once configured nrdk can be run like any binary in the system path.  E.g.:
 
 ```
-nrdk -h
-nrdk -v
-nrdk tool:terraform -v
+nrdk (-v|--version|version)
+nrdk --help [COMMAND]
 ```
 
-The CLI can also be run with npx:
-```sh-session
-$ npx @bcgov/nrdk (-v|--version|version)
-$ npx @bcgov/nrdk --help [COMMAND]
-USAGE
-  $ nrdk COMMAND
+# Common Errors
+
+### Error: Cannot find module '../lib'
+
+Make sure all typescript has been built and copied to ./lib/.
+
+```
+npm run build
 ```
 
-# Commands
+### Error: Cannot find module 'tslib'
+
+Make sure node_modules have been installed and/or updated.
+
+```
+npm ci
+```
+
+### .git/hooks/pre-commit: line 2: ./node_modules/.bin/lint-staged: No such file or directory
+
+This one is also related to node_modules.
+
+```
+npm ci
+```
+
+### stderr:error: the server doesn't have a resource type "secret"
+
+Login to OpenShift.  Tokens are available behind a login from the [web console](https://oauth-openshift.apps.silver.devops.gov.bc.ca/oauth/token/request).
+
+
+
