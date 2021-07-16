@@ -14,6 +14,7 @@ nrdk
 * [Usage](#usage)
 * [Commands](#commands)
 * [Troubleshooting](#troubleshooting)
+* [Development](#development)
 
 # Prerequisites
 * Setup yout git CLI so that credentials are being cached. You can use the `store` or `cache` credential helper. PS.: Jenkins will do that automatically for you when running within a jenkins job.
@@ -110,3 +111,7 @@ _See code: [@oclif/plugin-help](https://github.com/oclif/plugin-help/blob/v3.2.2
 # Troubleshooting
 
 Please see [TROUBLESHOOTING.md](./TROUBLESHOOTING.md)
+
+# Development
+
+Please see [DEVELOPER.md](./DEVELOPER.md)
