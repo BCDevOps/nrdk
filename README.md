@@ -15,6 +15,7 @@ nrdk
 * [Commands](#commands)
 * [Troubleshooting](#troubleshooting)
 * [Development](#development)
+* [Conduct](#conduct)
 
 # Prerequisites
 * Setup yout git CLI so that credentials are being cached. You can use the `store` or `cache` credential helper. PS.: Jenkins will do that automatically for you when running within a jenkins job.
@@ -115,3 +116,7 @@ Please see [TROUBLESHOOTING.md](./TROUBLESHOOTING.md)
 # Development
 
 Please see [DEVELOPER.md](./DEVELOPER.md)
+
+# Conduct
+
+Please see [CONDUCT.md](./CONDUCT.md)
