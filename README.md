@@ -15,6 +15,7 @@ nrdk
 * [Commands](#commands)
 * [Troubleshooting](#troubleshooting)
 * [Development](#development)
+* [Contributing](#contributing)
 * [Conduct](#conduct)
 
 # Prerequisites
@@ -115,6 +116,10 @@ Please see [TROUBLESHOOTING.md](./dev/TROUBLESHOOTING.md).
 # Development
 
 Please see [DEVELOPER.md](./dev/DEVELOPER.md).
+
+# Contributing
+
+Please see [CONTRIBUTING.md](./dev/CONTRIBUTING.md).
 
 # Conduct
 
