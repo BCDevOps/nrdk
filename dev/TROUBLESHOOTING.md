@@ -1,6 +1,8 @@
 Troubleshooting
 ====
 
+## Common error messages
+
 ### Error: Cannot find module '../lib'
 
 Make sure all typescript has been built and copied to ./lib/.
