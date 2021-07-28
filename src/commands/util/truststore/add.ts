@@ -1,3 +1,4 @@
+import * as FLAGS from '../../../flags'
 import {BaseCommand} from '../../../base'
 import {flags} from '@oclif/command'
 import {writeFileSync, readFileSync} from 'fs'
@@ -9,23 +10,24 @@ const logger = LoggerFactory.createLogger(name)
 
 /*
 You can achieve the same by
-1) Grab Secret, trustore key, decode key, and save into a p12 file
+1) Grab Secret, truststore key, decode key, and save into a p12 file
    $ oc --namespace=b24326-dev get secret/cvarjao-wallet-test --output=json  | jq -jr '.data["truststore.p12"]' | base64 --decode  > tmp.p12
 2) Import certificate
    $ keytool -import -noprompt -trustcacerts -alias entrust_2048_ca.cer -file entrust_2048_ca.cer -keystore tmp.p12 -storepass <password>
 3) Update Secret
    $ base64 --wrap=0 tmp.p12
+4) Grab the base64 encoded text and update the Secret/YAML in OpenShift
 */
 
 /**
- * Import a certificate from a file(s) to an existing trustore file stored in an Secret in OpenShift.
+ * Import a certificate from a file(s) to an existing truststore file stored in an Secret in OpenShift.
  *
  * Prerequisites:
  * - oc
  * - keytool (part of java JDK)
  */
 export default class UtilTruststoreAdd extends BaseCommand {
-  static description = 'Add a certificate to a p12 trustore to an existing OpenShift Secret'
+  static description = 'Add a certificate to a p12 truststore to an existing OpenShift Secret'
 
   static hidden = true
 
@@ -34,7 +36,7 @@ export default class UtilTruststoreAdd extends BaseCommand {
     secret: flags.string({char: 's', description: 'Secret name', required: true}),
     key: flags.string({char: 'k', description: 'Secret Key', required: true}),
     password: flags.string({char: 'p', description: 'Truststore password', required: true}),
-    'dry-run': flags.boolean({description: 'stage trustore changes, but do NOT update secret', default: false}),
+    [FLAGS.FlagNames.DRY_RUN]: flags.boolean({description: 'Stage truststore changes, but do NOT update secret', default: false}),
   }
 
   static args = [{name: 'file', description: 'Public certifiate file in PEM format with .crt extension', required: true}]
