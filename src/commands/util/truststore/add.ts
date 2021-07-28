@@ -7,6 +7,16 @@ import {LoggerFactory} from '../../../util/logger'
 const name = 'util:truststore:add'
 const logger = LoggerFactory.createLogger(name)
 
+/*
+You can achieve the same by
+1) Grab Secret, trustore key, decode key, and save into a p12 file
+   $ oc --namespace=b24326-dev get secret/cvarjao-wallet-test --output=json  | jq -jr '.data["truststore.p12"]' | base64 --decode  > tmp.p12
+2) Import certificate
+   $ keytool -import -noprompt -trustcacerts -alias entrust_2048_ca.cer -file entrust_2048_ca.cer -keystore tmp.p12 -storepass <password>
+3) Update Secret
+   $ base64 --wrap=0 tmp.p12
+*/
+
 /**
  * Import a certificate from a file(s) to an existing trustore file stored in an Secret in OpenShift.
  *
