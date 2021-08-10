@@ -21,9 +21,8 @@ Vault Definition of Done:
 * The pipeline is passing
 * All appropriate environments created (e.g. DEV, TEST, PROD)
 * Security and privacy maintained
-* The code has been deployed through all environments (e.g. DEV, TEST, PROD) unless otherwise specified
-* PR reviewed by team
-* 3rd party intrusion test completed when deemed necessary
-* SMEs have reviewed and their input captured and triaged
-* Verify policy intention through audit analysis
-* End to end testing of policy changes completed
+* Test cases have been expanded where we are able to
+* Integration or end-to-end testing (not ready, possible not feasible yet)
+* Basic documentation completed, but favour automation
+* Guidelines (minimal size, OS flexibility, etc) included
+* Automated security checks completed
