@@ -186,7 +186,7 @@ export namespace Util {
     }
 
     git.uri = git.url
-    if (!git.http_url) {
+    if (!git.http_url && git.url?.length > 0) {
       git.http_url = git.url.replace(
         /((https:\/\/github\.com\/)|(git@github.com:))([^/]+)\/(.*)/,
         'https://github.com/$4/$5',
