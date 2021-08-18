@@ -28,12 +28,17 @@ jobs:
           CI: true
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
+      - name: get user name and email address
+        run: |
+          echo AUTHOR_NAME=$(git --no-pager log --format=format:'%an' | grep -v github.com | head -n1) >> $GITHUB_ENV
+          echo AUTHOR_EMAIL=$(git --no-pager log --format=format:'%ae' | grep -v github.com | head -n1) >> $GITHUB_ENV
+
       - name: commit new version
         uses: EndBug/add-and-commit@v7.2.1
         with:
           add: '["package.json", "package-lock.json", "README.md"]'
-          author_name: Derek Roberts
-          author_email: derek.roberts@gmail.com
+          author_name: ${{ env.AUTHOR_NAME }}
+          author_email: ${{ env.AUTHOR_EMAIL }}
           message: 'Release: cut a new release'
           pull_stragegy: 'NO-PULL'
 
