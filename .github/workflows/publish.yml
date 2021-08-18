@@ -32,6 +32,7 @@ jobs:
         run: |
           echo AUTHOR_NAME=$(git --no-pager log --format=format:'%an' | grep -v github.com | head -n1) >> $GITHUB_ENV
           echo AUTHOR_EMAIL=$(git --no-pager log --format=format:'%ae' | grep -v github.com | head -n1) >> $GITHUB_ENV
+          echo RELEASE_VER=$(node -pe "require('./package.json').version") >> $GITHUB_ENV
 
       - name: commit new version
         uses: EndBug/add-and-commit@v7.2.1
@@ -39,8 +40,7 @@ jobs:
           add: '["package.json", "package-lock.json", "README.md"]'
           author_name: ${{ env.AUTHOR_NAME }}
           author_email: ${{ env.AUTHOR_EMAIL }}
-          message: 'Release: cut a new release'
-          pull_stragegy: 'NO-PULL'
+          message: 'Release: ${{ env.RELEASE_VER }}'
 
       - name: publish
         run: |
