@@ -17,9 +17,6 @@ jobs:
 
     # https://docs.github.com/en/actions/reference/context-and-expression-syntax-for-github-actions
     # https://docs.github.com/en/actions/reference/events-that-trigger-workflows
-    - name: GitHub Contexts object
+    - name: Event data
       if: contains(github.event.pull_request.labels.*.name, 'actions')
-      run: |
-        echo "action: " ${{ github.action }}
-        echo "event_name: " ${{ github.event_name }}
-        echo "context object: " ${{ github }}
+      run: cat /home/runner/work/_temp/_github_workflow/event.json
