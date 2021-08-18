@@ -1,0 +1,25 @@
+# If a PR is labelled "actions" this workflow prints helpful vars
+
+name: Actions Dev
+
+on: 
+  pull_request:
+    types: [opened, reopened, labeled]
+
+jobs:
+  environment:
+    runs-on: ubuntu-latest
+    steps:
+    # https://docs.github.com/en/actions/reference/environment-variables
+    - name: Envars
+      if: contains(github.event.pull_request.labels.*.name, 'actions')
+      run: env
+
+    # https://docs.github.com/en/actions/reference/context-and-expression-syntax-for-github-actions
+    # https://docs.github.com/en/actions/reference/events-that-trigger-workflows
+    - name: GitHub Contexts object
+      if: contains(github.event.pull_request.labels.*.name, 'actions')
+      run: |
+        echo "action: " ${{ github.action }}
+        echo "event_name: " ${{ github.event_name }}
+        echo "context object: " ${{ github }}
