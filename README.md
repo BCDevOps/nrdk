@@ -2,7 +2,7 @@ nrdk
 ====
 
 
-
+<!-- badges -->
 [![img](https://img.shields.io/badge/Lifecycle-Experimental-339999)](https://github.com/bcgov/repomountie/blob/master/doc/lifecycle-badges.md)
 [![oclif](https://img.shields.io/badge/cli-oclif-brightgreen.svg)](https://oclif.io)
 [![Version](https://img.shields.io/npm/v/@bcgov/nrdk.svg)](https://www.npmjs.com/package/@bcgov/nrdk)
@@ -13,7 +13,10 @@ nrdk
 * [Prerequisites](#prerequisites)
 * [Usage](#usage)
 * [Commands](#commands)
-<!-- tocstop -->
+* [Troubleshooting](#troubleshooting)
+* [Development](#development)
+* [Contributing](#contributing)
+* [Conduct](#conduct)
 
 # Prerequisites
 * Setup yout git CLI so that credentials are being cached. You can use the `store` or `cache` credential helper. PS.: Jenkins will do that automatically for you when running within a jenkins job.
@@ -104,5 +107,20 @@ OPTIONS
   --all  see all commands in CLI
 ```
 
-_See code: [@oclif/plugin-help](https://github.com/oclif/plugin-help/blob/v3.2.2/src/commands/help.ts)_
-<!-- commandsstop -->
+_See code: [@oclif/plugin-help](https://github.com/oclif/plugin-help/blob/v3.2.2/src/commands/help.ts).
+
+# Troubleshooting
+
+Please see [TROUBLESHOOTING.md](./dev/TROUBLESHOOTING.md).
+
+# Development
+
+Please see [DEVELOPER.md](./dev/DEVELOPER.md).
+
+# Contributing
+
+Please see [CONTRIBUTING.md](./dev/CONTRIBUTING.md).
+
+# Conduct
+
+Please see [CONDUCT.md](./dev/CONDUCT.md).
