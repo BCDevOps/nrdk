@@ -12,15 +12,37 @@ jobs:
     steps:
       - uses: actions/checkout@v2
         
-      - name: Install Node.js
+      - name: install Node.js
         uses: actions/setup-node@v1
         with:
           node-version: 12
       
-      - name: clean install
+      - name: continuous integration package install
         run: npm ci
-      
-      - name: version and publish
+
+      - name: increment version
+        run: |
+          npm set //registry.npmjs.org/:_authToken $NODE_AUTH_TOKEN
+          npm --no-git-tag-version version prerelease 
+        env:
+          CI: true
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: get user name and email address
+        run: |
+          echo AUTHOR_NAME=$(git --no-pager log --format=format:'%an' | grep -v github.com | head -n1) >> $GITHUB_ENV
+          echo AUTHOR_EMAIL=$(git --no-pager log --format=format:'%ae' | grep -v github.com | head -n1) >> $GITHUB_ENV
+          echo RELEASE_VER=$(node -pe "require('./package.json').version") >> $GITHUB_ENV
+
+      - name: commit new version
+        uses: EndBug/add-and-commit@v7.2.1
+        with:
+          add: '["package.json", "package-lock.json", "README.md"]'
+          author_name: ${{ env.AUTHOR_NAME }}
+          author_email: ${{ env.AUTHOR_EMAIL }}
+          message: 'Release: ${{ env.RELEASE_VER }}'
+
+      - name: publish
         run: |
           npm set //registry.npmjs.org/:_authToken $NODE_AUTH_TOKEN
           npm publish --access public
