@@ -28,7 +28,7 @@ $ npm install -g @bcgov/nrdk
 $ nrdk COMMAND
 running command...
 $ nrdk (-v|--version|version)
-@bcgov/nrdk/0.1.0-rc.119 linux-x64 node-v12.22.1
+@bcgov/nrdk/0.1.0-rc.119 linux-x64 node-v14.17.0
 $ nrdk --help [COMMAND]
 USAGE
   $ nrdk COMMAND
