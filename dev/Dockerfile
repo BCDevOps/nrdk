@@ -1,4 +1,4 @@
-FROM node:12-buster
+FROM node:14-buster
 
 ENV OC_VER="3.11.286"
 
