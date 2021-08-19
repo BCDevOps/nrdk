@@ -24,6 +24,10 @@ jobs:
           command: |
             ./node_modules/.bin/nyc report --reporter text-lcov > coverage.lcov
             curl -s https://codecov.io/bash | bash
+  node-15:
+    <<: *test
+    docker:
+      - image: node:15
   node-14:
     <<: *test
     docker:
@@ -51,6 +55,7 @@ workflows:
   "bcdk":
     jobs:
       - node-latest
+      - node-15
       - node-14
       - node-12
       - cache:
