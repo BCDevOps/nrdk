@@ -33,6 +33,12 @@ jobs:
           echo AUTHOR_NAME=$(git --no-pager log --format=format:'%an' | grep -v github.com | head -n1) >> $GITHUB_ENV
           echo AUTHOR_EMAIL=$(git --no-pager log --format=format:'%ae' | grep -v github.com | head -n1) >> $GITHUB_ENV
           echo RELEASE_VER=$(node -pe "require('./package.json').version") >> $GITHUB_ENV
+          if [ -z $AUTHOR_NAME ]||[ -z $AUTHOR_EMAIL ]||[ -z $RELEASE_VER ]
+          then
+            echo "Variable unassigned:"
+            echo "  AUTHOR_NAME=${AUTHOR_NAME}"
+            echo "  AUTHOR_EMAIL=${AUTHOR_EMAIL}"
+            echo "  RELEASES_VER=${RELEASE_VER}"
 
       - name: commit new version
         uses: EndBug/add-and-commit@v7.2.1
